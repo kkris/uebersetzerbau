@@ -35,6 +35,9 @@ for t in test_cases:
     r0 = r[0]
     r1 = r[1]
 
+    r[0] = 0
+    r[1] = 0
+
     implementation_lib.run_test(t[0], t[1], t[2], t[3], r)
 
     assert r0 == r[0] and r1 == r[1]

@@ -9,8 +9,8 @@ asma:
 	subq	(%rsi), %rax
     movq    8(%rdi), %rcx
     sbbq    8(%rsi), %rcx
-	movq	%rax, (%rdx)  # needed?
-    movq    %rcx, 8(%rdx) # needed?
+	movq	%rax, (%rdx)
+    movq    %rcx, 8(%rdx)
 	ret
 	.cfi_endproc
 .LFE0:
