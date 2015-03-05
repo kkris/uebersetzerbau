@@ -15,29 +15,6 @@
 
 /* rules */
 
-/*Program: Def
-       ;
-
-Def: IDENT '=' Lambda
-   ;
-
-Lambda: "fun" IDENT "->" Term "end"
-      ;
-
-Expr: "if" Expr "then" Expr "else" Expr "end"
-    | Lambda
-    | "let" IDENT "=" Expr "in" Expr "end"
-    | Term
-    /*| { "not" | "head" | "tail" | "isnum" | "islist" | "isfun" } Term */
- /*   | Term { "+" Term }
-    ;
-
-
-Term: "(" Expr ")"
-    | IDENT
-    ;
-*/
-
 Program:
        | Program Def ';'
        ;
