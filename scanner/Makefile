@@ -1,8 +1,8 @@
-compile:
-	flex rules.lex
+scanner:
+	flex scanner.l
 	gcc *.c -lfl -o scanner
 
-test: compile
+test: clean scanner
 	./scanner
 
 clean:
