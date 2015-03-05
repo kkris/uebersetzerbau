@@ -1,5 +1,3 @@
-	.file	"template.c"
-	.text
 	.globl	asma
 	.type	asma, @function
 asma:
@@ -15,5 +13,3 @@ asma:
 	.cfi_endproc
 .LFE0:
 	.size	asma, .-asma
-	.ident	"GCC: (GNU) 4.9.2 20150204 (prerelease)"
-	.section	.note.GNU-stack,"",@progbits
