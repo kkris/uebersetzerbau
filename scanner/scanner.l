@@ -11,7 +11,7 @@ WHITESPACE [ \r\n\t]
 IDENTIFIER {CHAR}({CHAR}|{DIGIT})*
 NUM_DEC {DIGIT}*
 NUM_HEX ${HEXDIGITNONNULL}{HEXDIGIT}*
-COMMENT \/\/.*$
+COMMENT \/\/.*
 KEYWORD (fun|if|then|else|let|in|not|head|tail|and|end|isnum|islist|isfun)
 LEXEM (;|=|\+|-|\*|\.|<|=|\(|\)|->)
 
