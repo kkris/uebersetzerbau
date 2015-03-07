@@ -8,26 +8,22 @@ asmb:
     mov $0, %r8
     clc # set cf flag to zero?
 
-    pushfq
+    movq $0, %r10
 
 .loopbody:
-    popfq
+    bt $0, %r10
 
     movq    (%rdi, %r8, 8), %rax
     sbbq    (%rsi, %r8, 8), %rax
     movq    %rax, (%rdx, %r8, 8)
 
-    setbe %r9b
-    movzbl %r9b, %r9d
-    pushfq
+    sbbq    %r10, %r10
 
     inc %r8
     cmpq    %rcx, %r8
     jne .loopbody
 .loopend:
-    popfq
-    negq  %r9
-    movq  %r9, (%rdx, %rcx, 8)
+    movq  %r10, (%rdx, %rcx, 8)
 	ret
 	.cfi_endproc
 .LFE0:
