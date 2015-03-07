@@ -22,7 +22,7 @@ test_cases = []
 MAX = 5
 
 for _ in range(int(sys.argv[1])):
-    n = random.randint(1, 10)
+    n = random.randint(0, 10)
 
     x = ffi.new("unsigned long[]", n)
     y = ffi.new("unsigned long[]", n)

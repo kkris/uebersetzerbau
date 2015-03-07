@@ -15,11 +15,11 @@ void run_test(unsigned long x[], unsigned long y[],
 }
 
 int main() {
-    unsigned long x[2] = {1, 2};
-    unsigned long y[2] = {3, 4};
-    unsigned long r[3];
+    unsigned long x[4] = {1, 2, 5, 6};
+    unsigned long y[4] = {3, 4, 7, 8};
+    unsigned long r[5];
 
-    asmb(x, y, r, 2);
+    run_test(x, y, r, 4);
 
     return 0;
 }
