@@ -4,11 +4,10 @@
 asmb:
 .LFB0:
 	.cfi_startproc
-    mov $0, %r8
-    mov %rcx, %r9
-    clc # set cf flag to zero?
+    movq $0, %r8
+    movq %rcx, %r9
 
-    testq %rcx, %rcx # n = 0
+    testq %rcx, %rcx # test if n = 0, carry flag is cleared
     je .loopend
 
 .loopbody:
