@@ -16,7 +16,7 @@ asmb:
     inc %r8
     loop .loop
 .epilog:
-    sbbq %r10, %r10
+    sbbq %r10, %r10             # store 0 or -1 in r10 (i.e. -borrow)
     movq %r10, (%rdx, %r8, 8)
 	ret
 	.cfi_endproc
