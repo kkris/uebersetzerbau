@@ -34,7 +34,12 @@ Expr: IF Expr THEN Expr ELSE Expr END
     | Lambda
     | LET IDENT '=' Expr IN Expr END
     | Term
-    /*| { not | head | tail | isnum | islist | isfun } Term  */
+    | NOT Term
+    | HEAD Term
+    | TAIL Term
+    | ISNUM Term
+    | ISLIST Term
+    | ISFUN Term
     | Term '+' Term
     | Term '-' Term
     | Term '*' Term
