@@ -47,12 +47,12 @@ Expr: IF Expr THEN Expr ELSE Expr END
     | Term AND Term
     | Term '<' Term
     | Term '=' Term
-    | Expr Term
+    | Expr Term     /* Funktionsaufruf */
     ;
 
 Term: '(' Expr ')'
     | NUM
-    | IDENT
+    | IDENT         /* Variablenverwendung */
     ;
 
 %%
