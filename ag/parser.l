@@ -1,4 +1,5 @@
 %{
+    #include "ast.h"
     #include "y.tab.h"
 %}
 
@@ -44,7 +45,7 @@ LEXEM (;|=|\+|-|\*|\.|<|=|\(|\)|->)
 }
 
 {IDENTIFIER} {
-    return IDENT;
+    return IDENT; @{ @IDENT.name@ = strdup(yytext); @}
 }
 
 {NUM_DEC} {
