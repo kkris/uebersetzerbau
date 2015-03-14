@@ -37,6 +37,8 @@ LEXEM (;|=|\+|-|\*|\.|<|=|\(|\)|->)
 "islist"    return ISLIST;
 "isfun"     return ISFUN;
 
+"->"        return ARROW;
+
 {LEXEM} {
     return yytext[0];
 }
