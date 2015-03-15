@@ -57,11 +57,11 @@ Lambda: FUN IDENT ARROW Expr END
       @{ @i @Expr.symbols@ = symbol_add(@Lambda.symbols@, @IDENT.name@); @}
       ;
 
-Expr: /*IF Expr THEN Expr ELSE Expr END
+Expr: IF Expr THEN Expr ELSE Expr END
     | Lambda
     | LET IDENT '=' Expr IN Expr END
-    |*/ Term
-    @{ @i @Term.symbols@ = @Expr.symbols@; @}
+    @{ @i @Expr.2.symbols@ = symbol_add(@Expr.0.symbols@, @IDENT.name@); @}
+    | Term
     | NOT Term
     | HEAD Term
     | TAIL Term
@@ -75,7 +75,7 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
     | Term AND Term
     | Term '<' Term
     | Term '=' Term
-    /*| Expr Term     /* Funktionsaufruf *1/*/
+    | Expr Term     /* Funktionsaufruf */
     ;
 
 Term: '(' Expr ')'
