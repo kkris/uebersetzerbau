@@ -22,13 +22,13 @@
 
 
 @traversal @lefttoright @preorder LRpre
+@autoinh symbols
 
 @attributes { char *name; } IDENT
 
 @attributes { struct symbol *symbols; struct symbol *up; } Program Def
 @attributes { struct symbol *symbols; } Lambda Expr Term
 
-@autoinh symbols
 
 %{
     #include <stdio.h>
@@ -62,24 +62,23 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
     | LET IDENT '=' Expr IN Expr END
     |*/ Term
     @{ @i @Term.symbols@ = @Expr.symbols@; @}
-/*    | NOT Term
+    | NOT Term
     | HEAD Term
     | TAIL Term
     | ISNUM Term
     | ISLIST Term
-    | ISFUN Term*/
-    /*| Term '+' Term*/
-/*    | Term '-' Term
+    | ISFUN Term
+    | Term '+' Term
+    | Term '-' Term
     | Term '*' Term
     | Term '.' Term
     | Term AND Term
     | Term '<' Term
     | Term '=' Term
-    | Expr Term     /* Funktionsaufruf *1/*/
+    /*| Expr Term     /* Funktionsaufruf *1/*/
     ;
 
 Term: '(' Expr ')'
-    @{ @i @Expr.symbols@ = @Term.symbols@; @}
     | NUM
     | IDENT         /* Variablenverwendung */
     @{ @LRpre check_variable(@Term.symbols@, @IDENT.name@); @}
