@@ -28,7 +28,7 @@
 @attributes { struct symbol *symbols; struct symbol *up; } Program Def
 @attributes { struct symbol *symbols; } Lambda Expr Term
 
-/*@autoinh symbols*/
+@autoinh symbols
 
 %{
     #include <stdio.h>
@@ -52,23 +52,6 @@ Program:
           @i @Lambda.symbols@ = @Program.0.symbols@;
        @}
        ;
-
-/*Program: 
-       @{ @i @Program.up@ = symbol_new(); @}
-       | Program Def ';'
-       @{ @i @Program.0.up@ = symbol_merge(@Def.up@, @Program.1.up@);
-          @i @Program.1.symbols@ = @Program.0.symbols@;
-       @}
-       ;*/
-
-/*Def: IDENT '=' Lambda
-   @{ @i @Def.up@ = symbol_add(symbol_new(), @IDENT.name@); 
-      @i @Lambda.symbols@ = @Def.symbols@;
-   @}
-   @{ @i @Def.symbols@ = symbol_add(symbol_new(), @IDENT.name@); 
-      @i @Lambda.symbols@ = @Def.symbols@;
-   @}
-   ;*/
 
 Lambda: FUN IDENT ARROW Expr END
       @{ @i @Expr.symbols@ = symbol_add(@Lambda.symbols@, @IDENT.name@); @}
@@ -98,11 +81,8 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
 Term: '(' Expr ')'
     @{ @i @Expr.symbols@ = @Term.symbols@; @}
     | NUM
-/*    @{ @i @Term.symbols@ = symbol_new(); @}*/
     | IDENT         /* Variablenverwendung */
-/*    @{  @i @Term.symbols@ = symbol_new();
-        @LRpre check_variable(@Term.symbols@, @IDENT.name@); 
-    @}*/
+    @{ @LRpre check_variable(@Term.symbols@, @IDENT.name@); @}
     ;
 
 %%
