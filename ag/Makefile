@@ -1,8 +1,15 @@
-ag: clean
+generator: clean
 	ox parser.y parser.l
 	yacc -d oxout.y
 	flex oxout.l
-	gcc -o ag lex.yy.c y.tab.c -lfl
+
+
+ag: generator
+	gcc -o ag lex.yy.c y.tab.c scope.c -lfl
+
+debug: generator
+	gcc -o ag lex.yy.c y.tab.c scope.c -lfl -DENDEBUG
+
 
 test: ag
 	./ag
