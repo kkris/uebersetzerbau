@@ -3,7 +3,7 @@
     #include <stdlib.h>
     #include <string.h>
 
-    #include "scope.h"
+    #include "symbol.h"
 
     #define YYDEBUG 1
 
@@ -15,50 +15,77 @@
 
 /* definitions */
 
-%start Program
+%start Start
 %token IDENT
 %token NUM
 %token FUN IF THEN ELSE LET IN NOT HEAD TAIL AND END ISNUM ISLIST ISFUN ARROW
 
+
 @traversal @lefttoright @preorder LRpre
 
 @attributes { char *name; } IDENT
-@attributes { struct scope *scope; } Program Lambda Expr Term
-/*@attributes {struct sym_table *table;} Term Expr Lambda Def Program*/
+
+@attributes { struct symbol *symbols; struct symbol *up; } Program Def
+@attributes { struct symbol *symbols; } Lambda Expr Term
+
+/*@autoinh symbols*/
+
 %{
     #include <stdio.h>
-    struct scope *global_scope = NULL;
-
+    struct symbol *all_symbols = NULL;
 %}
 
 %%
 
 /* rules */
 
-Program: 
-       @{ @i @Program.scope@ = global_scope = scope_new(); @}
-       | Program IDENT '=' Lambda ';'
-       @{ @i @Lambda.scope@ = scope_add_name(NULL, @IDENT.name@);
-          @i @Program.0.scope@ = global_scope = scope_add_name(global_scope, @IDENT.name@); @}
+Start:  Program
+     @{ @i @Program.symbols@ = all_symbols = @Program.up@; @}
+     ;
+
+Program:
+       @{ @i @Program.up@ = symbol_new(); @}
+       |
+       IDENT '=' Lambda ';' Program
+       @{ @i @Program.0.up@ = symbol_add(@Program.1.up@, @IDENT.name@);
+          @i @Program.1.symbols@ = @Program.0.symbols@;
+          @i @Lambda.symbols@ = @Program.0.symbols@;
+       @}
        ;
 
+/*Program: 
+       @{ @i @Program.up@ = symbol_new(); @}
+       | Program Def ';'
+       @{ @i @Program.0.up@ = symbol_merge(@Def.up@, @Program.1.up@);
+          @i @Program.1.symbols@ = @Program.0.symbols@;
+       @}
+       ;*/
+
+/*Def: IDENT '=' Lambda
+   @{ @i @Def.up@ = symbol_add(symbol_new(), @IDENT.name@); 
+      @i @Lambda.symbols@ = @Def.symbols@;
+   @}
+   @{ @i @Def.symbols@ = symbol_add(symbol_new(), @IDENT.name@); 
+      @i @Lambda.symbols@ = @Def.symbols@;
+   @}
+   ;*/
+
 Lambda: FUN IDENT ARROW Expr END
-      @{ @i @Expr.scope@ = scope_add_name(scope_new_with_parent(@Lambda.scope@), @IDENT.name@); @}
+      @{ @i @Expr.symbols@ = symbol_add(@Lambda.symbols@, @IDENT.name@); @}
       ;
 
 Expr: /*IF Expr THEN Expr ELSE Expr END
     | Lambda
-    | LET IDENT '=' Expr IN Expr END*/
-    | Term
-    @{ @i @Term.scope@ = @Expr.scope@; @}
+    | LET IDENT '=' Expr IN Expr END
+    |*/ Term
+    @{ @i @Term.symbols@ = @Expr.symbols@; @}
 /*    | NOT Term
     | HEAD Term
     | TAIL Term
     | ISNUM Term
     | ISLIST Term
     | ISFUN Term*/
-    | Term '+' Term
-    @{ @i @Term.0.scope@ = /*@Term.1.scope@ =*/ @Expr.scope@; @}
+    /*| Term '+' Term*/
 /*    | Term '-' Term
     | Term '*' Term
     | Term '.' Term
@@ -69,10 +96,13 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
     ;
 
 Term: '(' Expr ')'
-    @{ @i @Expr.scope@ = @Term.scope@; @}
+    @{ @i @Expr.symbols@ = @Term.symbols@; @}
     | NUM
+/*    @{ @i @Term.symbols@ = symbol_new(); @}*/
     | IDENT         /* Variablenverwendung */
-    @{ @LRpre check_in_scope(@Term.scope@, @IDENT.name@); @}
+/*    @{  @i @Term.symbols@ = symbol_new();
+        @LRpre check_variable(@Term.symbols@, @IDENT.name@); 
+    @}*/
     ;
 
 %%
@@ -87,7 +117,7 @@ void yyerror(char *s) {
 int main(void) {
     yyparse();
 
-    scope_print(global_scope);
+    symbol_print(all_symbols);
 
     /* if(root_symbols != NULL) { */
     /*     print_symbols(root_symbols); */

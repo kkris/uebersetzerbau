@@ -5,10 +5,10 @@ generator: clean
 
 
 ag: generator
-	gcc -o ag lex.yy.c y.tab.c scope.c -lfl
+	gcc -o ag lex.yy.c y.tab.c symbol.c -lfl
 
 debug: generator
-	gcc -o ag lex.yy.c y.tab.c scope.c -lfl -DENDEBUG
+	gcc -o ag lex.yy.c y.tab.c symbol.c -lfl -DENDEBUG
 
 
 test: ag

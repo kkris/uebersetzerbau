@@ -1,5 +1,5 @@
 %{
-    #include "symtab.h"
+    #include "symbol.h"
     #include "y.tab.h"
 %}
 
@@ -18,7 +18,7 @@ NUM_DEC {DIGIT}*
 NUM_HEX ${HEXDIGITNONNULL}{HEXDIGIT}*
 COMMENT \/\/.*
 KEYWORD (fun|if|then|else|let|in|not|head|tail|and|end|isnum|islist|isfun)
-LEXEM (;|=|\+|-|\*|\.|<|=|\(|\)|->)
+LEXEM (;|=|\+|-|\*|\.|<|\(|\)|->)
 
 %%
 
@@ -40,9 +40,16 @@ LEXEM (;|=|\+|-|\*|\.|<|=|\(|\)|->)
 
 "->"        return ARROW;
 
-{LEXEM} {
-    return yytext[0];
-}
+
+";"         return ';';
+"="         return '=';
+"+"         return '+';
+"-"         return '-';
+"*"         return '*';
+"."         return '.';
+"<"         return '<';
+"("         return '(';
+")"         return ')';
 
 {IDENTIFIER} {
     return IDENT; @{ @IDENT.name@ = strdup(yytext); @}
