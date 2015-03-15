@@ -1,13 +1,16 @@
-all:
-	gcc -c solution.s -o asma.o
+all: asma
 
-compile: compilereference compileimpl
+asma:
+	gcc -c asma.s -o asma.o
 
-compilereference:
-	gcc test.c asma.c --shared -fPIC -o asma_reference.so
+reference:
+	gcc test/test.c test/asma.c --shared -fPIC -o reference.so
 
-compileimpl:
-	gcc test.c solution.s --shared -fPIC -o asma_impl.so
+impl:
+	gcc test/test.c asma.s --shared -fPIC -o impl.so
+
+test: impl reference
+	python test/test.py 1000
 
 clean:
-	rm -f asma_reference.so asma_impl.so asma.o
+	rm -f reference.so impl.so asma.o

@@ -10,8 +10,8 @@ ffi.cdef("""
                  unsigned long r[]);
 """)
 
-reference_lib = ffi.dlopen("./asma_reference.so")
-implementation_lib = ffi.dlopen("./asma_impl.so")
+reference_lib = ffi.dlopen("./reference.so")
+implementation_lib = ffi.dlopen("./impl.so")
 
 
 test_cases = []
