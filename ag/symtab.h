@@ -5,5 +5,5 @@ struct symbol {
 
 struct sym_table {
     struct symbol *sym;
-    struct sym_table *child;
+    struct sym_table *parent;
 };
