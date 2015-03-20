@@ -1,6 +1,12 @@
-parser: clean
+all: parser
+
+yacc:
 	yacc -d parser.y
+
+flex: yacc
 	flex parser.l
+
+parser: yacc flex
 	gcc -o parser lex.yy.c y.tab.c -lfl
 
 test: parser
