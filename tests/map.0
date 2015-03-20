@@ -1,0 +1,5 @@
+// how to distinguish base case?
+map = fun func -> fun array -> (func (head array)) . ((map func) (tail array)) end end ;
+
+times2 = fun x -> 2 * x end;
+main = fun array -> (map times2) array end;

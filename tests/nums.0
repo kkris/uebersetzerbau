@@ -1,0 +1,5 @@
+f1 = fun x -> 5 end;
+f2 = fun x -> $cafebabe end;
+f3 = fun x -> 0005 end;
+f4 = fun x -> $05 end;
+f5 = fun x -> $123456789abcdef end;
