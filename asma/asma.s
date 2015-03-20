@@ -5,10 +5,10 @@ asma:
 	.cfi_startproc
 	movq	(%rdi), %rax
 	subq	(%rsi), %rax
-    movq    8(%rdi), %rcx
-    sbbq    8(%rsi), %rcx
-	movq	%rax, (%rdx)
-    movq    %rcx, 8(%rdx)
+    movq    %rax, (%rdx)
+    movq    8(%rdi), %rax
+    sbbq    8(%rsi), %rax
+	movq	%rax, 8(%rdx)
 	ret
 	.cfi_endproc
 .LFE0:

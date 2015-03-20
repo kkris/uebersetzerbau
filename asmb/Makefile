@@ -1,17 +1,16 @@
-all:
-	gcc -o asmb.o -c solution.s
+all: asmb
 
-compile: compilereference compileimpl
+asmb:
+	gcc -o asmb.o -c asmb.s
 
-test: compile
-	python test.py 1000
-	
+test: reference impl
+	python test/test.py 1000
 
-compilereference:
-	gcc test.c asmb.c --shared -std=c99 -fPIC -o asmb_reference.so
+reference:
+	gcc test/test.c test/asmb.c --shared -std=c99 -fPIC -o reference.so
 
-compileimpl:
-	gcc test.c solution.s --shared -std=c99 -fPIC -o asmb_impl.so
+impl:
+	gcc test/test.c asmb.s --shared -std=c99 -fPIC -o impl.so
 
 clean:
-	rm -f asmb_reference.so asmb_impl.so asmb.o
+	rm -f reference.so impl.so asmb.o

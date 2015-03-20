@@ -6,12 +6,6 @@ void run_test(unsigned long x[], unsigned long y[],
               unsigned long r[], size_t n)
 {
     asmb(x, y, r, n);
-
-    for(int i = 0; i < n + 1; i++) {
-        printf("%lu, ", r[i]);
-    }
-
-    printf("\n");
 }
 
 int main() {

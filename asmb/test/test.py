@@ -9,8 +9,8 @@ ffi.cdef("""
                  unsigned long r[], size_t n);
 """)
 
-reference_lib = ffi.dlopen("./asmb_reference.so")
-implementation_lib = ffi.dlopen("./asmb_impl.so")
+reference_lib = ffi.dlopen("./reference.so")
+implementation_lib = ffi.dlopen("./impl.so")
 
 def zero(r, n):
     for i in range(n + 1):
