@@ -1,7 +1,5 @@
 %option yylineno
 
-/* definitions */
-
 DIGIT [0-9]
 HEXDIGIT [0-9a-fA-F]
 CHAR [a-zA-Z]
@@ -57,9 +55,8 @@ main(argc, argv)
 int argc;
 char **argv;
 {
-    ++argv, --argc;
-    if(argc > 0)
-        yyin = fopen(argv[0], "r");
+    if(argc > 1)
+        yyin = fopen(argv[1], "r");
     else
         yyin = stdin;
 
