@@ -1,5 +1,13 @@
-// how to distinguish base case?
-map = fun func -> fun array -> (func (head array)) . ((map func) (tail array)) end end ;
+// can we determine list end without explicit array length?
+map = fun func -> fun array -> fun n -> 
+    let next = func (head array)
+    in 
+        if n = 1
+            then next
+            else next . ((map func) (tail array)) (n - 1) 
+        end 
+    end 
+end end end;
 
 times2 = fun x -> 2 * x end;
-main = fun array -> (map times2) array end;
+main = fun array -> fun n -> ((map times2) array) n end end;
