@@ -4,7 +4,7 @@ yacc:
 	yacc -d parser.y
 
 flex: yacc
-	flex parser.l
+	flex scanner.l
 
 parser: yacc flex
 	gcc -o parser lex.yy.c y.tab.c -lfl

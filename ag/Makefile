@@ -1,5 +1,5 @@
 generator: clean
-	ox parser.y parser.l
+	ox parser.y scanner.l
 	yacc -d oxout.y
 	flex oxout.l
 
