@@ -1,0 +1,3 @@
+f1 = fun x -> x + 5 end;
+f2 = fun x -> 5 + x end;
+f3 = fun x -> x + x end;
