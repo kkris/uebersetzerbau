@@ -21,7 +21,7 @@
 %token FUN IF THEN ELSE LET IN NOT HEAD TAIL AND END ISNUM ISLIST ISFUN ARROW
 
 
-@traversal @lefttoright @preorder verify
+@traversal @postorder verify
 @autoinh symbols
 
 @attributes { char *name; } IDENT
