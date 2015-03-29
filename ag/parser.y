@@ -21,7 +21,7 @@
 %token FUN IF THEN ELSE LET IN NOT HEAD TAIL AND END ISNUM ISLIST ISFUN ARROW
 
 
-@traversal @lefttoright @preorder LRpre
+@traversal @lefttoright @preorder verify
 @autoinh symbols
 
 @attributes { char *name; } IDENT
@@ -30,17 +30,12 @@
 @attributes { struct symbol *symbols; } Lambda Expr Term
 
 
-%{
-    #include <stdio.h>
-    struct symbol *all_symbols = NULL;
-%}
-
 %%
 
 /* rules */
 
 Start:  Program
-     @{ @i @Program.symbols@ = all_symbols = @Program.defs@; @}
+     @{ @i @Program.symbols@ = @Program.defs@; @}
      ;
 
 Program:
@@ -81,7 +76,7 @@ Expr: IF Expr THEN Expr ELSE Expr END
 Term: '(' Expr ')'
     | NUM
     | IDENT         /* Variablenverwendung */
-    @{ @LRpre check_variable(@Term.symbols@, @IDENT.name@); @}
+    @{ @verify check_variable(@Term.symbols@, @IDENT.name@); @}
     ;
 
 %%
@@ -95,15 +90,6 @@ void yyerror(char *s) {
 
 int main(void) {
     yyparse();
-
-    symbol_print(all_symbols);
-
-    /* if(root_symbols != NULL) { */
-    /*     print_symbols(root_symbols); */
-    /*     /*char *name = root_symbols->sym->name; */
-    /*     if(name) */
-    /*         printf("End: %s\n", root_symbols->sym->name);*1/ */
-    /* } */
 
     if(errors > 0)
         return 2;
