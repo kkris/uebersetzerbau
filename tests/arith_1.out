@@ -1,0 +1,14 @@
+ident minus
+=
+fun
+ident x
+->
+fun
+ident y
+->
+ident x
+-
+ident y
+end
+end
+;

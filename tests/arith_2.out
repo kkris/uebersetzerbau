@@ -1,0 +1,22 @@
+ident plusminus
+=
+fun
+ident x
+->
+fun
+ident y
+->
+fun
+ident z
+->
+(
+ident x
++
+ident y
+)
+-
+ident z
+end
+end
+end
+;

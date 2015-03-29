@@ -1,0 +1,24 @@
+ident foo
+=
+fun
+ident x
+->
+ident x
+end
+;
+ident bar
+=
+fun
+ident y
+->
+ident y
+end
+;
+ident frobinator
+=
+fun
+ident z
+->
+ident z
+end
+;
