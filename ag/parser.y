@@ -26,7 +26,7 @@
 
 @attributes { char *name; } IDENT
 
-@attributes { struct symbol *symbols; struct symbol *up; } Program Def
+@attributes { struct symbol *symbols; struct symbol *defs; } Program Def
 @attributes { struct symbol *symbols; } Lambda Expr Term
 
 
@@ -40,14 +40,14 @@
 /* rules */
 
 Start:  Program
-     @{ @i @Program.symbols@ = all_symbols = @Program.up@; @}
+     @{ @i @Program.symbols@ = all_symbols = @Program.defs@; @}
      ;
 
 Program:
-       @{ @i @Program.up@ = symbol_new(); @}
+       @{ @i @Program.defs@ = symbol_new(); @}
        |
        IDENT '=' Lambda ';' Program
-       @{ @i @Program.0.up@ = symbol_add(@Program.1.up@, @IDENT.name@);
+       @{ @i @Program.0.defs@ = symbol_add(@Program.1.defs@, @IDENT.name@);
           @i @Program.1.symbols@ = @Program.0.symbols@;
           @i @Lambda.symbols@ = @Program.0.symbols@;
        @}
