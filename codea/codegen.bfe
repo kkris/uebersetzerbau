@@ -1,0 +1,25 @@
+%{
+#include "stdio.h"
+#include "assert.h"
+#include "node.h"
+#include "codegen.h"
+%}
+
+%start reg
+%term ADD=1 REG=2 NUM=3 ASSIGN=4 ADDASSIGN=5
+%%
+reg: ASSIGN(reg,reg) # 1 # gen_code("movq");
+reg: ASSIGN(reg,num) # 1 # gen_code("movq");
+reg: ADDASSIGN(reg,reg) # 1 # gen_code("addq");
+reg: ADDASSIGN(reg,num) # 1 # gen_code("addq");
+num: ADD(num,num) # 0 # bnode->value = kids[0]->value + kids[1]->value;
+reg: REG # 0
+num: NUM # 0
+%%
+extern node *root;
+extern int yyparse(void);
+void burm_reduce(NODEPTR_TYPE bnode, int goalnt);
+void invoke_burm(NODEPTR_TYPE root) {
+burm_label(root);
+burm_reduce(root, 1);
+}
