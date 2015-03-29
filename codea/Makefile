@@ -1,7 +1,7 @@
 all: codea
 
 codea: generator codegen
-	gcc -o codea lex.yy.c y.tab.c code.c symbol.c node.c -lfl
+	gcc -o codea lex.yy.c y.tab.c code.c symbol.c tree.c -lfl
 
 generator: clean
 	ox parser.y scanner.l
