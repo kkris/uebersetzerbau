@@ -1,0 +1,10 @@
+ident f
+=
+fun
+ident x
+->
+num 66
++
+num 1337
+end
+;
