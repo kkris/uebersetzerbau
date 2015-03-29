@@ -9,6 +9,7 @@ void gen_code(const char *code, ...)
     va_list ap;
 
     va_start(ap, code);
+    fprintf(stdout, "\t");
     vfprintf(stdout, code, ap);
     fprintf(stdout, "\n");
     va_end(ap);

@@ -14,15 +14,23 @@
 #define STATE_TYPE struct burm_state*
 
 enum {
-    OP_UNKNOWN = 1,
+    OP_VAR = 1,
     OP_NUM,
-    OP_ADD
+    OP_ADD,
+    OP_SUB,
+    OP_MUL,
+    OP_AND,
+    OP_LT,
+    OP_EQ,
+    OP_UNKNOWN
 };
 
 struct tree {
     int op;                 /* node type */
     struct tree *kids[2];   /* child nodes */
 
+    char *reg;
+    char *name;
     long int value;             /* expression results */
 
     struct burm_state *state; /* BURG state variable */
@@ -31,5 +39,6 @@ struct tree {
 
 struct tree *new_node(int op, struct tree *left, struct tree *right);
 struct tree *new_const_node(int op, struct tree *left, struct tree *right, long int value);
+struct tree *new_named_node(int op, struct tree *left, struct tree *right, const char *name);
 
 #endif // TREE_H

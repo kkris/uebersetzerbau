@@ -69,8 +69,12 @@ Lambda: FUN IDENT ARROW Expr END
 Expr: /*IF Expr THEN Expr ELSE Expr END
     | Lambda
     | LET IDENT '=' Expr IN Expr END
-    @{ @i @Expr.2.symbols@ = symbol_add(@Expr.0.symbols@, @IDENT.name@); @}
-    |*/ Term
+    @{ 
+        @i @Expr.2.symbols@ = symbol_add(@Expr.0.symbols@, @IDENT.name@);
+        @i @Expr.0.node@ = @Expr.2.node@;
+    @}
+    |*/
+    Term
     /*| NOT Term
     | HEAD Term
     | TAIL Term
@@ -81,18 +85,33 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
     @{
         @i @Expr.node@ = new_node(OP_ADD, @Term.0.node@, @Term.1.node@);
     @}
-    /*| Term '-' Term
+    | Term '-' Term
+    @{
+        @i @Expr.node@ = new_node(OP_SUB, @Term.0.node@, @Term.1.node@);
+    @}
     | Term '*' Term
-    | Term '.' Term
+    @{
+        @i @Expr.node@ = new_node(OP_MUL, @Term.0.node@, @Term.1.node@);
+    @}
+    /*| Term '.' Term*/
     | Term AND Term
+    @{
+        @i @Expr.node@ = new_node(OP_AND, @Term.0.node@, @Term.1.node@);
+    @}
     | Term '<' Term
+    @{
+        @i @Expr.node@ = new_node(OP_LT, @Term.0.node@, @Term.1.node@);
+    @}
     | Term '=' Term
-    | Expr Term */    /* Funktionsaufruf */
+    @{
+        @i @Expr.node@ = new_node(OP_EQ, @Term.0.node@, @Term.1.node@);
+    @}
+    /*| Expr Term */    /* Funktionsaufruf */
     ;
 
 Term: '(' Expr ')'
     @{
-        @i @Term.node@ = new_node(OP_UNKNOWN, NULL, NULL);
+        @i @Term.node@ = @Expr.node@;
     @}
     | NUM
     @{
@@ -100,7 +119,7 @@ Term: '(' Expr ')'
     @}
     | IDENT         /* Variablenverwendung */
     @{ 
-        @i @Term.node@ = new_node(OP_UNKNOWN, NULL, NULL);
+        @i @Term.node@ = new_named_node(OP_VAR, NULL, NULL, @IDENT.name@);
         @verify check_variable(@Term.symbols@, @IDENT.name@); 
     @}
     ;
