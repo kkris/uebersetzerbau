@@ -55,7 +55,7 @@ struct symbol *symbol_find(struct symbol *sym, char *name)
     return NULL;
 }
 
-struct symbol *symbol_add(struct symbol *sym, char *name)
+struct symbol *symbol_add(struct symbol *sym, char *name, char *reg)
 {
     sym = symbol_copy(sym);
     struct symbol *result = symbol_find(sym, name);
@@ -67,6 +67,7 @@ struct symbol *symbol_add(struct symbol *sym, char *name)
 
     struct symbol *element = symbol_new();
     element->name = strdup(name);
+    element->reg = strdup(reg);
     element->next = sym;
 
     return element;
@@ -78,13 +79,13 @@ struct symbol *symbol_merge(struct symbol *s1, struct symbol *s2)
     struct symbol *result = symbol_new();
 
     while(current != NULL) {
-        result = symbol_add(result, current->name);
+        result = symbol_add(result, current->name, current->reg);
         current = current->next;
     }
 
     current = s2;
     while(current != NULL) {
-        result = symbol_add(result, current->name);
+        result = symbol_add(result, current->name, current->reg);
         current = current->next;
     }
 

@@ -33,7 +33,7 @@
 
 @attributes { struct symbol *symbols; struct symbol *defs; } Program Def
 
-@attributes { struct symbol *symbols; struct tree *node; } Term Expr Lambda
+@attributes { struct symbol *symbols; struct tree *node; } Term Expr Lambda LambdaToplevel
 
 
 %%
@@ -48,29 +48,39 @@ Start:  Program
 Program:
        @{ @i @Program.defs@ = NULL; @}
        |
-       IDENT '=' Lambda ';' Program
-       @{ @i @Program.0.defs@ = symbol_add(@Program.1.defs@, @IDENT.name@);
+       IDENT '=' LambdaToplevel ';' Program
+       @{ @i @Program.0.defs@ = symbol_add(@Program.1.defs@, @IDENT.name@, "??");
           @i @Program.1.symbols@ = @Program.0.symbols@;
-          @i @Lambda.symbols@ = @Program.0.symbols@;
+          @i @LambdaToplevel.symbols@ = @Program.0.symbols@;
 
           @codegen gen_func(@IDENT.name@);
-          @codegen burm_label(@Lambda.node@); burm_reduce(@Lambda.node@, 1);
+          @codegen burm_label(@LambdaToplevel.node@); burm_reduce(@LambdaToplevel.node@, 1);
        @}
        ;
 
-Lambda: FUN IDENT ARROW Expr END
+LambdaToplevel: FUN IDENT ARROW Expr END
       @{ 
-        @i @Expr.symbols@ = symbol_add(@Lambda.symbols@, @IDENT.name@); 
+        @i @Expr.symbols@ = symbol_add(@LambdaToplevel.symbols@, @IDENT.name@, "rdi"); 
+        @i @LambdaToplevel.node@ = @Expr.node@;
+
+      @}
+      ;
+
+
+/*Lambda: FUN IDENT ARROW Expr END
+      @{ 
+        @i @Expr.symbols@ = symbol_add(@Lambda.symbols@, @IDENT.name@, "todo"); 
         @i @Lambda.node@ = @Expr.node@;
 
       @}
       ;
+*/
 
 Expr: /*IF Expr THEN Expr ELSE Expr END
     | Lambda
     | LET IDENT '=' Expr IN Expr END
     @{ 
-        @i @Expr.2.symbols@ = symbol_add(@Expr.0.symbols@, @IDENT.name@);
+        @i @Expr.2.symbols@ = symbol_add(@Expr.0.symbols@, @IDENT.name@, "todo");
         @i @Expr.0.node@ = @Expr.2.node@;
     @}
     |*/
@@ -137,7 +147,7 @@ Term: '(' Expr ')'
     @}
     | IDENT         /* Variablenverwendung */
     @{ 
-        @i @Term.node@ = new_named_node(OP_VAR, NULL, NULL, @IDENT.name@);
+        @i @Term.node@ = new_named_node(OP_VAR, NULL, NULL, @IDENT.name@, symbol_find(@Term.symbols@, @IDENT.name@)->reg);
         @verify check_variable(@Term.symbols@, @IDENT.name@); 
     @}
     ;

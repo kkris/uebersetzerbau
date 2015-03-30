@@ -26,10 +26,11 @@ struct tree *new_const_node(int op, struct tree *left, struct tree *right, long 
     return t;
 }
 
-struct tree *new_named_node(int op, struct tree *left, struct tree *right, const char *name) {
+struct tree *new_named_node(int op, struct tree *left, struct tree *right, const char *name, const char *reg) {
     struct tree *t = new_node(op, left, right);
 
     t->name = strdup(name);
+    t->reg = strdup(reg);
 
     return t;
 }

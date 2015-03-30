@@ -45,6 +45,6 @@ struct tree {
 
 struct tree *new_node(int op, struct tree *left, struct tree *right);
 struct tree *new_const_node(int op, struct tree *left, struct tree *right, long int value);
-struct tree *new_named_node(int op, struct tree *left, struct tree *right, const char *name);
+struct tree *new_named_node(int op, struct tree *left, struct tree *right, const char *name, const char *reg);
 
 #endif // TREE_H

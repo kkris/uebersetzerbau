@@ -10,7 +10,7 @@ struct symbol {
 struct symbol *symbol_new();
 struct symbol *symbol_copy(struct symbol *sym);
 struct symbol *symbol_find(struct symbol *sym, char *name);
-struct symbol *symbol_add(struct symbol *sym, char *name);
+struct symbol *symbol_add(struct symbol *sym, char *name, char *reg);
 struct symbol *symbol_merge(struct symbol *s1, struct symbol *s2);
 
 int symbol_contains(struct symbol *sym, char *name);

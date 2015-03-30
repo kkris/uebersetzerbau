@@ -11,12 +11,14 @@
 
 lambda: expr                # 1 # gen_code("todo");
 lambda: const               # 0 # ret(TYPE_NUMBER, bnode);
+lambda: var                 # 0 # ret(TYPE_VAR, bnode);
 
 expr: OP_ADD(const, var)    # 0 # gen_code("addq $%ld, %%%s", LEFT_CHILD(bnode)->value, RIGHT_CHILD(bnode)->reg);
 expr: OP_ADD(var, const)    # 0 # gen_code("addq $%ld, %%%s", RIGHT_CHILD(bnode)->value, LEFT_CHILD(bnode)->reg);
 expr: OP_ADD(var, var)      # 0 # gen_code("addq %%%s, %%%s", RIGHT_CHILD(bnode)->reg, LEFT_CHILD(bnode)->reg);
+expr: var
 
-var: OP_VAR                 # 0 #
+var: OP_VAR                 # 0 # 
 
 const: OP_ADD(const, const) # 0 # bnode->value = LEFT_CHILD(bnode)->value + RIGHT_CHILD(bnode)->value;
 const: OP_SUB(const, const) # 0 # bnode->value = LEFT_CHILD(bnode)->value - RIGHT_CHILD(bnode)->value;
