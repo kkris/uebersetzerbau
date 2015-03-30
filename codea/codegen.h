@@ -11,17 +11,19 @@ enum {
 };
 
 
-char *get_reg();
+char *get_next_reg();
 
 void gen_code(const char *code, ...);
 
 void gen_func(const char *name);
 
-void move(long int value, const char *reg);
+void move(const char *source, const char *dest);
 
 void tag(int type, const char *reg);
 
-void untag(int type, const char *reg);
+void untag(const char *reg);
+
+void load_var(const char *var_reg, const char *dest);
 
 void ret(int type, struct tree *node);
 

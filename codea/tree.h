@@ -37,15 +37,20 @@ struct tree {
     struct tree *kids[2];   /* child nodes */
 
     char *reg;
+    char *var_reg;          /* hold register where variable is saved, if OP_VAR */
     char *name;
     long int value;             /* expression results */
+
 
     struct burm_state *state; /* BURG state variable */
 };
 
 
 struct tree *new_node(int op, struct tree *left, struct tree *right);
+struct tree *new_node_with_reg(int op, struct tree *left, struct tree *right, char *reg);
 struct tree *new_const_node(int op, struct tree *left, struct tree *right, long int value);
-struct tree *new_named_node(int op, struct tree *left, struct tree *right, const char *name, const char *reg);
+struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name, const char *var_reg);
+
+void print_tree(struct tree *node, int indent);
 
 #endif // TREE_H

@@ -9,16 +9,23 @@
 %term OP_VAR=1 OP_NUM=2 OP_ADD=3 OP_SUB=4 OP_MUL=5 OP_AND=6 OP_LT=7 OP_EQ=8 OP_NOT=9 OP_HEAD=10 OP_TAIL=11 OP_ISNUM=12 OP_ISLIST=13 OP_ISFUN=14 OP_RET=15
 %%
 
+ret: OP_RET(expr)           # 0 # ret(TYPE_REG, LEFT_CHILD(bnode));
 ret: OP_RET(const)          # 0 # ret(TYPE_NUMBER, LEFT_CHILD(bnode));
-ret: OP_RET(expr)            # 0 # ret(TYPE_REG, LEFT_CHILD(bnode));
+ret: OP_RET(OP_VAR)         # 0 # move(LEFT_CHILD(bnode)->var_reg, "rax"); gen_code("ret");
 
-expr: OP_ADD(const, var)    # 0 # gen_code("addq $%ld, %%%s", LEFT_CHILD(bnode)->value, RIGHT_CHILD(bnode)->reg);
-expr: OP_ADD(var, const)    # 0 # gen_code("addq $%ld, %%%s", RIGHT_CHILD(bnode)->value, LEFT_CHILD(bnode)->reg);
-expr: OP_ADD(var, var)      # 0 # gen_code("addq %%%s, %%%s", RIGHT_CHILD(bnode)->reg, LEFT_CHILD(bnode)->reg);
-expr: OP_NOT(var)           # 0 # gen_not(LEFT_CHILD(bnode)->reg, bnode->reg);
-expr: var
+expr: OP_ADD(const, expr)    # 0 # gen_code("addq $%ld, %%%s", LEFT_CHILD(bnode)->value, RIGHT_CHILD(bnode)->reg);
+expr: OP_ADD(expr, const)    # 0 # gen_code("addq $%ld, %%%s", RIGHT_CHILD(bnode)->value, LEFT_CHILD(bnode)->reg);
+expr: OP_ADD(expr, expr)      # 0 # gen_code("addq %%%s, %%%s", RIGHT_CHILD(bnode)->reg, LEFT_CHILD(bnode)->reg);
 
-var: OP_VAR                 # 0 #
+expr: OP_NOT(expr)          # 0 # gen_not(LEFT_CHILD(bnode)->reg, bnode->reg);
+
+expr: OP_MUL(expr, const)    # 0 # gen_code("mulq $%ld, %%%s", RIGHT_CHILD(bnode)->value, LEFT_CHILD(bnode)->reg);
+expr: OP_MUL(const, expr)    # 0 # gen_code("mulq $%ld, %%%s", LEFT_CHILD(bnode)->value, RIGHT_CHILD(bnode)->reg);
+expr: OP_MUL(expr, expr)    # 0 # gen_code("mulq %%%s, %%%s", LEFT_CHILD(bnode)->reg, RIGHT_CHILD(bnode)->reg);
+
+expr: var_untagged
+
+var_untagged: OP_VAR        # 0 # load_var(bnode->var_reg, bnode->reg);
 
 const: OP_ADD(const, const) # 0 # bnode->value = LEFT_CHILD(bnode)->value + RIGHT_CHILD(bnode)->value;
 const: OP_SUB(const, const) # 0 # bnode->value = LEFT_CHILD(bnode)->value - RIGHT_CHILD(bnode)->value;

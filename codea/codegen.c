@@ -2,15 +2,27 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 
-static int reg_idx = 0;
 
-char *get_reg() {
-    char* registers[] = {"rsi", "rdx", "rcx", "r8", "r9", "r10", "r11"};
-    char *reg = registers[reg_idx];
-    reg_idx++;
+char *get_next_reg(const char *prev) {
+    fprintf(stderr, "next_reg(%s, ", prev);
+    if(prev == NULL)
+        return strdup("rdi");
 
-    return reg;
+    char* registers[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9", "r10"};
+
+    int i = 0;
+    for(; i < sizeof(registers) / sizeof(registers[0]) - 1; i++) {
+        if(strcmp(prev, registers[i]) == 0) {
+            fprintf(stderr, "%s)\n", registers[i + 1]);
+            return strdup(registers[i + 1]);
+        }
+    }
+
+    fprintf(stderr, "Upps, no register left. Implement a better allocation algorithm!\n");
+
+    return NULL;
 }
 
 void gen_code(const char *code, ...)
@@ -29,9 +41,12 @@ void gen_func(const char *name)
     printf(".globl %s\n%s:\n", name, name);
 }
 
-void move(long int value, const char *reg)
+void move(const char *source, const char *dest)
 {
-    printf("movq %ld, %s\n", value, reg);
+    if(strcmp(source, dest) == 0)
+        return; // nop
+
+    gen_code("movq %%%s, %%%s", source, dest);
 }
 
 void tag(int type, const char *reg)
@@ -43,13 +58,16 @@ void tag(int type, const char *reg)
     }
 }
 
-void untag(int type, const char *reg)
+void untag(const char *reg)
 {
-    if(type == TYPE_NUMBER) {
-        gen_code("sar %%%s, %%%s", reg, reg);
-    } else {
-        printf("Not implemented");
-    }
+    // TODO: other types
+    gen_code("sar %%%s, %%%s", reg, reg);
+}
+
+void load_var(const char *var_reg, const char *dest)
+{
+    // TODO: other types
+    gen_code("sar %%%s, %%%s", var_reg, dest);
 }
 
 void ret(int type, struct tree *node)
@@ -58,7 +76,7 @@ void ret(int type, struct tree *node)
         long int tagged = node->value << 1;
         gen_code("movq $%ld, %rax", tagged);
     } else if(type == TYPE_REG) {
-        gen_code("movq %%%s, %%%s", node->reg, "rax");
+        //gen_code("movq %%%s, %%%s", node->reg, "rax");
     }
 
     gen_code("ret");
@@ -66,7 +84,7 @@ void ret(int type, struct tree *node)
 
 void gen_not(const char *source, const char *dest)
 {
-    gen_code("movq $1, %%%s", dest);
-    gen_code("xorq %%%s, %%%s", source, dest);
+    move(source, dest);
+    gen_code("xorq $1, %%%s", dest);
 }
 
