@@ -55,8 +55,8 @@ void untag(int type, const char *reg)
 void ret(int type, struct tree *node)
 {
     if(type == TYPE_NUMBER) {
-        gen_code("movq $%ld, %rax", node->value);
-        tag(TYPE_NUMBER, "rax");
+        long int tagged = node->value << 1;
+        gen_code("movq $%ld, %rax", tagged);
     } else if(type == TYPE_REG) {
         gen_code("movq %%%s, %%%s", node->reg, "rax");
     }
