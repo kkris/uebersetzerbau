@@ -46,7 +46,7 @@ Start:  Program
      ;
 
 Program:
-       @{ @i @Program.defs@ = symbol_new(); @}
+       @{ @i @Program.defs@ = NULL; @}
        |
        IDENT '=' Lambda ';' Program
        @{ @i @Program.0.defs@ = symbol_add(@Program.1.defs@, @IDENT.name@);

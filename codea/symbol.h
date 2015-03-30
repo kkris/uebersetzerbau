@@ -3,6 +3,7 @@
 
 struct symbol {
     char *name;
+    char *reg;
     struct symbol *next;
 };
 
