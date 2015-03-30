@@ -75,12 +75,30 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
     @}
     |*/
     Term
-    /*| NOT Term
+    | NOT Term
+    @{
+        @i @Expr.node@ = new_node(OP_NOT, @Term.node@, NULL);
+    @}
     | HEAD Term
+    @{
+        @i @Expr.node@ = new_node(OP_HEAD, @Term.node@, NULL);
+    @}
     | TAIL Term
+    @{
+        @i @Expr.node@ = new_node(OP_TAIL, @Term.node@, NULL);
+    @}
     | ISNUM Term
+    @{
+        @i @Expr.node@ = new_node(OP_ISNUM, @Term.node@, NULL);
+    @}
     | ISLIST Term
-    | ISFUN Term*/
+    @{
+        @i @Expr.node@ = new_node(OP_ISLIST, @Term.node@, NULL);
+    @}
+    | ISFUN Term
+    @{
+        @i @Expr.node@ = new_node(OP_ISFUN, @Term.node@, NULL);
+    @}
     | Term '+' Term
     @{
         @i @Expr.node@ = new_node(OP_ADD, @Term.0.node@, @Term.1.node@);

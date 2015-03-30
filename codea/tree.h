@@ -22,6 +22,12 @@ enum {
     OP_AND,
     OP_LT,
     OP_EQ,
+    OP_NOT,
+    OP_HEAD,
+    OP_TAIL,
+    OP_ISNUM,
+    OP_ISLIST,
+    OP_ISFUN,
     OP_UNKNOWN
 };
 

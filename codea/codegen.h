@@ -4,6 +4,14 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include "tree.h"
+
+enum {
+    TYPE_NUMBER = 1,
+    TYPE_LIST,
+    TYPE_FUN
+};
+
 void gen_code(const char *code, ...)
 {
     va_list ap;
@@ -25,9 +33,33 @@ void move(long int value, const char *reg)
     printf("movq %ld, %s\n", value, reg);
 }
 
-void ret()
+void tag(int type, const char *reg)
 {
+    if(type == TYPE_NUMBER) {
+        gen_code("sal %%%s, %%%s", reg, reg);
+    } else {
+        printf("Not implemented\n");
+    }
+}
+
+void untag(int type, const char *reg)
+{
+    if(type == TYPE_NUMBER) {
+        gen_code("sar %%%s, %%%s", reg, reg);
+    } else {
+        printf("Not implemented");
+    }
+}
+
+void ret(int type, struct tree *node)
+{
+    if(type == TYPE_NUMBER) {
+        gen_code("movq $%ld, %rax", node->value);
+        tag(TYPE_NUMBER, "rax");
+    }
+
     gen_code("ret");
 }
+
 
 #endif // CODEGEN_H

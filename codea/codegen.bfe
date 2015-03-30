@@ -6,11 +6,11 @@
 %}
 
 %start lambda
-%term OP_VAR=1 OP_NUM=2 OP_ADD=3 OP_SUB=4 OP_MUL=5 OP_AND=6 OP_LT=7 OP_EQ=8
+%term OP_VAR=1 OP_NUM=2 OP_ADD=3 OP_SUB=4 OP_MUL=5 OP_AND=6 OP_LT=7 OP_EQ=8 OP_NOT=9 OP_HEAD=10 OP_TAIL=11 OP_ISNUM=12 OP_ISLIST=13 OP_ISFUN=14
 %%
 
-lambda: expr                # 1 # ret(bnode->value);
-lambda: const               # 0 # gen_code("movq $%ld, %rax", bnode->value); ret();
+lambda: expr                # 1 # gen_code("todo");
+lambda: const               # 0 # ret(TYPE_NUMBER, bnode);
 
 expr: OP_ADD(const, var)    # 0 # gen_code("addq $%ld, %%%s", LEFT_CHILD(bnode)->value, RIGHT_CHILD(bnode)->reg);
 expr: OP_ADD(var, const)    # 0 # gen_code("addq $%ld, %%%s", RIGHT_CHILD(bnode)->value, LEFT_CHILD(bnode)->reg);
@@ -21,6 +21,11 @@ var: OP_VAR                 # 0 #
 const: OP_ADD(const, const) # 0 # bnode->value = LEFT_CHILD(bnode)->value + RIGHT_CHILD(bnode)->value;
 const: OP_SUB(const, const) # 0 # bnode->value = LEFT_CHILD(bnode)->value - RIGHT_CHILD(bnode)->value;
 const: OP_MUL(const, const) # 0 # bnode->value = LEFT_CHILD(bnode)->value * RIGHT_CHILD(bnode)->value;
+const: OP_AND(const, const) # 0 # bnode->value = LEFT_CHILD(bnode)->value & RIGHT_CHILD(bnode)->value;
+const: OP_LT(const, const)  # 0 # bnode->value = LEFT_CHILD(bnode)->value < RIGHT_CHILD(bnode)->value ? 1 : 0;
+const: OP_EQ(const, const)  # 0 # bnode->value = LEFT_CHILD(bnode)->value == RIGHT_CHILD(bnode)->value ? 1 : 0;
+const: OP_NOT(const)        # 0 # bnode->value = LEFT_CHILD(bnode)->value ^ 1;
+const: OP_ISNUM(const)      # 0 # bnode->value = 1;
 const: OP_NUM               # 0 # 
 
 
