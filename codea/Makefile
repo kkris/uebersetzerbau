@@ -17,4 +17,4 @@ test: codea
 
 
 clean:
-	rm -f codea codegen.c lex.yy.c oxout.l oxout.y y.tab.c y.tab.h
+	rm -f codea codegen.c lex.yy.c oxout.l oxout.y y.tab.c y.tab.h code.c
