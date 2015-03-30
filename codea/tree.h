@@ -28,6 +28,7 @@ enum {
     OP_ISNUM,
     OP_ISLIST,
     OP_ISFUN,
+    OP_RET,
     OP_UNKNOWN
 };
 

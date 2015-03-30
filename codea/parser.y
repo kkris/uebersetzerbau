@@ -61,7 +61,7 @@ Program:
 LambdaToplevel: FUN IDENT ARROW Expr END
       @{ 
         @i @Expr.symbols@ = symbol_add(@LambdaToplevel.symbols@, @IDENT.name@, "rdi"); 
-        @i @LambdaToplevel.node@ = @Expr.node@;
+        @i @LambdaToplevel.node@ = new_node(OP_RET, @Expr.node@, NULL);
 
       @}
       ;
@@ -88,54 +88,74 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
     | NOT Term
     @{
         @i @Expr.node@ = new_node(OP_NOT, @Term.node@, NULL);
+        @codegen @Expr.node@->reg = get_reg();
     @}
     | HEAD Term
     @{
         @i @Expr.node@ = new_node(OP_HEAD, @Term.node@, NULL);
+        @codegen @Expr.node@->reg = get_reg();
     @}
     | TAIL Term
     @{
         @i @Expr.node@ = new_node(OP_TAIL, @Term.node@, NULL);
+        @codegen @Expr.node@->reg = get_reg();
     @}
     | ISNUM Term
     @{
         @i @Expr.node@ = new_node(OP_ISNUM, @Term.node@, NULL);
+        @codegen @Expr.node@->reg = get_reg();
     @}
     | ISLIST Term
     @{
         @i @Expr.node@ = new_node(OP_ISLIST, @Term.node@, NULL);
+        @codegen @Expr.node@->reg = get_reg();
     @}
     | ISFUN Term
     @{
         @i @Expr.node@ = new_node(OP_ISFUN, @Term.node@, NULL);
+        @codegen @Expr.node@->reg = get_reg();
     @}
     | Term '+' Term
     @{
         @i @Expr.node@ = new_node(OP_ADD, @Term.0.node@, @Term.1.node@);
+        @codegen @Term.0.node@->reg = get_reg();
+        @codegen @Term.1.node@->reg = get_reg();
     @}
     | Term '-' Term
     @{
         @i @Expr.node@ = new_node(OP_SUB, @Term.0.node@, @Term.1.node@);
-    @}
+        @codegen @Term.0.node@->reg = get_reg();
+        @codegen @Term.1.node@->reg = get_reg();
+   @}
     | Term '*' Term
     @{
         @i @Expr.node@ = new_node(OP_MUL, @Term.0.node@, @Term.1.node@);
+        @codegen @Term.0.node@->reg = get_reg();
+        @codegen @Term.1.node@->reg = get_reg();
     @}
     /*| Term '.' Term*/
     | Term AND Term
     @{
         @i @Expr.node@ = new_node(OP_AND, @Term.0.node@, @Term.1.node@);
+        @codegen @Term.0.node@->reg = get_reg();
+        @codegen @Term.1.node@->reg = get_reg();
     @}
     | Term '<' Term
     @{
         @i @Expr.node@ = new_node(OP_LT, @Term.0.node@, @Term.1.node@);
+        @codegen @Term.0.node@->reg = get_reg();
+        @codegen @Term.1.node@->reg = get_reg();
     @}
     | Term '=' Term
     @{
         @i @Expr.node@ = new_node(OP_EQ, @Term.0.node@, @Term.1.node@);
+        @codegen @Term.0.node@->reg = get_reg();
+        @codegen @Term.1.node@->reg = get_reg();
     @}
     /*| Expr Term */    /* Funktionsaufruf */
     ;
+
+/* TODO Binary Term for better register alloc */
 
 Term: '(' Expr ')'
     @{

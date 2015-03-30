@@ -10,12 +10,12 @@ enum {
     TYPE_NUMBER = 1,
     TYPE_LIST,
     TYPE_FUN,
-    TYPE_VAR
+    TYPE_REG
 };
 
 
 static int reg_idx = 0;
-static char* registers[] = {"rsi", "rdx", "rcx", "r8", "r9", "r10", "r11"};
+char* registers[] = {"rsi", "rdx", "rcx", "r8", "r9", "r10", "r11"};
 
 char *get_reg() {
     char *reg = registers[reg_idx];
@@ -68,11 +68,17 @@ void ret(int type, struct tree *node)
     if(type == TYPE_NUMBER) {
         gen_code("movq $%ld, %rax", node->value);
         tag(TYPE_NUMBER, "rax");
-    } else if(type == TYPE_VAR) {
+    } else if(type == TYPE_REG) {
         gen_code("movq %%%s, %%%s", node->reg, "rax");
     }
 
     gen_code("ret");
+}
+
+void gen_not(const char *source, const char *dest)
+{
+    gen_code("movq $1, %%%s", dest);
+    gen_code("xorq %%%s, %%%s", source, dest);
 }
 
 
