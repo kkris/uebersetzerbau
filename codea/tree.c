@@ -27,6 +27,7 @@ struct tree *new_const_node(int op, struct tree *left, struct tree *right, long 
 }
 
 struct tree *new_named_node(int op, struct tree *left, struct tree *right, const char *name, const char *reg) {
+    fprintf(stderr, "new named node: (%s, %%%s)\n", name, reg);
     struct tree *t = new_node(op, left, right);
 
     t->name = strdup(name);
