@@ -5,6 +5,7 @@
 
     #include "tree.h"
     #include "symbol.h"
+    #include "codegen.h"
 
     #define YYDEBUG 1
 
