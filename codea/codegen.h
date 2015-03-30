@@ -10,6 +10,11 @@ enum {
     TYPE_REG
 };
 
+enum {
+    TAGGED = 1,
+    UNTAGGED
+};
+
 
 char *get_next_reg();
 
@@ -25,8 +30,8 @@ void untag(const char *reg);
 
 void load_var(const char *var_reg, const char *dest);
 
-void ret(int type, struct tree *node);
+void ret(struct tree *node, int tag_type, int type);
 
-void gen_not(const char *source, const char *dest);
+void gen_not(const char *source, const char *dest, int tag_type);
 
 #endif // CODEGEN_H

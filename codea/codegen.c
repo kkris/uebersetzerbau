@@ -64,27 +64,36 @@ void untag(const char *reg)
     gen_code("sar %%%s, %%%s", reg, reg);
 }
 
-void load_var(const char *var_reg, const char *dest)
+void load_num(const char *var_reg, const char *dest)
 {
-    // TODO: other types
+    gen_code("bt %%%s", var_reg);
+    gen_code("jc .raisesig");
     gen_code("sar %%%s, %%%s", var_reg, dest);
 }
 
-void ret(int type, struct tree *node)
+void ret(struct tree *node, int tag_type, int type)
 {
-    if(type == TYPE_NUMBER) {
-        long int tagged = node->value << 1;
-        gen_code("movq $%ld, %rax", tagged);
-    } else if(type == TYPE_REG) {
-        //gen_code("movq %%%s, %%%s", node->reg, "rax");
+    if(tag_type == TAGGED) {
+        move(node->reg, "rax");
+    } else {
+        if(type == TYPE_NUMBER) {
+            long int tagged = node->value << 1;
+            gen_code("moveq $%ld, %rax", tagged);
+        }
+
     }
 
     gen_code("ret");
 }
 
-void gen_not(const char *source, const char *dest)
+void gen_not(const char *source, const char *dest, int tag_type)
 {
     move(source, dest);
-    gen_code("xorq $1, %%%s", dest);
+
+    if(tag_type == TAGGED) {
+        gen_code("xorq $2, %%%s", dest);
+    } else {
+        gen_code("xorq $1, %%%s", dest);
+    }
 }
 
