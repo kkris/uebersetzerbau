@@ -49,25 +49,37 @@ void move(const char *source, const char *dest)
     gen_code("movq %%%s, %%%s", source, dest);
 }
 
-void tag(int type, const char *reg)
+void expect(const char *reg, int type)
 {
     if(type == TYPE_NUMBER) {
-        gen_code("sal %%%s, %%%s", reg, reg);
+        gen_code("bt %%%s, 0", reg);
+        gen_code("jc .raisesig");
+    }
+}
+
+void tag(int type, const char *source, const char *dest)
+{
+    if(type == TYPE_NUMBER) {
+        gen_code("sal %%%s, %%%s", source, dest);
     } else {
         printf("Not implemented\n");
     }
 }
 
-void untag(const char *reg)
+void untag(const char *source, const char *dest)
 {
-    // TODO: other types
-    gen_code("sar %%%s, %%%s", reg, reg);
+    gen_code("sar %%%s, %%%s", source, dest);
+}
+
+void load_tagged_num(const char *var_reg, const char *dest)
+{
+    expect(var_reg, TYPE_NUMBER);
+    move(var_reg, dest);
 }
 
 void load_num(const char *var_reg, const char *dest)
 {
-    gen_code("bt %%%s", var_reg);
-    gen_code("jc .raisesig");
+    expect(var_reg, TYPE_NUMBER);
     gen_code("sar %%%s, %%%s", var_reg, dest);
 }
 
@@ -97,3 +109,19 @@ void gen_not(const char *source, const char *dest, int tag_type)
     }
 }
 
+void gen_eq(const char *src1, const char *src2, const char *dest)
+{
+    gen_code("xorq %%%s, %%%s", dest, dest);
+
+    gen_code("testq %%%s, %%%s", src1, src2);
+    gen_code("movqe $2, %%%s", dest); // $2 = tagged 1
+}
+
+void gen_eq_with_const(const char *src, int long value, const char *dest)
+{
+    gen_code("sal $%ld, %%%s", value, dest);
+
+    gen_code("testq %%%s, %%%s", src, dest);
+    gen_code("movqe $2, %%%s", dest); // $2 = tagged 1
+    gen_code("movqne $0, %%%s", dest);
+}
