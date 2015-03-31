@@ -1,0 +1,10 @@
+f1 = fun x -> x + 1 end;
+f2 = fun x -> 1 + x end;
+f3 = fun x -> x + x end;
+f4 = fun x -> x + (1 + 1) end;
+f5 = fun x -> x + (x + 1) end;
+f6 = fun x -> x + (1 + x) end;
+f7 = fun x -> (x + 1) + x end;
+f8 = fun x -> (1 + x) + x end;
+f9 = fun x -> (x + 1) + (1 + x) end;
+
