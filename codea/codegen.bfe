@@ -9,12 +9,12 @@
 %term OP_VAR=1 OP_NUM=2 OP_ADD=3 OP_SUB=4 OP_MUL=5 OP_AND=6 OP_LT=7 OP_EQ=8 OP_NOT=9 OP_HEAD=10 OP_TAIL=11 OP_ISNUM=12 OP_ISLIST=13 OP_ISFUN=14 OP_RET=15
 %%
 
-ret: OP_RET(u_expr)                 # 0 # ret(LEFT_CHILD(bnode), UNTAGGED, TYPE_REG);
+ret: OP_RET(u_expr)         # 0 # ret(LEFT_CHILD(bnode), UNTAGGED, TYPE_REG);
 ret: OP_RET(expr)           # 0 # gen_code("foobar");
 ret: OP_RET(const)          # 0 # ret(LEFT_CHILD(bnode), UNTAGGED, TYPE_NUMBER);
-ret: OP_RET(OP_VAR)         # 0 # move(LEFT_CHILD(bnode)->var_reg, "rax"); gen_code("ret");
-ret: OP_RET(t_expr)         # 0 # ret(LEFT_CHILD(bnode), TAGGED, 0);
-ret: OP_RET(t_word)         # 0 # ret(LEFT_CHILD(bnode), TAGGED, 0);
+ret: OP_RET(OP_VAR)         # 0 # move(LEFT_CHILD(bnode)->var_reg, "rax"); gen_code("ret2");
+ret: OP_RET(t_expr)         # 0 # ret(LEFT_CHILD(bnode), TAGGED, 0); gen_code("t");
+ret: OP_RET(t_word)         # 0 # ret(LEFT_CHILD(bnode), TAGGED, 0); gen_code("tw");
 
 
 u_expr: const                   # 0 # bnode->constant = 1;
@@ -29,25 +29,23 @@ u_expr: OP_MUL(const, u_expr)   # 0 # gen_code("mulq $%ld, %%%s", LEFT_CHILD(bno
 u_expr: OP_MUL(u_expr, u_expr)  # 0 # gen_code("mulq %%%s, %%%s", LEFT_CHILD(bnode)->reg, RIGHT_CHILD(bnode)->reg);
 
 
-
-
-
-t_expr: OP_VAR                  # 0 # load_tagged_num(bnode->var_reg, bnode->reg);
+t_expr: OP_VAR                  # 1 # load_tagged_num(bnode->var_reg, bnode->reg);
 
 t_expr: OP_NOT(t_expr)          # 0 # gen_not(LEFT_CHILD(bnode)->reg, bnode->reg, TAGGED);
 
-t_expr: OP_ADD(t_expr, t_expr) # 0 # gen_add_t_expr(bnode);
-t_expr: OP_ADD(t_expr, const) # 0 # gen_add_t_expr(bnode);
-t_expr: OP_ADD(const, t_expr) # 0 # gen_add_t_expr(bnode);
+t_expr: OP_ADD(t_expr, t_expr)  # 0 # gen_add_t_expr(bnode);
+t_expr: OP_ADD(t_expr, const)   # 0 # gen_add_t_expr(bnode);
+t_expr: OP_ADD(const, t_expr)   # 0 # gen_add_t_expr(bnode);
+
+t_expr: OP_EQ(t_word, t_word)   # 2 # gen_eq_tagged(bnode);
+t_expr: OP_EQ(t_word, const)    # 1 # gen_eq_tagged(bnode);
+t_expr: OP_EQ(const, t_word)    # 1 # gen_eq_tagged(bnode);
+
+t_expr: OP_EQ(t_expr, t_expr)   # 2 # gen_eq_tagged(bnode);
 
 
-t_word: OP_VAR                  # 0 #
 
-t_word: OP_EQ(OP_VAR, OP_VAR)   # 0 # gen_eq_t_word(bnode);
-t_word: OP_EQ(t_word, t_word)   # 2 # gen_eq_t_word(bnode);
-t_word: OP_EQ(t_word, const)    # 1 # gen_eq_t_word(bnode);
-t_word: OP_EQ(const, t_word)    # 1 # gen_eq_t_word(bnode);
-t_word: OP_EQ(u_expr, u_expr)   # 3 # gen_eq_u_expr(bnode);
+t_word: OP_VAR                  # 0 # 
 
 const: OP_ADD(const, const) # 0 # bnode->value = LEFT_CHILD(bnode)->value + RIGHT_CHILD(bnode)->value; bnode->constant = 1;
 const: OP_SUB(const, const) # 0 # bnode->value = LEFT_CHILD(bnode)->value - RIGHT_CHILD(bnode)->value; bnode->constant = 1;

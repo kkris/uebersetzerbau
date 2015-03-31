@@ -38,7 +38,7 @@ void gen_add_u_expr(struct tree *node);
 
 void gen_not(const char *source, const char *dest, int tag_type);
 
-void gen_eq_t_word(struct tree *node);
+void gen_eq_tagged(struct tree *node);
 void gen_eq_u_expr(struct tree *node);
 
 #endif // CODEGEN_H
