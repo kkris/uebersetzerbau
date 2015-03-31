@@ -20,6 +20,8 @@ char *opnames[] = {
     "islist",
     "isfun",
     "ret",
+    "zero",
+    "one",
     "unknown"
 };
 
@@ -53,8 +55,7 @@ struct tree *new_const_node(int op, struct tree *left, struct tree *right, long 
 {
     struct tree *t = new_node(op, left, right);
 
-    t->value = value;
-    t->constant = 1;
+    const_node_set_value(t, value);
 
     return t;
 }
@@ -67,6 +68,19 @@ struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const
     t->var_reg = strdup(var_reg);
 
     return t;
+}
+
+void const_node_set_value(struct tree *node, long int value)
+{
+    node->value = value;
+    node->constant = 1;
+
+    if(value == 0)
+        node->op = OP_ZERO;
+    else if(value == 1)
+        node->op = OP_ONE;
+    else
+        node->op = OP_NUM;
 }
 
 

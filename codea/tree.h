@@ -29,6 +29,8 @@ enum {
     OP_ISLIST,
     OP_ISFUN,
     OP_RET,
+    OP_ZERO,
+    OP_ONE,
     OP_UNKNOWN
 };
 
@@ -51,6 +53,8 @@ struct tree *new_node(int op, struct tree *left, struct tree *right);
 struct tree *new_node_with_reg(int op, struct tree *left, struct tree *right, char *reg);
 struct tree *new_const_node(int op, struct tree *left, struct tree *right, long int value);
 struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name, const char *var_reg);
+
+void const_node_set_value(struct tree *node, long int value);
 
 void print_tree(struct tree *node, int indent);
 
