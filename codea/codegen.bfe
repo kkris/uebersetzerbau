@@ -20,9 +20,9 @@ ret: OP_RET(t_word)         # 0 # ret(LEFT_CHILD(bnode), TAGGED, 0); gen_code("t
 u_expr: const                   # 0 # bnode->constant = 1;
 u_expr: t_expr                  # 9 # untag(bnode->reg, bnode->reg);
 
-u_expr: OP_ADD(const, u_expr)   # 0 # gen_add_u_expr(bnode);
-u_expr: OP_ADD(u_expr, const)   # 0 # gen_add_u_expr(bnode);
-u_expr: OP_ADD(u_expr, u_expr)  # 0 # gen_add_u_expr(bnode);
+u_expr: OP_ADD(const, u_expr)   # 0 # gen_add(bnode, UNTAGGED);
+u_expr: OP_ADD(u_expr, const)   # 0 # gen_add(bnode, UNTAGGED);
+u_expr: OP_ADD(u_expr, u_expr)  # 0 # gen_add(bnode, UNTAGGED);
 
 u_expr: OP_MUL(u_expr, const)   # 0 # gen_code("mulq $%ld, %%%s", RIGHT_CHILD(bnode)->value, LEFT_CHILD(bnode)->reg);
 u_expr: OP_MUL(const, u_expr)   # 0 # gen_code("mulq $%ld, %%%s", LEFT_CHILD(bnode)->value, RIGHT_CHILD(bnode)->reg);
@@ -33,9 +33,9 @@ t_expr: OP_VAR                  # 3 # load_tagged_num(bnode->var_reg, bnode->reg
 
 t_expr: OP_NOT(t_expr)          # 1 # gen_not(LEFT_CHILD(bnode)->reg, bnode->reg, TAGGED);
 
-t_expr: OP_ADD(t_expr, t_expr)  # 2 # gen_add_t_expr(bnode);
-t_expr: OP_ADD(t_expr, const)   # 1 # gen_add_t_expr(bnode);
-t_expr: OP_ADD(const, t_expr)   # 1 # gen_add_t_expr(bnode);
+t_expr: OP_ADD(t_expr, t_expr)  # 2 # gen_add(bnode, TAGGED);
+t_expr: OP_ADD(t_expr, const)   # 1 # gen_add(bnode, TAGGED);
+t_expr: OP_ADD(const, t_expr)   # 1 # gen_add(bnode, TAGGED);
 
 t_expr: OP_EQ(t_word, t_word)   # 2 # gen_eq_tagged(bnode);
 t_expr: OP_EQ(t_word, const)    # 1 # gen_eq_tagged(bnode);

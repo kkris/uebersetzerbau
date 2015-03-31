@@ -161,14 +161,16 @@ void gen_add_u_expr(struct tree *node)
     }
 }
 
-static void gen_add_t_expr_const(long int value, const char *source, const char *dest)
+static void gen_add_reg_const(long int value, const char *source, const char *dest, int tag_type)
 {
-    value = tag_const(value);
+    if(tag_type == TAGGED)
+        value = tag_const(value);
+
     move(source, dest);
     gen_code("addq $%ld, %%%s", value, dest);
 }
 
-void gen_add_t_expr(struct tree *node)
+void gen_add(struct tree *node, int tag_type)
 {
     struct tree *lhs = LEFT_CHILD(node);
     struct tree *rhs = RIGHT_CHILD(node);
@@ -178,9 +180,9 @@ void gen_add_t_expr(struct tree *node)
     if(lhs->constant && rhs->constant) {
         gen_code("TODO: upps, constant fold!");
     } else if(lhs->constant) {
-        gen_add_t_expr_const(lhs->value, rhs->reg, dest);
+        gen_add_reg_const(lhs->value, rhs->reg, dest, tag_type);
     } else if(rhs->constant) {
-        gen_add_t_expr_const(rhs->value, lhs->reg, dest);
+        gen_add_reg_const(rhs->value, lhs->reg, dest, tag_type);
     } else {
         move(lhs->reg, dest);
         gen_code("addq %%%s, %%%s", rhs->reg, dest);
