@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <string.h>
 
+static char *type_checked_vars[5] = {NULL, NULL, NULL, NULL, NULL};
 
 char *get_next_reg(const char *prev) {
     fprintf(stderr, "next_reg(%s, ", prev);
@@ -49,11 +50,20 @@ void move(const char *source, const char *dest)
     gen_code("movq %%%s, %%%s", source, dest);
 }
 
-void expect(const char *reg, int type)
+void expect(const char *var_reg, int type)
 {
+    int i;
+    for(i = 0; i < 5; i++) {
+        if(type_checked_vars[i] == NULL) break;
+        if(strcmp(var_reg, type_checked_vars[i]) == 0)
+            return;
+    }
+
     if(type == TYPE_NUMBER) {
-        gen_code("bt %%%s, 0", reg);
+        gen_code("bt %%%s, 0", var_reg);
         gen_code("jc .raisesig");
+
+        type_checked_vars[i] = strdup(var_reg);
     }
 }
 
@@ -104,6 +114,11 @@ void ret(struct tree *node, int tag_type, int type)
     }
 
     gen_code("ret");
+
+    int i;
+    for(i = 0; i < 5; i++) {
+        type_checked_vars[i] = NULL;
+    }
 }
 
 void gen_not(const char *source, const char *dest, int tag_type)
