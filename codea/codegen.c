@@ -10,7 +10,7 @@ char *get_next_reg(const char *prev) {
     if(prev == NULL)
         return strdup("rdi");
 
-    char* registers[] = {"rdi", "rsi", "rdx", "rcx", "r8", "r9", "r10"};
+    char* registers[] = {"rdi", "rax", "rsi", "rdx", "rcx", "r8", "r9", "r10"};
 
     int i = 0;
     for(; i < sizeof(registers) / sizeof(registers[0]) - 1; i++) {
@@ -66,6 +66,11 @@ void tag(int type, const char *source, const char *dest)
     }
 }
 
+long int tag_const(long int value)
+{
+    return value << 1;
+}
+
 void untag(const char *source, const char *dest)
 {
     gen_code("sar %%%s, %%%s", source, dest);
@@ -91,6 +96,9 @@ void ret(struct tree *node, int tag_type, int type)
         if(type == TYPE_NUMBER) {
             long int tagged = node->value << 1;
             gen_code("moveq $%ld, %rax", tagged);
+        } else if(type == TYPE_REG) {
+            move(node->reg, "rax");
+            tag(TYPE_NUMBER, "rax", "rax");
         }
 
     }
@@ -109,7 +117,61 @@ void gen_not(const char *source, const char *dest, int tag_type)
     }
 }
 
-void gen_eq(const char *src1, const char *src2, const char *dest)
+static void gen_add_with_num(long int value, const char *source, const char *dest)
+{
+    value = tag_const(value);
+    move(source, dest);
+    gen_code("addq $%ld, %%%s", value, dest);
+}
+
+void gen_add_u_expr(struct tree *node)
+{
+    /* fprintf(stderr, " op: %d\n", node->op); */
+    /* fprintf(stderr, "lop: %d\n", LEFT_CHILD(node)->op); */
+    /* fprintf(stderr, "rop: %d\n", RIGHT_CHILD(node)->op); */
+
+    struct tree *lhs = LEFT_CHILD(node);
+    struct tree *rhs = RIGHT_CHILD(node);
+
+    const char *dest = node->reg;
+
+    if(lhs->op == OP_VAR && rhs->op == OP_NUM) {
+        gen_add_with_num(rhs->value, lhs->reg, dest);
+    } else if(lhs->op == OP_NUM && rhs->op == OP_VAR) {
+        gen_add_with_num(lhs->value, rhs->reg, dest);
+    } else {
+        move(lhs->reg, dest);
+        gen_code("addq %%%s, %%%s", rhs->reg, dest);
+    }
+}
+
+static void gen_add_t_expr_const(long int value, const char *source, const char *dest)
+{
+    value = tag_const(value);
+    move(source, dest);
+    gen_code("addq $%ld, %%%s", value, dest);
+}
+
+void gen_add_t_expr(struct tree *node)
+{
+    struct tree *lhs = LEFT_CHILD(node);
+    struct tree *rhs = RIGHT_CHILD(node);
+
+    const char *dest = node->reg;
+
+    if(lhs->constant && rhs->constant) {
+        gen_code("TODO: upps, constant fold!");
+    } else if(lhs->constant) {
+        gen_add_t_expr_const(lhs->value, rhs->reg, dest);
+    } else if(rhs->constant) {
+        gen_add_t_expr_const(rhs->value, lhs->reg, dest);
+    } else {
+        move(lhs->reg, dest);
+        gen_code("addq %%%s, %%%s", rhs->reg, dest);
+    }
+}
+
+void gen_eqXXX(const char *src1, const char *src2, const char *dest)
 {
     gen_code("xorq %%%s, %%%s", dest, dest);
 
@@ -117,11 +179,38 @@ void gen_eq(const char *src1, const char *src2, const char *dest)
     gen_code("movqe $2, %%%s", dest); // $2 = tagged 1
 }
 
-void gen_eq_with_const(const char *src, int long value, const char *dest)
+static void gen_eq_with_num(long int value, const char *source, const char *dest)
 {
-    gen_code("sal $%ld, %%%s", value, dest);
+    value = tag_const(value);
 
-    gen_code("testq %%%s, %%%s", src, dest);
-    gen_code("movqe $2, %%%s", dest); // $2 = tagged 1
-    gen_code("movqne $0, %%%s", dest);
+    gen_code("testq $%ld, %%%s", source);
+    gen_code("cmovqe $2, %%%s", dest);
+    gen_code("cmovqne $0, %%%s", dest);
+}
+
+void gen_eq_t_word(struct tree *node)
+{
+    struct tree *lhs = LEFT_CHILD(node);
+    struct tree *rhs = RIGHT_CHILD(node);
+
+    const char *dest = node->reg;
+
+    if(lhs->op == OP_VAR && rhs->op == OP_VAR) {
+        if(strcmp(lhs->name, rhs->name) == 0) {
+            gen_code("movq $2, %%%s", dest);
+        }
+    } else if(lhs->op == OP_VAR && rhs->op == OP_NUM) {
+        gen_eq_with_num(rhs->value, lhs->var_reg, dest);
+    } else if(lhs->op == OP_NUM && rhs->op == OP_VAR) {
+        gen_eq_with_num(lhs->value, rhs->var_reg, dest);
+    } else {
+        gen_code("Upps TODO eq");
+    }
+}
+
+void gen_eq_u_expr(struct tree *node)
+{
+    fprintf(stderr, " op: %d\n", node->op);
+    fprintf(stderr, "lop: %d\n", LEFT_CHILD(node)->op);
+    fprintf(stderr, "rop: %d\n", RIGHT_CHILD(node)->op);
 }

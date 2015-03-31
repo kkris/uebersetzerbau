@@ -41,6 +41,7 @@ struct tree {
     char *name;
     long int value;             /* expression results */
 
+    int constant;
 
     struct burm_state *state; /* BURG state variable */
 };

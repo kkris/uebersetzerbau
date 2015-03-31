@@ -34,8 +34,11 @@ void load_num(const char *var_reg, const char *dest);
 
 void ret(struct tree *node, int tag_type, int type);
 
+void gen_add_u_expr(struct tree *node);
+
 void gen_not(const char *source, const char *dest, int tag_type);
-void gen_eq(const char *src1, const char *src2, const char *dest);
-void gen_eq_with_const(const char *src1, long int value, const char *dest);
+
+void gen_eq_t_word(struct tree *node);
+void gen_eq_u_expr(struct tree *node);
 
 #endif // CODEGEN_H

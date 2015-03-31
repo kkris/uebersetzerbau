@@ -35,6 +35,7 @@ struct tree *new_node(int op, struct tree *left, struct tree *right)
     t->var_reg = NULL;
     t->name = NULL;
     t->value = 0;
+    t->constant = 0;
 
     return t;
 }
@@ -53,13 +54,13 @@ struct tree *new_const_node(int op, struct tree *left, struct tree *right, long 
     struct tree *t = new_node(op, left, right);
 
     t->value = value;
+    t->constant = 1;
 
     return t;
 }
 
 struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name, const char *var_reg)
 {
-    fprintf(stderr, "new named node: (%s, %%%s)\n", name, var_reg);
     struct tree *t = new_node(op, left, right);
 
     t->name = strdup(name);

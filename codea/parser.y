@@ -55,9 +55,9 @@ Program:
           @i @Program.1.symbols@ = @Program.0.symbols@;
           @i @LambdaToplevel.symbols@ = @Program.0.symbols@;
 
+          @codegen @revorder(1) print_tree(@LambdaToplevel.node@, 0);
           @codegen @revorder(1) gen_func(@IDENT.name@);
           @codegen @revorder(1) burm_label(@LambdaToplevel.node@); burm_reduce(@LambdaToplevel.node@, 1);
-          @codegen print_tree(@LambdaToplevel.node@, 0);
 
        @}
        ;
