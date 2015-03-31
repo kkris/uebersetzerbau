@@ -24,9 +24,9 @@ u_expr: OP_ADD(const, u_expr)   # 0 # gen_add(bnode, UNTAGGED);
 u_expr: OP_ADD(u_expr, const)   # 0 # gen_add(bnode, UNTAGGED);
 u_expr: OP_ADD(u_expr, u_expr)  # 0 # gen_add(bnode, UNTAGGED);
 
-u_expr: OP_MUL(u_expr, const)   # 0 # gen_code("mulq $%ld, %%%s", RIGHT_CHILD(bnode)->value, LEFT_CHILD(bnode)->reg);
-u_expr: OP_MUL(const, u_expr)   # 0 # gen_code("mulq $%ld, %%%s", LEFT_CHILD(bnode)->value, RIGHT_CHILD(bnode)->reg);
-u_expr: OP_MUL(u_expr, u_expr)  # 0 # gen_code("mulq %%%s, %%%s", LEFT_CHILD(bnode)->reg, RIGHT_CHILD(bnode)->reg);
+u_expr: OP_MUL(u_expr, const)   # 0 # gen_mul(bnode);
+u_expr: OP_MUL(const, u_expr)   # 0 # gen_mul(bnode);
+u_expr: OP_MUL(u_expr, u_expr)  # 0 # gen_mul(bnode);
 
 
 t_expr: OP_VAR                  # 3 # load_tagged_num(bnode->var_reg, bnode->reg);

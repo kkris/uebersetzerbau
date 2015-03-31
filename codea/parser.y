@@ -130,8 +130,6 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
 
         @reg @Term.0.node@->reg = @Expr.node@->reg;
         @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg);
-        /*@codegen @Term.0.node@->reg = get_reg();
-        @codegen @Term.1.node@->reg = get_reg();*/
     @}
     | Term '-' Term
     @{
@@ -142,8 +140,9 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
     | Term '*' Term
     @{
         @i @Expr.node@ = new_node(OP_MUL, @Term.0.node@, @Term.1.node@);
-        /*@codegen @Term.0.node@->reg = get_reg();
-        @codegen @Term.1.node@->reg = get_reg();*/
+
+        @reg @Term.0.node@->reg = @Expr.node@->reg;
+        @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg);
     @}
     /*| Term '.' Term*/
     | Term AND Term

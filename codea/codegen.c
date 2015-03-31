@@ -140,27 +140,6 @@ static void gen_add_with_num(long int value, const char *source, const char *des
     gen_code("addq $%ld, %%%s", value, dest);
 }
 
-void gen_add_u_expr(struct tree *node)
-{
-    /* fprintf(stderr, " op: %d\n", node->op); */
-    /* fprintf(stderr, "lop: %d\n", LEFT_CHILD(node)->op); */
-    /* fprintf(stderr, "rop: %d\n", RIGHT_CHILD(node)->op); */
-
-    struct tree *lhs = LEFT_CHILD(node);
-    struct tree *rhs = RIGHT_CHILD(node);
-
-    const char *dest = node->reg;
-
-    if(lhs->op == OP_VAR && rhs->op == OP_NUM) {
-        gen_add_with_num(rhs->value, lhs->reg, dest);
-    } else if(lhs->op == OP_NUM && rhs->op == OP_VAR) {
-        gen_add_with_num(lhs->value, rhs->reg, dest);
-    } else {
-        move(lhs->reg, dest);
-        gen_code("addq %%%s, %%%s", rhs->reg, dest);
-    }
-}
-
 static void gen_add_reg_const(long int value, const char *source, const char *dest, int tag_type)
 {
     if(tag_type == TAGGED)
@@ -186,6 +165,31 @@ void gen_add(struct tree *node, int tag_type)
     } else {
         move(lhs->reg, dest);
         gen_code("addq %%%s, %%%s", rhs->reg, dest);
+    }
+}
+
+static void gen_mul_reg_const(long int value, const char *source, const char *dest)
+{
+    move(source, dest);
+    gen_code("mulq $%ld, %%%s", value, dest);
+}
+
+void gen_mul(struct tree *node)
+{
+    struct tree *lhs = LEFT_CHILD(node);
+    struct tree *rhs = RIGHT_CHILD(node);
+
+    const char *dest = node->reg;
+
+    if(lhs->constant && rhs->constant) {
+        gen_code("TODO: upps, constant fold!");
+    } else if(lhs->constant) {
+        gen_mul_reg_const(lhs->value, rhs->reg, dest);
+    } else if(rhs->constant) {
+        gen_mul_reg_const(rhs->value, lhs->reg, dest);
+    } else {
+        move(lhs->reg, dest);
+        gen_code("mulq %%%s, %%%s", rhs->reg, dest);
     }
 }
 
