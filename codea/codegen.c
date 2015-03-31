@@ -187,14 +187,6 @@ void gen_add_t_expr(struct tree *node)
     }
 }
 
-void gen_eqXXX(const char *src1, const char *src2, const char *dest)
-{
-    gen_code("xorq %%%s, %%%s", dest, dest);
-
-    gen_code("testq %%%s, %%%s", src1, src2);
-    gen_code("movqe $2, %%%s", dest); // $2 = tagged 1
-}
-
 static void gen_eq_tagged_const(long int value, const char *source, const char *dest)
 {
     value = tag_const(value);
@@ -227,21 +219,19 @@ void gen_eq_tagged(struct tree *node)
         if(strcmp(lhs->name, rhs->name) == 0) {
             gen_code("movq $2, %%%s", dest);
         } else {
+            gen_code("xorq %%%s, %%%s", dest, dest);
             gen_code("testq %%%s, %%%s", lhs->var_reg, rhs->var_reg);
             gen_code("cmovqe $2, %%%s", dest);
-            gen_code("cmovqne $0, %%%s", dest);
 
         }
     } else {
+        gen_code("xorq %%%s, %%%s", dest, dest);
         gen_code("testq %%%s, %%%s", lhs->reg, rhs->reg);
         gen_code("cmovqe $2, %%%s", dest);
-        gen_code("cmovqne $0, %%%s", dest);
     }
 }
 
-void gen_eq_u_expr(struct tree *node)
+void gen_eq_untagged(struct tree *node)
 {
-    fprintf(stderr, " op: %d\n", node->op);
-    fprintf(stderr, "lop: %d\n", LEFT_CHILD(node)->op);
-    fprintf(stderr, "rop: %d\n", RIGHT_CHILD(node)->op);
+    gen_eq_tagged(node);
 }
