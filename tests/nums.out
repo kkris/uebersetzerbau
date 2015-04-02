@@ -30,11 +30,3 @@ ident x
 num 5
 end
 ;
-ident f5
-=
-fun
-ident x
-->
-num 81985529216486895
-end
-;
