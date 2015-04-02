@@ -83,6 +83,19 @@ void const_node_set_value(struct tree *node, long int value)
         node->op = OP_NUM;
 }
 
+void make_equal_to(struct tree *dest, struct tree *source)
+{
+    dest->op = source->op;
+    dest->reg = source->reg == NULL ? NULL : strdup(source->reg);
+    dest->var_reg = source->var_reg == NULL ? NULL : strdup(source->var_reg);
+    dest->name = source->name == NULL ? NULL : strdup(source->name);
+    dest->value = source->value;
+    dest->constant = source->constant;
+
+    LEFT_CHILD(dest) = LEFT_CHILD(source);
+    RIGHT_CHILD(dest) = RIGHT_CHILD(source);
+}
+
 
 
 void print_indent(int indent) {

@@ -100,7 +100,9 @@ void load_num(const char *var_reg, const char *dest)
 
 void ret(struct tree *node, int tag_type, int type)
 {
-    if(tag_type == TAGGED) {
+    if(node->op == OP_VAR) {
+        move(node->var_reg, "rax");
+    } else if(tag_type == TAGGED) {
         move(node->reg, "rax");
     } else {
         if(type == TYPE_NUMBER) {
@@ -162,6 +164,11 @@ void gen_add(struct tree *node, int tag_type)
         gen_add_reg_const(lhs->value, rhs->reg, dest, tag_type);
     } else if(rhs->constant) {
         gen_add_reg_const(rhs->value, lhs->reg, dest, tag_type);
+    } else if(lhs->op == OP_VAR, rhs->op == OP_VAR){
+        expect(lhs->var_reg, TYPE_NUMBER);
+        expect(rhs->var_reg, TYPE_NUMBER);
+        move(lhs->var_reg, dest);
+        gen_code("addq %%%s, %%%s", rhs->var_reg, dest);
     } else {
         move(lhs->reg, dest);
         gen_code("addq %%%s, %%%s", rhs->reg, dest);

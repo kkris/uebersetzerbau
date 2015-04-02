@@ -1,1 +1,6 @@
-inv = fun x -> not (not x) end ;
+inv1 = fun x -> not (not x) end;
+inv2 = fun x -> not (not (x + 1)) end;
+inv3 = fun x -> not (not (not x)) end;
+inv4 = fun x -> not (not (not (not x))) end;
+inv5 = fun x -> not (not (not (x + 1))) end;
+inv6 = fun x -> not (not (not (not (x + 1)))) end;

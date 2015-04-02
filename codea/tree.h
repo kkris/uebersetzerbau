@@ -55,7 +55,9 @@ struct tree *new_const_node(int op, struct tree *left, struct tree *right, long 
 struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name, const char *var_reg);
 
 void const_node_set_value(struct tree *node, long int value);
+void make_equal_to(struct tree *dest, struct tree *source);
 
 void print_tree(struct tree *node, int indent);
+
 
 #endif // TREE_H
