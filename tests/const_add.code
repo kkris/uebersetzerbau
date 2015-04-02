@@ -1,0 +1,3 @@
+f:
+movq $2806, %rax
+ret

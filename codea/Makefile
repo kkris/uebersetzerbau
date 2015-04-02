@@ -15,6 +15,9 @@ codegen:
 test: codea
 	./codea
 
+checkcode: codea
+	../run_code_check.sh ../tests ./codea
+
 
 clean:
 	rm -f codea lex.yy.c oxout.l oxout.y y.tab.c y.tab.h code.c

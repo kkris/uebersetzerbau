@@ -1,0 +1,3 @@
+id:
+movq %rdi, %rax
+ret

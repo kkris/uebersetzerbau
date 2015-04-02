@@ -1,0 +1,6 @@
+inv:
+bt %rdi, 0
+jc .raisesig
+movq %rdi, %rax
+xorq $2, %rax
+ret

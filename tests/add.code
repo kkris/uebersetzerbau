@@ -1,0 +1,93 @@
+f1:
+bt %rdi, 0
+jc .raisesig
+movq %rdi, %rax
+addq $2, %rax
+ret
+f2:
+bt %rdi, 0
+jc .raisesig
+movq %rdi, %rax
+addq $2, %rax
+ret
+f3:
+bt %rdi, 0
+jc .raisesig
+sarq %rdi, %rax
+addq %rax, %rax
+salq %rax
+ret
+f4:
+bt %rdi, 0
+jc .raisesig
+movq %rdi, %rax
+addq $4, %rax
+ret
+f5:
+bt %rdi, 0
+jc .raisesig
+sarq %rdi, %rsi
+movq %rsi, %rax
+addq $2, %rax
+addq %rsi, %rax
+salq %rax, %rax
+ret
+f6:
+bt %rdi, 0
+jc .raisesig
+sarq %rdi, %rsi
+movq %rsi, %rax
+addq $2, %rax
+addq %rsi, %rax
+salq %rax, %rax
+ret
+f7:
+bt %rdi, 0
+jc .raisesig
+sarq %rdi, %rsi
+movq %rsi, %rax
+addq $2, %rax
+addq %rsi, %rax
+salq %rax, %rax
+ret
+f8:
+bt %rdi, 0
+jc .raisesig
+sarq %rdi, %rsi
+movq %rsi, %rax
+addq $2, %rax
+addq %rsi, %rax
+salq %rax, %rax
+ret
+f9:
+bt %rdi, 0
+jc .raisesig
+sarq %rdi, %rsi
+movq %rsi, %rax
+addq $2, %rax
+addq %rsi, %rax
+movq %rsi, %rdx
+addq $2, %rdx
+addq %rdx, %rax
+salq %rax, %rax
+ret
+f10:
+XXX: check type?
+movq %rdi, %rax
+ret
+f11:
+XXX: check type?
+movq %rdi, %rax
+ret
+f12:
+XXX: check type?
+movq %rdi, %rax
+ret
+f13:
+XXX: check type?
+movq %rdi, %rax
+ret
+f14:
+XXX: check type?
+movq %rdi, %rax
+ret

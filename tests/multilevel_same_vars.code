@@ -1,0 +1,10 @@
+foo:
+movq %rdi, %rax
+ret
+bar:
+bt %rdi, 0
+jc .raisesig
+sarq %rdi, %rax
+addq %rax, %rax
+salq %rax
+ret

@@ -1,0 +1,45 @@
+add:
+movq $110, %rax
+ret
+sub:
+movq $1910, %rax
+ret
+mul:
+movq $1440, %rax
+ret
+mulzero:
+movq $0, %rax
+ret
+not1:
+movq $6, %rax
+ret
+not2:
+movq $4, %rax
+ret
+not3:
+movq $0, %rax
+ret
+and1:
+movq $0, %rax
+ret
+and2:
+movq $8, %rax
+ret
+lt:
+movq $2, %rax
+ret
+lt2:
+movq $0, %rax
+ret
+eq:
+movq $0, %rax
+ret
+eq2:
+movq $2, %rax
+ret
+isnum1:
+movq $2, %rax
+ret
+isnum2:
+movq $2, %rax
+ret

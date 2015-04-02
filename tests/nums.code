@@ -1,0 +1,12 @@
+f1:
+movq $10, %rax
+ret
+f2:
+movq $6811383164, %rax
+ret
+f3:
+movq $10, %rax
+ret
+f4:
+movq $10, %rax
+ret

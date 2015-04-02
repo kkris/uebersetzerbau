@@ -1,0 +1,31 @@
+f1:
+movq $2, %rax
+ret
+f2:
+xorq %rax, %rax
+testq $10, %rdi
+cmovqe $2, %rax
+ret
+f3:
+xorq %rax, %rax
+testq $10, %rdi
+cmovqe $2, %rax
+ret
+f4:
+movq $2, %rax
+ret
+f5:
+movq $2, %rax
+ret
+f6:
+TODO
+ret
+f7:
+TODO
+ret
+f8:
+TODO
+ret
+f9:
+TODO
+ret

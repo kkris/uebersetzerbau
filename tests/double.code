@@ -1,0 +1,20 @@
+constvar:
+bt %rdi, 0
+jc .raisesig
+sarq %rdi, %rax
+mulq $2, %rax
+salq %rax, %rax
+ret
+varconst:
+bt %rdi, 0
+jc .raisesig
+sarq %rdi, %rax
+mulq $2, %rax
+salq %rax, %rax
+ret
+varvar:
+bt %rdi, 0
+jc .raisesig
+movq %rdi, %rax
+addq %rdi, %rax
+ret
