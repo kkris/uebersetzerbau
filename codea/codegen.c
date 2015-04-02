@@ -70,7 +70,7 @@ void expect(const char *var_reg, int type)
 void tag(int type, const char *source, const char *dest)
 {
     if(type == TYPE_NUMBER) {
-        gen_code("sal %%%s, %%%s", source, dest);
+        gen_code("salq %%%s, %%%s", source, dest);
     } else {
         printf("Not implemented\n");
     }
@@ -83,7 +83,7 @@ long int tag_const(long int value)
 
 void untag(const char *source, const char *dest)
 {
-    gen_code("sar %%%s, %%%s", source, dest);
+    gen_code("sarq %%%s, %%%s", source, dest);
 }
 
 void load_tagged_num(const char *var_reg, const char *dest)
@@ -95,7 +95,7 @@ void load_tagged_num(const char *var_reg, const char *dest)
 void load_num(const char *var_reg, const char *dest)
 {
     expect(var_reg, TYPE_NUMBER);
-    gen_code("sar %%%s, %%%s", var_reg, dest);
+    gen_code("sarq %%%s, %%%s", var_reg, dest);
 }
 
 void ret(struct tree *node, int tag_type, int type)
@@ -105,7 +105,7 @@ void ret(struct tree *node, int tag_type, int type)
     } else {
         if(type == TYPE_NUMBER) {
             long int tagged = node->value << 1;
-            gen_code("moveq $%ld, %rax", tagged);
+            gen_code("movq $%ld, %rax", tagged);
         } else if(type == TYPE_REG) {
             move(node->reg, "rax");
             tag(TYPE_NUMBER, "rax", "rax");
@@ -197,9 +197,9 @@ static void gen_eq_tagged_const(long int value, const char *source, const char *
 {
     value = tag_const(value);
 
+    gen_code("xorq %%%s, %%%s", dest);
     gen_code("testq $%ld, %%%s", value, source);
     gen_code("cmovqe $2, %%%s", dest);
-    gen_code("cmovqne $0, %%%s", dest);
 }
 
 void gen_eq_tagged(struct tree *node)
