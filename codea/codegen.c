@@ -241,3 +241,16 @@ void gen_eq_untagged(struct tree *node)
 {
     gen_eq_tagged(node);
 }
+
+void gen_isnum(struct tree *node)
+{
+    struct tree *lhs = LEFT_CHILD(node);
+    const char *dest = node->reg;
+
+    if(lhs->op == OP_VAR) {
+        move(lhs->var_reg, dest);
+        gen_code("xorq $1, %rax");
+    } else {
+        gen_code("UNSUPPORTED");
+    }
+}

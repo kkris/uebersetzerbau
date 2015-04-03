@@ -112,7 +112,8 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
     | ISNUM Term
     @{
         @i @Expr.node@ = new_node(OP_ISNUM, @Term.node@, NULL);
-        /*@codegen @Expr.node@->reg = get_reg();*/
+
+        @reg @Term.node@->reg = @Expr.node@->reg;
     @}
     | ISLIST Term
     @{

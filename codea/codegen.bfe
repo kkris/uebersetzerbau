@@ -29,9 +29,10 @@ u_expr: OP_ADD(zero, u_expr)    # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 u_expr: OP_MUL(u_expr, const)   # 2 # gen_mul(bnode);
 u_expr: OP_MUL(const, u_expr)   # 2 # gen_mul(bnode);
 u_expr: OP_MUL(u_expr, u_expr)  # 2 # gen_mul(bnode);
-u_expr: OP_MUL(u_expr, one)     # 1 # make_equal_to(bnode, LEFT_CHILD(bnode));
-u_expr: OP_MUL(one, u_expr)     # 1 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+u_expr: OP_MUL(u_expr, one)     # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
+u_expr: OP_MUL(one, u_expr)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 
+u_expr: OP_ISNUM(OP_VAR)        # 0 # gen_isnum(bnode);
 
 
 t_expr: OP_VAR                  # 3 # load_tagged_num(bnode->var_reg, bnode->reg);
@@ -79,16 +80,26 @@ const: OP_NUM               # 0 #
 const: one                  # 0 #
 const: zero                 # 0 #
 
+
 one: OP_ONE                 # 0 # make_constant(bnode, 1);
+
 one: OP_ADD(one, zero)      # 0 # make_constant(bnode, 1);
 one: OP_ADD(zero, one)      # 0 # make_constant(bnode, 1);
+
 one: OP_MUL(one, one)       # 0 # make_constant(bnode, 0);
 
+one: OP_ISNUM(t_expr)       # 0 # make_constant(bnode, 1);
+one: OP_ISNUM(u_expr)       # 0 # make_constant(bnode, 1);
+
 zero: OP_ZERO               # 0 # make_constant(bnode, 0);
+
 zero: OP_MUL(u_expr, zero)  # 0 # make_constant(bnode, 0);
 zero: OP_MUL(zero, u_expr)  # 0 # make_constant(bnode, 0);
+zero: OP_MUL(t_expr, zero)  # 0 # make_constant(bnode, 0);
+zero: OP_MUL(zero, t_expr)  # 0 # make_constant(bnode, 0);
 zero: OP_MUL(const, zero)   # 0 # make_constant(bnode, 0);
 zero: OP_MUL(zero, const)   # 0 # make_constant(bnode, 0);
+
 zero: OP_ADD(zero, zero)    # 0 # make_constant(bnode, 0);
 
 
