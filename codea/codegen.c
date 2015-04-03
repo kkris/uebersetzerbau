@@ -135,13 +135,6 @@ void gen_not(const char *source, const char *dest, int tag_type)
     }
 }
 
-static void gen_add_with_num(long int value, const char *source, const char *dest)
-{
-    value = tag_const(value);
-    move(source, dest);
-    gen_code("addq $%ld, %%%s", value, dest);
-}
-
 static void gen_add_reg_const(long int value, const char *source, const char *dest, int tag_type)
 {
     if(tag_type == TAGGED)

@@ -39,7 +39,7 @@ t_expr: OP_VAR                  # 3 # load_tagged_num(bnode->var_reg, bnode->reg
 t_expr: OP_NOT(t_expr)          # 1 # gen_not(LEFT_CHILD(bnode)->reg, bnode->reg, TAGGED);
 
 t_expr: OP_ADD(OP_VAR, OP_VAR)  # 1 # gen_add(bnode, TAGGED);
-t_expr: OP_ADD(t_expr, t_expr)  # 3 # gen_code("texpr,texpr"); gen_add(bnode, TAGGED);gen_code("end");
+t_expr: OP_ADD(t_expr, t_expr)  # 3 # gen_add(bnode, TAGGED);
 t_expr: OP_ADD(t_expr, const)   # 2 # gen_add(bnode, TAGGED);
 t_expr: OP_ADD(const, t_expr)   # 2 # gen_add(bnode, TAGGED);
 t_expr: OP_ADD(zero, t_expr)    # 0 # bnode = RIGHT_CHILD(bnode);
