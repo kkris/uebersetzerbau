@@ -168,6 +168,51 @@ void gen_add(struct tree *node, int tag_type)
     }
 }
 
+static void gen_sub_reg_const(long int value, const char *source, const char *dest, int tag_type)
+{
+    if(tag_type == TAGGED)
+        value = tag_const(value);
+
+    move(source, dest);
+    gen_code("movq $%ld, %%%s", value, dest);
+    gen_code("subq %%%s, %%%s", source, dest);
+}
+
+static void gen_sub_const_reg(long int value, const char *source, const char *dest, int tag_type)
+{
+    if(tag_type == TAGGED)
+        value = tag_const(value);
+
+    move(source, dest);
+    gen_code("subq $%ld, %%%s", value, dest);
+}
+
+void gen_sub(struct tree *node, int tag_type)
+{
+    struct tree *lhs = LEFT_CHILD(node);
+    struct tree *rhs = RIGHT_CHILD(node);
+
+    const char *dest = node->reg;
+
+    if(lhs->constant && rhs->constant) {
+        gen_code("TODO: upps, constant fold!");
+    } else if(lhs->constant) {
+        gen_sub_const_reg(lhs->value, rhs->reg, dest, tag_type);
+    } else if(rhs->constant) {
+        gen_sub_reg_const(rhs->value, lhs->reg, dest, tag_type);
+    } else if(lhs->op == OP_VAR && rhs->op == OP_VAR){
+        expect(lhs->var_reg, TYPE_NUMBER);
+        expect(rhs->var_reg, TYPE_NUMBER);
+        move(lhs->var_reg, dest);
+        gen_code("subq %%%s, %%%s", rhs->var_reg, dest);
+    } else {
+        move(lhs->reg, dest);
+        gen_code("subq %%%s, %%%s", rhs->reg, dest);
+    }
+}
+
+
+
 static void gen_mul_reg_const(long int value, const char *source, const char *dest)
 {
     move(source, dest);

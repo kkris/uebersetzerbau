@@ -26,6 +26,13 @@ u_expr: OP_ADD(u_expr, u_expr)  # 1 # gen_add(bnode, UNTAGGED);
 u_expr: OP_ADD(u_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 u_expr: OP_ADD(zero, u_expr)    # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 
+u_expr: OP_SUB(const, u_expr)   # 1 # gen_sub(bnode, UNTAGGED);
+u_expr: OP_SUB(u_expr, const)   # 1 # gen_sub(bnode, UNTAGGED);
+u_expr: OP_SUB(u_expr, u_expr)  # 1 # gen_sub(bnode, UNTAGGED);
+u_expr: OP_SUB(zero, u_expr)    # 1 # gen_sub(bnode, UNTAGGED);
+u_expr: OP_SUB(u_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
+
+
 u_expr: OP_MUL(u_expr, const)   # 2 # gen_mul(bnode);
 u_expr: OP_MUL(const, u_expr)   # 2 # gen_mul(bnode);
 u_expr: OP_MUL(u_expr, u_expr)  # 2 # gen_mul(bnode);
@@ -45,6 +52,14 @@ t_expr: OP_ADD(t_expr, const)   # 2 # gen_add(bnode, TAGGED);
 t_expr: OP_ADD(const, t_expr)   # 2 # gen_add(bnode, TAGGED);
 t_expr: OP_ADD(zero, t_expr)    # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 t_expr: OP_ADD(t_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
+
+t_expr: OP_SUB(OP_VAR, OP_VAR)  # 1 # gen_sub(bnode, TAGGED);
+t_expr: OP_SUB(t_expr, t_expr)  # 3 # gen_sub(bnode, TAGGED);
+t_expr: OP_SUB(t_expr, const)   # 2 # gen_sub(bnode, TAGGED);
+t_expr: OP_SUB(const, t_expr)   # 2 # gen_sub(bnode, TAGGED);
+t_expr: OP_SUB(zero, t_expr)    # 2 # gen_sub(bnode, TAGGED);
+t_expr: OP_SUB(t_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
+
 
 t_expr: OP_EQ(t_word, t_word)   # 2 # gen_eq_tagged(bnode);
 t_expr: OP_EQ(t_word, const)    # 1 # gen_eq_tagged(bnode);
@@ -85,6 +100,8 @@ one: OP_ONE                 # 0 # make_constant(bnode, 1);
 
 one: OP_ADD(one, zero)      # 0 # make_constant(bnode, 1);
 one: OP_ADD(zero, one)      # 0 # make_constant(bnode, 1);
+
+one: OP_SUB(one, zero)      # 0 # make_constant(bnode, 1);
 
 one: OP_MUL(one, one)       # 0 # make_constant(bnode, 0);
 

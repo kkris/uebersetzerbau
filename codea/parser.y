@@ -135,8 +135,9 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
     | Term '-' Term
     @{
         @i @Expr.node@ = new_node(OP_SUB, @Term.0.node@, @Term.1.node@);
-        /*@codegen @Term.0.node@->reg = get_reg();
-        @codegen @Term.1.node@->reg = get_reg();*/
+
+        @reg @Term.0.node@->reg = @Expr.node@->reg;
+        @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg);
    @}
     | Term '*' Term
     @{
