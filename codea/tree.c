@@ -55,7 +55,7 @@ struct tree *new_const_node(int op, struct tree *left, struct tree *right, long 
 {
     struct tree *t = new_node(op, left, right);
 
-    const_node_set_value(t, value);
+    make_constant(t, value);
 
     return t;
 }
@@ -70,7 +70,7 @@ struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const
     return t;
 }
 
-void const_node_set_value(struct tree *node, long int value)
+void make_constant(struct tree *node, long int value)
 {
     node->value = value;
     node->constant = 1;

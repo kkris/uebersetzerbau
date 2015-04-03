@@ -23,14 +23,14 @@ u_expr: t_expr                  # 9 # untag(bnode->reg, bnode->reg);
 u_expr: OP_ADD(const, u_expr)   # 1 # gen_add(bnode, UNTAGGED);
 u_expr: OP_ADD(u_expr, const)   # 1 # gen_add(bnode, UNTAGGED);
 u_expr: OP_ADD(u_expr, u_expr)  # 1 # gen_add(bnode, UNTAGGED);
-u_expr: OP_ADD(u_expr, zero)    # 0 # bnode = LEFT_CHILD(bnode);
-u_expr: OP_ADD(zero, u_expr)    # 0 # bnode = RIGHT_CHILD(bnode);
+u_expr: OP_ADD(u_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
+u_expr: OP_ADD(zero, u_expr)    # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 
-u_expr: OP_MUL(u_expr, const)   # 1 # gen_mul(bnode);
-u_expr: OP_MUL(const, u_expr)   # 1 # gen_mul(bnode);
-u_expr: OP_MUL(u_expr, u_expr)  # 1 # gen_mul(bnode);
-u_expr: OP_MUL(u_expr, one)     # 1 # bnode = LEFT_CHILD(bnode);
-u_expr: OP_MUL(one, u_expr)     # 1 # bnode = RIGHT_CHILD(bnode);
+u_expr: OP_MUL(u_expr, const)   # 2 # gen_mul(bnode);
+u_expr: OP_MUL(const, u_expr)   # 2 # gen_mul(bnode);
+u_expr: OP_MUL(u_expr, u_expr)  # 2 # gen_mul(bnode);
+u_expr: OP_MUL(u_expr, one)     # 1 # make_equal_to(bnode, LEFT_CHILD(bnode));
+u_expr: OP_MUL(one, u_expr)     # 1 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 
 
 
@@ -42,8 +42,8 @@ t_expr: OP_ADD(OP_VAR, OP_VAR)  # 1 # gen_add(bnode, TAGGED);
 t_expr: OP_ADD(t_expr, t_expr)  # 3 # gen_add(bnode, TAGGED);
 t_expr: OP_ADD(t_expr, const)   # 2 # gen_add(bnode, TAGGED);
 t_expr: OP_ADD(const, t_expr)   # 2 # gen_add(bnode, TAGGED);
-t_expr: OP_ADD(zero, t_expr)    # 0 # bnode = RIGHT_CHILD(bnode);
-t_expr: OP_ADD(t_expr, zero)    # 0 # bnode = LEFT_CHILD(bnode);
+t_expr: OP_ADD(zero, t_expr)    # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+t_expr: OP_ADD(t_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 
 t_expr: OP_EQ(t_word, t_word)   # 2 # gen_eq_tagged(bnode);
 t_expr: OP_EQ(t_word, const)    # 1 # gen_eq_tagged(bnode);
@@ -59,37 +59,37 @@ t_expr: OP_NOT(neg_t_expr)      # 0 # make_equal_to(bnode, LEFT_CHILD(LEFT_CHILD
 
 
 t_word: OP_VAR                  # 1 #
-t_word: OP_NOT(neg_t_word)        # 0 # make_equal_to(bnode, LEFT_CHILD(LEFT_CHILD(bnode)));
+t_word: OP_NOT(neg_t_word)      # 0 # make_equal_to(bnode, LEFT_CHILD(LEFT_CHILD(bnode)));
 
-neg_t_word: OP_NOT(t_word)        # 0 #
-neg_t_expr: OP_NOT(t_expr)        # 0 #
-
-
+neg_t_word: OP_NOT(t_word)      # 0 #
+neg_t_expr: OP_NOT(t_expr)      # 0 #
 
 
-const: OP_ADD(const, const) # 0 # const_node_set_value(bnode, LEFT_CHILD(bnode)->value + RIGHT_CHILD(bnode)->value);
-const: OP_SUB(const, const) # 0 # const_node_set_value(bnode, LEFT_CHILD(bnode)->value - RIGHT_CHILD(bnode)->value);
-const: OP_MUL(const, const) # 0 # const_node_set_value(bnode, LEFT_CHILD(bnode)->value * RIGHT_CHILD(bnode)->value);
-const: OP_AND(const, const) # 0 # const_node_set_value(bnode, LEFT_CHILD(bnode)->value & RIGHT_CHILD(bnode)->value);
-const: OP_LT(const, const)  # 0 # const_node_set_value(bnode, LEFT_CHILD(bnode)->value < RIGHT_CHILD(bnode)->value ? 1 : 0);
-const: OP_EQ(const, const)  # 0 # const_node_set_value(bnode, LEFT_CHILD(bnode)->value == RIGHT_CHILD(bnode)->value ? 1 : 0);
-const: OP_NOT(const)        # 0 # const_node_set_value(bnode, LEFT_CHILD(bnode)->value ^ 1);
-const: OP_ISNUM(const)      # 0 # const_node_set_value(bnode, 1);
-const: OP_NUM               # 0 # bnode->constant = 1;
-const: one                  # 0 # bnode->constant = 1;
-const: zero                 # 0 # bnode->constant = 1;
 
-one: OP_ONE                 # 0 # const_node_set_value(bnode, 1);
-one: OP_ADD(one, zero)      # 0 #
-one: OP_ADD(zero, one)      # 0 #
-one: OP_MUL(one, one)       # 0 #
 
-zero: OP_ZERO               # 0 # const_node_set_value(bnode, 0);
-zero: OP_MUL(u_expr, zero)   # 0 # 
-zero: OP_MUL(zero, u_expr)   # 0 # 
-zero: OP_MUL(const, zero)   # 0 # 
-zero: OP_MUL(zero, const)   # 0 # 
-zero: OP_ADD(zero, zero)    # 0 #
+const: OP_ADD(const, const) # 0 # make_constant(bnode, LEFT_CHILD(bnode)->value + RIGHT_CHILD(bnode)->value);
+const: OP_SUB(const, const) # 0 # make_constant(bnode, LEFT_CHILD(bnode)->value - RIGHT_CHILD(bnode)->value);
+const: OP_MUL(const, const) # 0 # make_constant(bnode, LEFT_CHILD(bnode)->value * RIGHT_CHILD(bnode)->value);
+const: OP_AND(const, const) # 0 # make_constant(bnode, LEFT_CHILD(bnode)->value & RIGHT_CHILD(bnode)->value);
+const: OP_LT(const, const)  # 0 # make_constant(bnode, LEFT_CHILD(bnode)->value < RIGHT_CHILD(bnode)->value ? 1 : 0);
+const: OP_EQ(const, const)  # 0 # make_constant(bnode, LEFT_CHILD(bnode)->value == RIGHT_CHILD(bnode)->value ? 1 : 0);
+const: OP_NOT(const)        # 0 # make_constant(bnode, LEFT_CHILD(bnode)->value ^ 1);
+const: OP_ISNUM(const)      # 0 # make_constant(bnode, 1);
+const: OP_NUM               # 0 #
+const: one                  # 0 #
+const: zero                 # 0 #
+
+one: OP_ONE                 # 0 # make_constant(bnode, 1);
+one: OP_ADD(one, zero)      # 0 # make_constant(bnode, 1);
+one: OP_ADD(zero, one)      # 0 # make_constant(bnode, 1);
+one: OP_MUL(one, one)       # 0 # make_constant(bnode, 0);
+
+zero: OP_ZERO               # 0 # make_constant(bnode, 0);
+zero: OP_MUL(u_expr, zero)  # 0 # make_constant(bnode, 0);
+zero: OP_MUL(zero, u_expr)  # 0 # make_constant(bnode, 0);
+zero: OP_MUL(const, zero)   # 0 # make_constant(bnode, 0);
+zero: OP_MUL(zero, const)   # 0 # make_constant(bnode, 0);
+zero: OP_ADD(zero, zero)    # 0 # make_constant(bnode, 0);
 
 
 %%
