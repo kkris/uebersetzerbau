@@ -13,9 +13,8 @@ ret
 f3:
 bt %rdi, 0
 jc .raisesig
-sarq %rdi, %rax
-addq %rax, %rax
-salq %rax
+movq %rdi, %rax
+addq %rdi, %rax
 ret
 f4:
 bt %rdi, 0
@@ -26,11 +25,9 @@ ret
 f5:
 bt %rdi, 0
 jc .raisesig
-sarq %rdi, %rsi
-movq %rsi, %rax
+movq %rdi, %rax
 addq $2, %rax
-addq %rsi, %rax
-salq %rax, %rax
+addq %rdi, %rax
 ret
 f6:
 bt %rdi, 0
