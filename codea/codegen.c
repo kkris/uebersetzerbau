@@ -164,7 +164,7 @@ void gen_add(struct tree *node, int tag_type)
         gen_add_reg_const(lhs->value, rhs->reg, dest, tag_type);
     } else if(rhs->constant) {
         gen_add_reg_const(rhs->value, lhs->reg, dest, tag_type);
-    } else if(lhs->op == OP_VAR, rhs->op == OP_VAR){
+    } else if(lhs->op == OP_VAR && rhs->op == OP_VAR){
         expect(lhs->var_reg, TYPE_NUMBER);
         expect(rhs->var_reg, TYPE_NUMBER);
         move(lhs->var_reg, dest);
