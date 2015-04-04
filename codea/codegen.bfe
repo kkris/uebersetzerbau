@@ -9,6 +9,7 @@
     Use lea in more places 
         (mul, 2, 3, 4, 5, 8, 9)
     Implement redundant move removal
+    research if multiplication is valid with tagged values (seems to be)
 */
 
 %}
