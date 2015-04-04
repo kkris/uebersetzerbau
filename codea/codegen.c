@@ -297,3 +297,27 @@ void gen_isnum(struct tree *node)
         gen_code("UNSUPPORTED");
     }
 }
+
+void gen_islist(struct tree *node)
+{
+    struct tree *lhs = LEFT_CHILD(node);
+
+    const char *source;
+    const char *dest = node->reg;
+
+    if(lhs->op == OP_VAR) {
+        source = lhs->var_reg;
+    } else {
+        source = lhs->reg;
+    }
+    move(source, dest);
+    gen_code("andq $3, %%%s", dest);
+    gen_code("testq $2, %%%s", dest);
+    gen_code("jz .nolist");
+    gen_code("movq $2 %%%s", dest);
+    gen_code("jmp .after");
+    gen_code(".nolist:");
+    gen_code("movq $0, %%%s", dest);
+    gen_code(".after:");
+}
+
