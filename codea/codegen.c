@@ -241,7 +241,7 @@ void gen_mul(struct tree *node)
     }
 }
 
-static void gen_eq_tagged_const(long int value, const char *source, const char *dest)
+static void gen_eq_const(long int value, const char *source, const char *dest)
 {
     value = tag_const(value);
 
@@ -250,7 +250,7 @@ static void gen_eq_tagged_const(long int value, const char *source, const char *
     gen_code("cmovqe $2, %%%s", dest);
 }
 
-void gen_eq_tagged(struct tree *node)
+void gen_eq(struct tree *node)
 {
     struct tree *lhs = LEFT_CHILD(node);
     struct tree *rhs = RIGHT_CHILD(node);
@@ -261,14 +261,14 @@ void gen_eq_tagged(struct tree *node)
         gen_code("TODO: upps, constant fold!");
     } else if(lhs->constant) {
         if(rhs->op == OP_VAR)
-            gen_eq_tagged_const(lhs->value, rhs->var_reg, dest);
+            gen_eq_const(lhs->value, rhs->var_reg, dest);
         else
-            gen_eq_tagged_const(lhs->value, rhs->reg, dest);
+            gen_eq_const(lhs->value, rhs->reg, dest);
     } else if(rhs->constant) {
         if(lhs->op == OP_VAR)
-            gen_eq_tagged_const(rhs->value, lhs->var_reg, dest);
+            gen_eq_const(rhs->value, lhs->var_reg, dest);
         else
-            gen_eq_tagged_const(rhs->value, lhs->reg, dest);
+            gen_eq_const(rhs->value, lhs->reg, dest);
     } else if(lhs->op == OP_VAR && rhs->op == OP_VAR) {
         if(strcmp(lhs->name, rhs->name) == 0) {
             gen_code("movq $2, %%%s", dest);
@@ -283,11 +283,6 @@ void gen_eq_tagged(struct tree *node)
         gen_code("testq %%%s, %%%s", lhs->reg, rhs->reg);
         gen_code("cmovqe $2, %%%s", dest);
     }
-}
-
-void gen_eq_untagged(struct tree *node)
-{
-    gen_eq_tagged(node);
 }
 
 void gen_isnum(struct tree *node)

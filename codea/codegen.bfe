@@ -61,15 +61,15 @@ t_expr: OP_SUB(zero, t_expr)    # 2 # gen_sub(bnode, TAGGED);
 t_expr: OP_SUB(t_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 
 
-t_expr: OP_EQ(t_word, t_word)   # 2 # gen_eq_tagged(bnode);
-t_expr: OP_EQ(t_word, const)    # 1 # gen_eq_tagged(bnode);
-t_expr: OP_EQ(const, t_word)    # 1 # gen_eq_tagged(bnode);
+t_expr: OP_EQ(t_word, t_word)   # 2 # gen_eq(bnode);
+t_expr: OP_EQ(t_word, const)    # 1 # gen_eq(bnode);
+t_expr: OP_EQ(const, t_word)    # 1 # gen_eq(bnode);
 
-t_expr: OP_EQ(t_expr, t_expr)   # 2 # gen_eq_tagged(bnode);
-t_expr: OP_EQ(const, t_expr)    # 1 # gen_eq_tagged(bnode);
-t_expr: OP_EQ(t_expr, const)    # 1 # gen_eq_tagged(bnode);
+t_expr: OP_EQ(t_expr, t_expr)   # 2 # gen_eq(bnode);
+t_expr: OP_EQ(const, t_expr)    # 1 # gen_eq(bnode);
+t_expr: OP_EQ(t_expr, const)    # 1 # gen_eq(bnode);
 
-t_expr: OP_EQ(u_expr, u_expr)   # 1 # gen_eq_untagged(bnode);
+t_expr: OP_EQ(u_expr, u_expr)   # 1 # gen_eq(bnode);
 
 t_expr: OP_NOT(neg_t_expr)      # 0 # make_equal_to(bnode, LEFT_CHILD(LEFT_CHILD(bnode)));
 
