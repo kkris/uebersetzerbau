@@ -57,7 +57,7 @@ t_expr: OP_SUB(OP_VAR, OP_VAR)  # 1 # gen_sub(bnode, TAGGED);
 t_expr: OP_SUB(t_expr, t_expr)  # 3 # gen_sub(bnode, TAGGED);
 t_expr: OP_SUB(t_expr, const)   # 2 # gen_sub(bnode, TAGGED);
 t_expr: OP_SUB(const, t_expr)   # 2 # gen_sub(bnode, TAGGED);
-t_expr: OP_SUB(zero, t_expr)    # 2 # gen_sub(bnode, TAGGED);
+t_expr: OP_SUB(zero, t_expr)    # 2 # gen_sub(bnode, TAGGED); gen_code("TODO: flip sign??");
 t_expr: OP_SUB(t_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 
 
@@ -82,7 +82,9 @@ neg_t_expr: OP_NOT(t_expr)      # 0 #
 
 
 
-
+const: one                  # 0 #
+const: zero                 # 0 #
+const: OP_NUM               # 0 #
 const: OP_ADD(const, const) # 0 # make_constant(bnode, LEFT_CHILD(bnode)->value + RIGHT_CHILD(bnode)->value);
 const: OP_SUB(const, const) # 0 # make_constant(bnode, LEFT_CHILD(bnode)->value - RIGHT_CHILD(bnode)->value);
 const: OP_MUL(const, const) # 0 # make_constant(bnode, LEFT_CHILD(bnode)->value * RIGHT_CHILD(bnode)->value);
@@ -91,9 +93,6 @@ const: OP_LT(const, const)  # 0 # make_constant(bnode, LEFT_CHILD(bnode)->value 
 const: OP_EQ(const, const)  # 0 # make_constant(bnode, LEFT_CHILD(bnode)->value == RIGHT_CHILD(bnode)->value ? 1 : 0);
 const: OP_NOT(const)        # 0 # make_constant(bnode, LEFT_CHILD(bnode)->value ^ 1);
 const: OP_ISNUM(const)      # 0 # make_constant(bnode, 1);
-const: OP_NUM               # 0 #
-const: one                  # 0 #
-const: zero                 # 0 #
 
 
 one: OP_ONE                 # 0 # make_constant(bnode, 1);
