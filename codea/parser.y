@@ -123,28 +123,29 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
     | ISFUN Term
     @{
         @i @Expr.node@ = new_node(OP_ISFUN, @Term.node@, NULL);
-        /*@codegen @Expr.node@->reg = get_reg();*/
+
+        @reg @Term.node@->reg = @Expr.node@->reg;
     @}
     | Term '+' Term
     @{
         @i @Expr.node@ = new_node(OP_ADD, @Term.0.node@, @Term.1.node@);
 
         @reg @Term.0.node@->reg = @Expr.node@->reg;
-        @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg);
+        @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg, @Term.0.node@->constant);
     @}
     | Term '-' Term
     @{
         @i @Expr.node@ = new_node(OP_SUB, @Term.0.node@, @Term.1.node@);
 
         @reg @Term.0.node@->reg = @Expr.node@->reg;
-        @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg);
+        @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg, @Term.0.node@->constant);
    @}
     | Term '*' Term
     @{
         @i @Expr.node@ = new_node(OP_MUL, @Term.0.node@, @Term.1.node@);
 
         @reg @Term.0.node@->reg = @Expr.node@->reg;
-        @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg);
+        @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg, @Term.0.node@->constant);
     @}
     /*| Term '.' Term*/
     | Term AND Term
@@ -164,7 +165,7 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
         @i @Expr.node@ = new_node(OP_EQ, @Term.0.node@, @Term.1.node@);
 
         @reg @Term.0.node@->reg = @Expr.node@->reg;
-        @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg);
+        @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg, @Term.0.node@->constant);
         /*@codegen @Term.0.node@->reg = get_reg();
         @codegen @Term.1.node@->reg = get_reg();*/
     @}

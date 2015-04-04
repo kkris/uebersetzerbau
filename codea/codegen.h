@@ -16,7 +16,7 @@ enum {
 };
 
 
-char *get_next_reg();
+char *get_next_reg(const char *prev, int reuse);
 
 void gen_code(const char *code, ...);
 

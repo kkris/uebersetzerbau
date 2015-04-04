@@ -6,7 +6,7 @@
 
 static char *type_checked_vars[5] = {NULL, NULL, NULL, NULL, NULL};
 
-char *get_next_reg(const char *prev) {
+char *get_next_reg(const char *prev, int reuse) {
     fprintf(stderr, "next_reg(%s, ", prev);
     if(prev == NULL)
         return strdup("rdi");
@@ -17,7 +17,10 @@ char *get_next_reg(const char *prev) {
     for(; i < sizeof(registers) / sizeof(registers[0]) - 1; i++) {
         if(strcmp(prev, registers[i]) == 0) {
             fprintf(stderr, "%s)\n", registers[i + 1]);
-            return strdup(registers[i + 1]);
+            if(reuse == 1)
+                return strdup(registers[i]);
+            else
+                return strdup(registers[i + 1]);
         }
     }
 
