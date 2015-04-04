@@ -1,0 +1,31 @@
+f1:
+movq $2, %rax
+ret
+f2:
+movq $2, %rax
+ret
+f3:
+movq %rdi, %rax
+xorq $1, %rax
+salq %rax, %rax
+ret
+f4:
+bt %rdi, 0
+jc .raisesig
+xorq $1, %rax
+salq %rax, %rax
+ret
+f5:
+XXX: check type?
+movq $2, %rax
+ret
+f6:
+bt %rdi, 0
+jc .raisesig
+movq $2, %rax
+ret
+f7:
+bt %rdi, 0
+jc .raisesig
+movq $2, %rax
+ret
