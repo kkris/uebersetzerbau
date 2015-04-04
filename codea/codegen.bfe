@@ -58,6 +58,11 @@ t_expr: OP_ADD(OP_VAR, OP_VAR)  # 1 # gen_add(bnode, TAGGED);
 t_expr: OP_ADD(t_expr, t_expr)  # 3 # gen_add(bnode, TAGGED);
 t_expr: OP_ADD(t_expr, const)   # 2 # gen_add(bnode, TAGGED);
 t_expr: OP_ADD(const, t_expr)   # 2 # gen_add(bnode, TAGGED);
+t_expr: OP_ADD(OP_VAR, const)   # 1 # gen_add_var_const(bnode, TAGGED);
+t_expr: OP_ADD(const, OP_VAR)   # 1 # gen_add_var_const(bnode, TAGGED);
+t_expr: OP_ADD(OP_VAR, t_expr)   # 1 # gen_add(bnode, TAGGED);
+t_expr: OP_ADD(t_expr, OP_VAR)   # 1 # gen_add(bnode, TAGGED);
+
 t_expr: OP_ADD(zero, t_expr)    # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 t_expr: OP_ADD(t_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 

@@ -166,9 +166,35 @@ void gen_add(struct tree *node, int tag_type)
         move(lhs->var_reg, dest);
         gen_code("addq %%%s, %%%s", rhs->var_reg, dest);
     } else {
-        move(lhs->reg, dest);
-        gen_code("addq %%%s, %%%s", rhs->reg, dest);
+        if(lhs->op == OP_VAR) {
+            move(lhs->var_reg, dest);
+            gen_code("addq %%%s, %%%s", rhs->reg, dest);
+        } else if(rhs->op == OP_VAR){
+            gen_code("addq %%%s, %%%s", rhs->var_reg, dest);
+        } else {
+            move(lhs->reg, dest);
+            gen_code("addq %%%s, %%%s", rhs->reg, dest);
+        }
     }
+}
+
+void gen_add_var_const(struct tree *node, int tag_type)
+{
+    struct tree *lhs = LEFT_CHILD(node);
+    struct tree *rhs = RIGHT_CHILD(node);
+
+    const char *dest = node->reg;
+
+    struct tree *constnode = lhs->constant ? lhs : rhs;
+    struct tree *varnode = lhs->op == OP_VAR ? lhs : rhs;
+
+    long int value = constnode->value;
+    if(tag_type == TAGGED)
+        value = tag_const(value);
+
+    expect(varnode->var_reg, TYPE_NUMBER);
+
+    gen_code("leaq %ld(%%%s), %%%s", value, varnode->var_reg, dest);
 }
 
 static void gen_sub_reg_const(long int value, const char *source, const char *dest, int tag_type)

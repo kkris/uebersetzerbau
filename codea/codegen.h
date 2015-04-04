@@ -34,11 +34,11 @@ void load_num(const char *var_reg, const char *dest);
 
 void ret(struct tree *node, int tag_type, int type);
 
-void gen_add_u_expr(struct tree *node);
-
 void gen_not(const char *source, const char *dest, int tag_type);
 
 void gen_add(struct tree *node, int tag_type);
+void gen_add_var_const(struct tree *node, int tag_type);
+
 void gen_sub(struct tree *node, int tag_type);
 void gen_mul(struct tree *node);
 
