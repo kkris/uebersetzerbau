@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
+#include <assert.h>
 
 static char *type_checked_vars[5] = {NULL, NULL, NULL, NULL, NULL};
 
@@ -86,7 +87,8 @@ long int tag_const(long int value)
 
 void untag(const char *source, const char *dest)
 {
-    gen_code("sarq %%%s, %%%s", source, dest);
+    move(source, dest);
+    gen_code("sarq $1, %%%s", dest);
 }
 
 void load_tagged_num(const char *var_reg, const char *dest)
@@ -98,7 +100,7 @@ void load_tagged_num(const char *var_reg, const char *dest)
 void load_num(const char *var_reg, const char *dest)
 {
     expect(var_reg, TYPE_NUMBER);
-    gen_code("sarq %%%s, %%%s", var_reg, dest);
+    gen_code("xxsarq %%%s, %%%s", var_reg, dest);
 }
 
 void ret(struct tree *node, int tag_type, int type)
@@ -240,31 +242,109 @@ void gen_sub(struct tree *node, int tag_type)
     }
 }
 
-
-
-static void gen_mul_reg_const(long int value, const char *source, const char *dest)
+/**
+ * result is tagged if source reg is
+ */
+static void gen_mul_reg_const(const char *source, const char *dest, long int value)
 {
-    move(source, dest);
-    gen_code("mulq $%ld, %%%s", value, dest);
+    switch(value) {
+    case 0:
+    case 1:
+        gen_code("mul with 0, 1 should be handled else where"); break;
+    case 2:
+        gen_code("leaq (, %%%s, 2), %%%s", source, dest); break;
+    case 3:
+        gen_code("leaq (%%%s, %%%s, 2), %%%s", source, source, dest); break;
+    case 4:
+        gen_code("leaq (, %%%s, 4), %%%s", source, dest); break;
+    case 5:
+        gen_code("leaq (%%%s, %%%s, 4), %%%s", source, source, dest); break;
+    case 8:
+        gen_code("leaq (, %%%s, 8), %%%s", source, dest); break;
+    case 9:
+        gen_code("leaq (%%%s, %%%s, 8), %%%s", source, source, dest); break;
+    default:
+        move(source, dest);
+        gen_code("imulq $%ld, %%%s", value, dest);
+    }
 }
 
-void gen_mul(struct tree *node)
+void gen_mul_untagged(struct tree *node, int input_tag_type)
 {
     struct tree *lhs = LEFT_CHILD(node);
     struct tree *rhs = RIGHT_CHILD(node);
 
     const char *dest = node->reg;
 
+    if(input_tag_type == TAGGED) {
+        if(lhs->op == OP_VAR) {
+            move(lhs->var_reg, dest);
+            gen_code("sarq $1, %%%s", dest);
+            gen_code("imulq %%%s, %%%s", rhs->reg, dest);
+            gen_code("sarq $1, %%%s", dest);
+        } else if(rhs->op == OP_VAR) {
+            gen_code("sarq $1, %%%s", dest);
+            gen_code("imulq %%%s, %%%s", rhs->var_reg, dest);
+            gen_code("sarq $1, %%%s", dest);
+        } else {
+            move(lhs->reg, dest);
+            gen_code("sarq $1, %%%s", dest);
+            gen_code("imulq %%%s, %%%s", rhs->reg, dest);
+            gen_code("sarq $1, %%%s", dest);
+        }
+    } else {
+        if(lhs->constant) {
+            gen_mul_reg_const(rhs->reg, dest, lhs->value);
+        } else if(rhs->constant) {
+            gen_mul_reg_const(lhs->reg, dest, rhs->value);
+        } else {
+            move(lhs->reg, dest);
+            gen_code("imulq %%%s, %%%s", rhs->reg, dest);
+        }
+    }
+}
+
+void gen_mul_tagged(struct tree *node, int tag_type)
+{
+    struct tree *lhs = LEFT_CHILD(node);
+    struct tree *rhs = RIGHT_CHILD(node);
+
+    const char *dest = node->reg;
+
+    assert(tag_type == TAGGED);
+
     if(lhs->constant && rhs->constant) {
         gen_code("TODO: upps, constant fold!");
     } else if(lhs->constant) {
-        gen_mul_reg_const(lhs->value, rhs->reg, dest);
+        gen_mul_reg_const(rhs->reg, dest, lhs->value);
     } else if(rhs->constant) {
-        gen_mul_reg_const(rhs->value, lhs->reg, dest);
+        gen_mul_reg_const(lhs->reg, dest, rhs->value);
+    } else if(lhs->op == OP_VAR && rhs->op == OP_VAR){
+        expect(lhs->var_reg, TYPE_NUMBER);
+        expect(rhs->var_reg, TYPE_NUMBER);
+        move(lhs->var_reg, dest);
+        gen_code("sarq $1, %%%s", dest);
+        gen_code("imulq %%%s, %%%s", rhs->var_reg, dest);
     } else {
-        move(lhs->reg, dest);
-        gen_code("mulq %%%s, %%%s", rhs->reg, dest);
+        assert(0);
     }
+}
+
+/**
+ *  result is tagged because var is tagged
+ */
+void gen_mul_var_const(struct tree *node)
+{
+    struct tree *lhs = LEFT_CHILD(node);
+    struct tree *rhs = RIGHT_CHILD(node);
+
+    const char *dest = node->reg;
+
+    struct tree *constnode = lhs->constant ? lhs : rhs;
+    struct tree *varnode = lhs->op == OP_VAR ? lhs : rhs;
+
+    expect(varnode->var_reg, TYPE_NUMBER);
+    gen_mul_reg_const(varnode->var_reg, dest, constnode->value);
 }
 
 static void gen_eq_const(long int value, const char *source, const char *dest)

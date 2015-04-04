@@ -17,41 +17,117 @@ ret
 f5:
 bt %rdi, 0
 jc .raisesig
-sarq %rdi, %rsi
-movq %rsi, %rax
-mulq %rsi, %rax
-mulq %rsi, %rax
-mulq %rsi, %rax
-salq %rax, %rax
+leaq (, %rdi, 2), %rax
 ret
 f6:
-XXX: check type?
-movq $0, %rax
+bt %rdi, 0
+jc .raisesig
+leaq (, %rdi, 2), %rax
 ret
 f7:
 bt %rdi, 0
 jc .raisesig
-sarq %rdi, %rsi
-movq %rsi, %rax
-mulq %rsi, %rax
-mulq %rsi, %rax
-mulq %rsi, %rax
-salq %rax, %rax
+leaq (%rdi, %rdi, 2), %rax
 ret
 f8:
 bt %rdi, 0
 jc .raisesig
-sarq %rdi, %rax
-mulq $24, %rax
-salq %rax, %rax
+leaq (%rdi, %rdi, 2), %rax
 ret
 f9:
 bt %rdi, 0
 jc .raisesig
-sarq %rdi, %rax
-mulq $5, %rax
-mulq $4, %rax
-mulq $3, %rax
-mulq $2, %rax
+leaq (, %rdi, 4), %rax
+ret
+f10:
+bt %rdi, 0
+jc .raisesig
+leaq (, %rdi, 4), %rax
+ret
+f11:
+bt %rdi, 0
+jc .raisesig
+leaq (%rdi, %rdi, 4), %rax
+ret
+f12:
+bt %rdi, 0
+jc .raisesig
+leaq (%rdi, %rdi, 4), %rax
+ret
+f13:
+bt %rdi, 0
+jc .raisesig
+leaq (, %rdi, 8), %rax
+ret
+f14:
+bt %rdi, 0
+jc .raisesig
+leaq (, %rdi, 8), %rax
+ret
+f15:
+bt %rdi, 0
+jc .raisesig
+leaq (%rdi, %rdi, 8), %rax
+ret
+f16:
+bt %rdi, 0
+jc .raisesig
+leaq (%rdi, %rdi, 8), %rax
+ret
+f17:
+movq %rdi, %rax
+sarq $1, %rax
+movq %rdi, %rsi
+sarq $1, %rsi
+bt %rdi, 0
+jc .raisesig
+movq %rdi, %rdx
+sarq $1, %rdx
+imulq %rdi, %rdx
+sarq $1, %rdx
+imulq %rdx, %rsi
+imulq %rsi, %rax
 salq %rax, %rax
+ret
+f18:
+bt %rdi, 0
+jc .raisesig
+movq %rdi, %rax
+sarq $1, %rax
+imulq %rdi, %rax
+sarq $1, %rax
+movq %rdi, %rsi
+sarq $1, %rsi
+imulq %rsi, %rax
+movq %rdi, %rsi
+sarq $1, %rsi
+imulq %rsi, %rax
+salq %rax, %rax
+ret
+f19:
+bt %rdi, 0
+jc .raisesig
+movq %rdi, %rdx
+sarq $1, %rdx
+imulq %rdi, %rdx
+movq $0, %rax
+ret
+f20:
+bt %rdi, 0
+jc .raisesig
+TROOOOOOOOOOOOUUUUUUUUUUUBLLLLLLE with constant folding (make_equal_to)
+ret
+f21:
+bt %rdi, 0
+jc .raisesig
+movq %rdi, %rax
+imulq $24, %rax
+ret
+f22:
+bt %rdi, 0
+jc .raisesig
+leaq (%rdi, %rdi, 4), %rax
+leaq (, %rax, 4), %rax
+leaq (%rax, %rax, 2), %rax
+leaq (, %rax, 2), %rax
 ret

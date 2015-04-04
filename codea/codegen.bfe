@@ -28,6 +28,7 @@ ret: OP_RET(t_word)         # 1 # ret(LEFT_CHILD(bnode), TAGGED, 0);
 
 u_expr: const                   # 0 # bnode->constant = 1;
 u_expr: t_expr                  # 9 # untag(bnode->reg, bnode->reg);
+u_expr: OP_VAR                  # 9 # untag(bnode->var_reg, bnode->reg);
 
 u_expr: OP_ADD(const, u_expr)   # 1 # gen_add(bnode, UNTAGGED);
 u_expr: OP_ADD(u_expr, const)   # 1 # gen_add(bnode, UNTAGGED);
@@ -42,9 +43,9 @@ u_expr: OP_SUB(zero, u_expr)    # 1 # gen_sub(bnode, UNTAGGED);
 u_expr: OP_SUB(u_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 
 
-u_expr: OP_MUL(u_expr, const)   # 2 # gen_mul(bnode);
-u_expr: OP_MUL(const, u_expr)   # 2 # gen_mul(bnode);
-u_expr: OP_MUL(u_expr, u_expr)  # 2 # gen_mul(bnode);
+u_expr: OP_MUL(u_expr, const)   # 2 # gen_mul_untagged(bnode, UNTAGGED);
+u_expr: OP_MUL(const, u_expr)   # 2 # gen_mul_untagged(bnode, UNTAGGED);
+u_expr: OP_MUL(u_expr, u_expr)  # 2 # gen_mul_untagged(bnode, UNTAGGED);
 u_expr: OP_MUL(u_expr, one)     # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 u_expr: OP_MUL(one, u_expr)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 
@@ -74,6 +75,16 @@ t_expr: OP_SUB(const, t_expr)   # 2 # gen_sub(bnode, TAGGED);
 t_expr: OP_SUB(zero, t_expr)    # 2 # gen_sub(bnode, TAGGED); gen_code("TODO: flip sign??");
 t_expr: OP_SUB(t_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 
+t_expr: OP_MUL(OP_VAR, OP_VAR)  # 1 # gen_mul_tagged(bnode, TAGGED);
+t_expr: OP_MUL(t_expr, const)   # 2 # gen_mul_tagged(bnode, TAGGED);
+t_expr: OP_MUL(const, t_expr)   # 2 # gen_mul_tagged(bnode, TAGGED);
+t_expr: OP_MUL(OP_VAR, const)   # 1 # gen_mul_var_const(bnode);
+t_expr: OP_MUL(const, OP_VAR)   # 1 # gen_mul_var_const(bnode);
+
+t_expr: OP_MUL(t_expr, one)     # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
+t_expr: OP_MUL(one, t_expr)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+t_expr: OP_MUL(OP_VAR, one)     # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
+t_expr: OP_MUL(one, OP_VAR)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 
 t_expr: OP_EQ(t_word, t_word)   # 2 # gen_eq(bnode);
 t_expr: OP_EQ(t_word, const)    # 1 # gen_eq(bnode);
@@ -131,6 +142,10 @@ zero: OP_MUL(t_expr, zero)  # 0 # make_constant(bnode, 0);
 zero: OP_MUL(zero, t_expr)  # 0 # make_constant(bnode, 0);
 zero: OP_MUL(const, zero)   # 0 # make_constant(bnode, 0);
 zero: OP_MUL(zero, const)   # 0 # make_constant(bnode, 0);
+zero: OP_MUL(t_expr, zero)  # 0 # make_constant(bnode, 0);
+zero: OP_MUL(zero, t_expr)  # 0 # make_constant(bnode, 0);
+zero: OP_MUL(OP_VAR, zero)  # 0 # make_constant(bnode, 0);
+zero: OP_MUL(zero, OP_VAR)  # 0 # make_constant(bnode, 0);
 
 zero: OP_ADD(zero, zero)    # 0 # make_constant(bnode, 0);
 
