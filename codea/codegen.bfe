@@ -3,6 +3,14 @@
 #include "assert.h"
 #include "tree.h"
 #include "codegen.h"
+
+
+/** TODO
+    Use lea in more places 
+        (mul, 2, 3, 4, 5, 8, 9)
+    Implement redundant move removal
+*/
+
 %}
 
 %start ret
