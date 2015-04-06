@@ -12,8 +12,8 @@ ret
 f4:
 bt %rdi, 0
 jc .raisesig
-xorq $1, %rax
-salq %rax, %rax
+leaq 2(%rdi), %rax
+movq $2, %rax
 ret
 f5:
 XXX: check type?
@@ -22,6 +22,7 @@ ret
 f6:
 bt %rdi, 0
 jc .raisesig
+leaq 2(%rdi), %rax
 movq $2, %rax
 ret
 f7:

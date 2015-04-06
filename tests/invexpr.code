@@ -6,8 +6,7 @@ ret
 inv2:
 bt %rdi, 0
 jc .raisesig
-movq %rdi, %rax
-addq $2, %rax
+leaq 2(%rdi), %rax
 ret
 inv3:
 bt %rdi, 0
@@ -23,13 +22,11 @@ ret
 inv5:
 bt %rdi, 0
 jc .raisesig
-movq %rdi, %rax
-addq $2, %rax
+leaq 2(%rdi), %rax
 xorq $2, %rax
 ret
 inv6:
 bt %rdi, 0
 jc .raisesig
-movq %rdi, %rax
-addq $2, %rax
+leaq 2(%rdi), %rax
 ret
