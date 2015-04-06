@@ -166,17 +166,13 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
 
         @reg @Term.0.node@->reg = @Expr.node@->reg;
         @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg, @Term.0.node@->constant);
-        /*@codegen @Term.0.node@->reg = get_reg();
-        @codegen @Term.1.node@->reg = get_reg();*/
     @}
     /*| Expr Term */    /* Funktionsaufruf */
     ;
 
-/* TODO Binary Term for better register alloc */
-
 Term: '(' Expr ')'
     @{
-        /*@i @Term.node@ = @Expr.node@;*/
+        @i @Term.node@ = @Expr.node@;
         @reg @Expr.node@->reg = @Term.node@->reg;
     @}
     | NUM
