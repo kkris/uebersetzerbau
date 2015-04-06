@@ -1,53 +1,53 @@
 f1:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 leaq 2(%rdi), %rax
 ret
 f2:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 leaq 2(%rdi), %rax
 ret
 f3:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 movq %rdi, %rax
 addq %rdi, %rax
 ret
 f4:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 leaq 4(%rdi), %rax
 ret
 f5:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 leaq 2(%rdi), %rsi
 movq %rdi, %rax
 addq %rsi, %rax
 ret
 f6:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 leaq 2(%rdi), %rsi
 movq %rdi, %rax
 addq %rsi, %rax
 ret
 f7:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 leaq 2(%rdi), %rax
 addq %rdi, %rax
 ret
 f8:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 leaq 2(%rdi), %rax
 addq %rdi, %rax
 ret
 f9:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 leaq 2(%rdi), %rax
 leaq 2(%rdi), %rsi
 addq %rsi, %rax
@@ -73,8 +73,8 @@ XXX: check type?
 leaq 0(%rdi), %rax
 ret
 f15:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 leaq 2(%rdi), %rax
 leaq 4(%rdi), %rsi
 addq %rsi, %rax

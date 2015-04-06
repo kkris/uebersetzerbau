@@ -1,21 +1,21 @@
 constvar:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 salq %rdi, %rax
 ret
 varconst:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 salq %rdi, %rax
 ret
 varvar:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 movq %rdi, %rax
 addq %rdi, %rax
 ret
 varvarexpr:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 salq %rdi, %rax
 ret

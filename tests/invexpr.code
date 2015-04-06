@@ -1,32 +1,32 @@
 inv1:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 movq %rdi, %rax
 ret
 inv2:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 leaq 2(%rdi), %rax
 ret
 inv3:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 movq %rdi, %rax
 xorq $2, %rax
 ret
 inv4:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 movq %rdi, %rax
 ret
 inv5:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 leaq 2(%rdi), %rax
 xorq $2, %rax
 ret
 inv6:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 leaq 2(%rdi), %rax
 ret

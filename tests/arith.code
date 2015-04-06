@@ -1,5 +1,5 @@
 f1:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 movq %rdi, %rax
 ret

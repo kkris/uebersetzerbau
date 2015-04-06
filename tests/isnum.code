@@ -10,8 +10,8 @@ xorq $1, %rax
 salq %rax, %rax
 ret
 f4:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 leaq 2(%rdi), %rax
 movq $2, %rax
 ret
@@ -20,13 +20,13 @@ XXX: check type?
 movq $2, %rax
 ret
 f6:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 leaq 2(%rdi), %rax
 movq $2, %rax
 ret
 f7:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 movq $2, %rax
 ret

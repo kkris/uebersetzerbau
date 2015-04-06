@@ -2,8 +2,8 @@ foo:
 movq %rdi, %rax
 ret
 bar:
-bt %rdi, 0
-jc .raisesig
+testq $1, %rdi
+jnz raisesig
 movq %rdi, %rax
 addq %rdi, %rax
 ret
