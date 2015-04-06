@@ -1,0 +1,40 @@
+extern long f1(long int);
+extern long f2(long int);
+extern long f3(long int);
+extern long f4(long int);
+extern long f5(long int);
+extern long f6(long int);
+extern long f7(long int);
+extern long f8(long int);
+extern long f9(long int);
+extern long f10(long int);
+extern long f11(long int);
+extern long f12(long int);
+extern long f13(long int);
+extern long f14(long int);
+extern long f15(long int);
+
+CHECK(f1, 0, 1);
+CHECK(f1, 1, 2);
+RAISES(f1, 1);
+CHECK(f1, -1,  0);
+CHECK(f1, -2, -1);
+CHECK(f1, 5, 6);
+CHECK(f1, 1000, 1001);
+CHECK(f1, 10376293541461622783, -42);
+
+CHECK(f2, 0, 1);
+CHECK(f2, 1, 2);
+CHECK(f2, -1,  0);
+CHECK(f2, -2, -1);
+CHECK(f2, 5, 6);
+CHECK(f2, 1000, 1001);
+CHECK(f2, 10376293541461622783, -42);
+
+CHECK(f3, 0, 0);
+CHECK(f3, -1,  -2);
+CHECK(f3, -2, -4);
+CHECK(f3, 5, 10);
+CHECK(f3, 1000, 200);
+CHECK(f3, 10376293541461622783, 0);
+

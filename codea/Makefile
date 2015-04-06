@@ -16,7 +16,7 @@ test: codea
 	./codea
 
 checkcode: codea
-	../run_code_check.sh ../tests ./codea
+	../testframework/run_code_check.sh ../tests ./codea
 
 
 clean:
