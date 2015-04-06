@@ -64,8 +64,8 @@ void expect(const char *var_reg, int type)
     }
 
     if(type == TYPE_NUMBER) {
-        gen_code("bt %%%s, 0", var_reg);
-        gen_code("jc .raisesig");
+        gen_code("testq $1, %%%s", var_reg);
+        gen_code("jnz raisesig");
 
         type_checked_vars[i] = strdup(var_reg);
     }
