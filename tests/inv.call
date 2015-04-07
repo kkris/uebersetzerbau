@@ -1,0 +1,21 @@
+extern long inv(long);
+
+CHECK(inv, 0, 1);
+CHECK(inv, 1, 0);
+CHECK(inv, 2, 3);
+CHECK(inv, 3, 2);
+CHECK(inv, 4, 5);
+CHECK(inv, 5, 4);
+CHECK(inv, 6, 7);
+CHECK(inv, 7, 6);
+CHECK(inv, 8, 9);
+CHECK(inv, -1, -2);
+CHECK(inv, -2, -1);
+CHECK(inv, -3, -4);
+CHECK(inv, -4, -3);
+CHECK(inv, -5, -6);
+CHECK(inv, -6, -5);
+CHECK(inv, -7, -8);
+CHECK(inv, -8, -7);
+CHECK(inv, 1024, 1025);
+CHECK(inv, 31, 30);

@@ -4,6 +4,8 @@
 int expect_sig = 0;
 int sig_raised = 0;
 
+int errors = 0;
+
 void raisesig()
 {
     if(expect_sig == 0)
@@ -24,23 +26,31 @@ long int untag(long int value)
 
 #define CHECK(FUNC, INPUT, EXPECTED) do {\
     long int result = untag(FUNC(tag(INPUT))); \
-    if(result == EXPECTED) printf("OK %s(%s) == %ld\n", #FUNC, #INPUT, result); \
-   else \
-        printf("FF %s(%s) == %ld but should be %s\n", #FUNC, #INPUT, result, #EXPECTED); \
+    if(result != EXPECTED) {\
+        printf("\tFF %s(%s) == %ld but should be %s\n", #FUNC, #INPUT, result, #EXPECTED); \
+        errors++;\
+    } \
 } while(0)
 
 #define RAISES(FUNC, INPUT) do {\
     expect_sig = 1; \
     FUNC(INPUT); \
-    if(sig_raised == 0) printf("FF Expected signal, but was not raised\n"); \
-    else printf("OK Signal raised\n"); \
+    if(sig_raised == 0) {\
+        printf("\tFF Expected signal, but was not raised\n"); \
+        errors++;\
+    }\
     expect_sig = 0; \
     sig_raised = 0; \
 } while(0)
 
 int main(void) {
-    #include "../tests/add.call"
+    #include "TESTCASE"
 
+    if(errors == 0) {
+        printf("OK TESTCASE\n");
+    } else {
+        printf("FF TESTCASE (%d errors)\n", errors);
+    }
 
     return 0;
 }

@@ -3,15 +3,23 @@
 TESTS=${1%/} # remove trailing /
 BIN=$2
 
-for expected in $TESTS/*.call
+DIR="$(dirname "$(realpath "$0")")"
+TESTDIR=/tmp/uebersetzerbau_tests
+
+mkdir -p $TESTDIR
+
+for testcase in $TESTS/*.call
 do
-    testcase="${expected%.call}.0"
+    program="${testcase%.call}.0"
+    name="$(basename $testcase)"
 
-    $BIN < $testcase > /tmp/out.s 2> /dev/null
+    cp "$testcase" $TESTDIR/$name
+    sed "s|TESTCASE|$name|" $DIR/testmain.c > $TESTDIR/main.c
 
-    #gcc -o test raisesig.s test.c /tmp/out.s
-    gcc -g -o test test.c /tmp/out.s
-    ./test
+    $BIN < $program > $TESTDIR/program.s 2> /dev/null
+
+    gcc -g -o $TESTDIR/testmain $TESTDIR/main.c $TESTDIR/program.s
+    $TESTDIR/testmain
 done
 
 exit 0

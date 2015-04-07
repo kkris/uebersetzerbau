@@ -12,8 +12,8 @@ codegen:
 	bfe codegen.bfe | iburg - code.c
 
 
-test: codea
-	./codea
+tests: codea
+	../testframework/run_test_call.sh ../tests ./codea
 
 checkcode: codea
 	../testframework/run_code_check.sh ../tests ./codea
