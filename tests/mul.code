@@ -87,7 +87,7 @@ imulq %rdi, %rdx
 sarq $1, %rdx
 imulq %rdx, %rsi
 imulq %rsi, %rax
-salq %rax, %rax
+salq $1, %rax
 ret
 f18:
 testq $1, %rdi
@@ -102,7 +102,7 @@ imulq %rsi, %rax
 movq %rdi, %rsi
 sarq $1, %rsi
 imulq %rsi, %rax
-salq %rax, %rax
+salq $1, %rax
 ret
 f19:
 testq $1, %rdi
@@ -126,8 +126,55 @@ ret
 f22:
 testq $1, %rdi
 jnz raisesig
-leaq (%rdi, %rdi, 4), %rax
-leaq (, %rax, 4), %rax
+leaq (, %rdi, 4), %rax
 leaq (%rax, %rax, 2), %rax
 leaq (, %rax, 2), %rax
+ret
+f23:
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rax
+imulq $10, %rax
+ret
+f24:
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rax
+imulq $10, %rax
+ret
+f25:
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rax
+imulq $-5, %rax
+ret
+f26:
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rax
+imulq $-5, %rax
+ret
+f27:
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rax
+imulq $-7, %rax
+ret
+f28:
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rax
+imulq $-7, %rax
+ret
+f29:
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rax
+imulq $7, %rax
+ret
+f30:
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rax
+imulq $7, %rax
 ret
