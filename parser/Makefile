@@ -13,7 +13,7 @@ test: parser
 	./parser
 
 tests: parser
-	../run_tests.sh ../tests/ ./parser
+	../testframework/run_tests.sh ../tests/ ./parser
 
 
 clean:
