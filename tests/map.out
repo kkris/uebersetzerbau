@@ -4,28 +4,27 @@ fun
 ident func
 ->
 fun
-ident array
+ident list
 ->
-fun
-ident n
-->
+if
+not
+(
+islist
+ident list
+)
+then
+ident list
+else
 let
-ident next
+ident x
 =
 ident func
 (
 head
-ident array
+ident list
 )
 in
-if
-ident n
-=
-num 1
-then
-ident next
-else
-ident next
+ident x
 .
 (
 (
@@ -34,15 +33,9 @@ ident func
 )
 (
 tail
-ident array
+ident list
 )
 )
-(
-ident n
--
-num 1
-)
-end
 end
 end
 end
@@ -61,19 +54,12 @@ end
 ident main
 =
 fun
-ident array
+ident list
 ->
-fun
-ident n
-->
-(
 (
 ident map
 ident times2
 )
-ident array
-)
-ident n
-end
+ident list
 end
 ;

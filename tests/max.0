@@ -1,1 +1,18 @@
-max = fun list -> let x = head list in let y = head (tail list) in if x < y then y else x end end end end ;
+max = fun list -> (max2 list) 0 end;
+
+max2 = fun list -> fun curmax ->
+    if not (islist list)
+    then
+        curmax
+    else
+        let x = head list in 
+            if x < curmax
+            then
+                (max2 (tail list)) curmax
+            else
+                (max2 (tail list)) x
+            end
+        end
+    end
+end end;
+

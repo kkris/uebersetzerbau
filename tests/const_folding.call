@@ -15,6 +15,7 @@ extern long isnum1(long);
 extern long isnum2(long);
 
 CHECK(add, 0, 55);
+CHECK(add2, 0, 1403);
 CHECK(sub, 0, 955);
 CHECK(mul, 0, 720);
 CHECK(mulzero, 0, 0);

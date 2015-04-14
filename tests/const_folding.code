@@ -1,6 +1,9 @@
 add:
 movq $110, %rax
 ret
+add2:
+movq $2806, %rax
+ret
 sub:
 movq $1910, %rax
 ret
