@@ -5,6 +5,18 @@
 #include <string.h>
 #include <assert.h>
 
+void debug(const char *msg, ...)
+{
+    return;
+
+    va_list ap;
+
+    va_start(ap, msg);
+    vfprintf(stderr, msg, ap);
+    fprintf(stderr, "\n");
+    va_end(ap);
+}
+
 static char *type_checked_vars[5] = {NULL, NULL, NULL, NULL, NULL};
 
 char *get_next_reg(const char *prev, int reuse) {
@@ -25,7 +37,7 @@ char *get_next_reg(const char *prev, int reuse) {
         }
     }
 
-    fprintf(stderr, "Upps, no register left. Implement a better allocation algorithm!\n");
+    debug("Upps, no register left. Implement a better allocation algorithm!");
 
     return NULL;
 }
@@ -56,6 +68,8 @@ void move(const char *source, const char *dest)
 
 void expect(const char *var_reg, int type)
 {
+    debug("expect");
+
     int i;
     for(i = 0; i < 5; i++) {
         if(type_checked_vars[i] == NULL) break;
@@ -73,6 +87,8 @@ void expect(const char *var_reg, int type)
 
 void tag(int type, const char *source, const char *dest)
 {
+    debug("tag(%s, %s)", source, dest);
+
     if(type == TYPE_NUMBER) {
         move(source, dest);
         gen_code("salq $1, %%%s", dest);
@@ -88,18 +104,24 @@ long int tag_const(long int value)
 
 void untag(const char *source, const char *dest)
 {
+    debug("untag(%s, %s)", source, dest);
+
     move(source, dest);
     gen_code("sarq $1, %%%s", dest);
 }
 
 void load_tagged_num(const char *var_reg, const char *dest)
 {
+    debug("load_tagged_num");
+
     expect(var_reg, TYPE_NUMBER);
     move(var_reg, dest);
 }
 
 void load_num(const char *var_reg, const char *dest)
 {
+    debug("load_num");
+
     expect(var_reg, TYPE_NUMBER);
     gen_code("xxsarq %%%s, %%%s", var_reg, dest);
 }
@@ -132,6 +154,8 @@ void ret(struct tree *node, int tag_type, int type)
 
 void gen_not(const char *source, const char *dest, int tag_type)
 {
+    debug("gen_not");
+
     move(source, dest);
 
     if(tag_type == TAGGED) {
@@ -143,6 +167,8 @@ void gen_not(const char *source, const char *dest, int tag_type)
 
 static void gen_add_reg_const(long int value, const char *source, const char *dest, int tag_type)
 {
+    debug("gen_add_reg_const");
+
     if(tag_type == TAGGED)
         value = tag_const(value);
 
@@ -152,6 +178,8 @@ static void gen_add_reg_const(long int value, const char *source, const char *de
 
 void gen_add(struct tree *node, int tag_type)
 {
+    debug("gen_add");
+
     struct tree *lhs = LEFT_CHILD(node);
     struct tree *rhs = RIGHT_CHILD(node);
 
@@ -183,6 +211,8 @@ void gen_add(struct tree *node, int tag_type)
 
 void gen_add_var_const(struct tree *node, int tag_type)
 {
+    debug("gen_add_var_const");
+
     struct tree *lhs = LEFT_CHILD(node);
     struct tree *rhs = RIGHT_CHILD(node);
 
@@ -202,6 +232,8 @@ void gen_add_var_const(struct tree *node, int tag_type)
 
 static void gen_sub_reg_const(long int value, const char *source, const char *dest, int tag_type)
 {
+    debug("gen_sub_reg_const");
+
     if(tag_type == TAGGED)
         value = tag_const(value);
 
@@ -212,6 +244,8 @@ static void gen_sub_reg_const(long int value, const char *source, const char *de
 
 static void gen_sub_const_reg(long int value, const char *source, const char *dest, int tag_type)
 {
+    debug("gen_sub_const_reg");
+
     if(tag_type == TAGGED)
         value = tag_const(value);
 
@@ -221,6 +255,8 @@ static void gen_sub_const_reg(long int value, const char *source, const char *de
 
 void gen_sub(struct tree *node, int tag_type)
 {
+    debug("gen_sub");
+
     struct tree *lhs = LEFT_CHILD(node);
     struct tree *rhs = RIGHT_CHILD(node);
 
@@ -248,6 +284,8 @@ void gen_sub(struct tree *node, int tag_type)
  */
 static void gen_mul_reg_const(const char *source, const char *dest, long int value)
 {
+    debug("gen_mul_reg_const");
+
     switch(value) {
     case 0:
     case 1:
@@ -272,6 +310,8 @@ static void gen_mul_reg_const(const char *source, const char *dest, long int val
 
 void gen_mul_untagged(struct tree *node, int input_tag_type)
 {
+    debug("gen_mul_untagged");
+
     struct tree *lhs = LEFT_CHILD(node);
     struct tree *rhs = RIGHT_CHILD(node);
 
@@ -307,6 +347,8 @@ void gen_mul_untagged(struct tree *node, int input_tag_type)
 
 void gen_mul_tagged(struct tree *node, int tag_type)
 {
+    debug("gen_mul_tagged");
+
     struct tree *lhs = LEFT_CHILD(node);
     struct tree *rhs = RIGHT_CHILD(node);
 
@@ -339,6 +381,8 @@ void gen_mul_tagged(struct tree *node, int tag_type)
  */
 void gen_mul_var_const(struct tree *node)
 {
+    debug("gen_mul_var_const");
+
     struct tree *lhs = LEFT_CHILD(node);
     struct tree *rhs = RIGHT_CHILD(node);
 
@@ -353,6 +397,8 @@ void gen_mul_var_const(struct tree *node)
 
 static void gen_eq_const(long int value, const char *source, const char *dest)
 {
+    debug("gen_eq_const");
+
     value = tag_const(value);
 
     gen_code("xorq %%%s, %%%s", dest);
@@ -362,6 +408,8 @@ static void gen_eq_const(long int value, const char *source, const char *dest)
 
 void gen_eq(struct tree *node)
 {
+    debug("gen_eq");
+
     struct tree *lhs = LEFT_CHILD(node);
     struct tree *rhs = RIGHT_CHILD(node);
 
@@ -397,6 +445,8 @@ void gen_eq(struct tree *node)
 
 void gen_isnum(struct tree *node)
 {
+    debug("gen_isnum");
+
     struct tree *lhs = LEFT_CHILD(node);
     const char *dest = node->reg;
 
@@ -410,6 +460,8 @@ void gen_isnum(struct tree *node)
 
 void gen_islist(struct tree *node)
 {
+    debug("gen_islist");
+
     struct tree *lhs = LEFT_CHILD(node);
 
     const char *source;
