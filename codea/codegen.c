@@ -327,7 +327,10 @@ void gen_mul_tagged(struct tree *node, int tag_type)
         gen_code("sarq $1, %%%s", dest);
         gen_code("imulq %%%s, %%%s", rhs->var_reg, dest);
     } else {
-        assert(0);
+        /* t_expr * t_expr, type checked earlier */
+        move(lhs->reg, dest);
+        gen_code("sarq $1, %%%s", dest);
+        gen_code("imulq %%%s, %%%s", rhs->reg, dest);
     }
 }
 

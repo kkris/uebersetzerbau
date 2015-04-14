@@ -29,7 +29,7 @@ ret: OP_RET(t_word)         # 1 # ret(LEFT_CHILD(bnode), TAGGED, 0);
 
 u_expr: const                   # 0 # bnode->constant = 1;
 u_expr: t_expr                  # 9 # untag(bnode->reg, bnode->reg);
-u_expr: OP_VAR                  # 9 # untag(bnode->var_reg, bnode->reg);
+u_expr: OP_VAR                  # 8 # untag(bnode->var_reg, bnode->reg); /* cheaper to load var directly than var -> t_expr -> u_expr */
 
 u_expr: OP_ADD(const, u_expr)   # 1 # gen_add(bnode, UNTAGGED);
 u_expr: OP_ADD(u_expr, const)   # 1 # gen_add(bnode, UNTAGGED);
@@ -76,6 +76,7 @@ t_expr: OP_SUB(const, t_expr)   # 2 # gen_sub(bnode, TAGGED);
 t_expr: OP_SUB(zero, t_expr)    # 2 # gen_sub(bnode, TAGGED); gen_code("TODO: flip sign??");
 t_expr: OP_SUB(t_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 
+t_expr: OP_MUL(t_expr, t_expr)  # 1 # gen_mul_tagged(bnode, TAGGED);
 t_expr: OP_MUL(OP_VAR, OP_VAR)  # 1 # gen_mul_tagged(bnode, TAGGED);
 t_expr: OP_MUL(t_expr, const)   # 2 # gen_mul_tagged(bnode, TAGGED);
 t_expr: OP_MUL(const, t_expr)   # 2 # gen_mul_tagged(bnode, TAGGED);

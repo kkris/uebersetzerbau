@@ -75,19 +75,17 @@ jnz raisesig
 leaq (%rdi, %rdi, 8), %rax
 ret
 f17:
-movq %rdi, %rax
-sarq $1, %rax
-movq %rdi, %rsi
-sarq $1, %rsi
 testq $1, %rdi
 jnz raisesig
+movq %rdi, %rax
+movq %rdi, %rsi
 movq %rdi, %rdx
 sarq $1, %rdx
 imulq %rdi, %rdx
-sarq $1, %rdx
+sarq $1, %rsi
 imulq %rdx, %rsi
+sarq $1, %rax
 imulq %rsi, %rax
-salq $1, %rax
 ret
 f18:
 testq $1, %rdi
@@ -95,14 +93,12 @@ jnz raisesig
 movq %rdi, %rax
 sarq $1, %rax
 imulq %rdi, %rax
+movq %rdi, %rsi
 sarq $1, %rax
-movq %rdi, %rsi
-sarq $1, %rsi
 imulq %rsi, %rax
 movq %rdi, %rsi
-sarq $1, %rsi
+sarq $1, %rax
 imulq %rsi, %rax
-salq $1, %rax
 ret
 f19:
 testq $1, %rdi
@@ -115,7 +111,12 @@ ret
 f20:
 testq $1, %rdi
 jnz raisesig
-TROOOOOOOOOOOOUUUUUUUUUUUBLLLLLLE with constant folding (make_equal_to)
+movq %rdi, %rax
+movq %rdi, %rsi
+sarq $1, %rsi
+imulq %rdi, %rsi
+sarq $1, %rax
+imulq %rsi, %rax
 ret
 f21:
 testq $1, %rdi
