@@ -74,7 +74,8 @@ void expect(const char *var_reg, int type)
 void tag(int type, const char *source, const char *dest)
 {
     if(type == TYPE_NUMBER) {
-        gen_code("salq %%%s, %%%s", source, dest);
+        move(source, dest);
+        gen_code("salq $1, %%%s", dest);
     } else {
         printf("Not implemented\n");
     }
