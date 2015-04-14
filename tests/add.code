@@ -11,8 +11,7 @@ ret
 f3:
 testq $1, %rdi
 jnz raisesig
-movq %rdi, %rax
-addq %rdi, %rax
+leaq (%rdi, %rdi, 1), %rax
 ret
 f4:
 testq $1, %rdi
@@ -23,15 +22,13 @@ f5:
 testq $1, %rdi
 jnz raisesig
 leaq 2(%rdi), %rsi
-movq %rdi, %rax
-addq %rsi, %rax
+leaq (%rdi, %rsi, 1), %rax
 ret
 f6:
 testq $1, %rdi
 jnz raisesig
 leaq 2(%rdi), %rsi
-movq %rdi, %rax
-addq %rsi, %rax
+leaq (%rdi, %rsi, 1), %rax
 ret
 f7:
 testq $1, %rdi
@@ -50,7 +47,7 @@ testq $1, %rdi
 jnz raisesig
 leaq 2(%rdi), %rax
 leaq 2(%rdi), %rsi
-addq %rsi, %rax
+leaq (%rax, %rsi, 1), %rax
 ret
 f10:
 XXX: check type?
@@ -77,9 +74,9 @@ testq $1, %rdi
 jnz raisesig
 leaq 2(%rdi), %rax
 leaq 4(%rdi), %rsi
-addq %rsi, %rax
+leaq (%rax, %rsi, 1), %rax
 leaq 6(%rdi), %rsi
 leaq 8(%rdi), %rdx
-addq %rdx, %rsi
-addq %rsi, %rax
+leaq (%rsi, %rdx, 1), %rsi
+leaq (%rax, %rsi, 1), %rax
 ret

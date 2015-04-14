@@ -194,17 +194,14 @@ void gen_add(struct tree *node, int tag_type)
     } else if(lhs->op == OP_VAR && rhs->op == OP_VAR){
         expect(lhs->var_reg, TYPE_NUMBER);
         expect(rhs->var_reg, TYPE_NUMBER);
-        move(lhs->var_reg, dest);
-        gen_code("addq %%%s, %%%s", rhs->var_reg, dest);
+        gen_code("leaq (%%%s, %%%s, 1), %%%s", lhs->var_reg, rhs->var_reg, dest);
     } else {
         if(lhs->op == OP_VAR) {
-            move(lhs->var_reg, dest);
-            gen_code("addq %%%s, %%%s", rhs->reg, dest);
+            gen_code("leaq (%%%s, %%%s, 1), %rax", lhs->var_reg, rhs->reg, dest);
         } else if(rhs->op == OP_VAR){
             gen_code("addq %%%s, %%%s", rhs->var_reg, dest);
         } else {
-            move(lhs->reg, dest);
-            gen_code("addq %%%s, %%%s", rhs->reg, dest);
+            gen_code("leaq (%%%s, %%%s, 1), %%%s", lhs->reg, rhs->reg, dest);
         }
     }
 }
