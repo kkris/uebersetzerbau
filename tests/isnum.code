@@ -7,7 +7,7 @@ ret
 f3:
 movq %rdi, %rax
 xorq $1, %rax
-salq %rax, %rax
+salq $1, %rax
 ret
 f4:
 testq $1, %rdi

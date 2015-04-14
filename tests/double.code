@@ -1,12 +1,12 @@
 constvar:
 testq $1, %rdi
 jnz raisesig
-salq %rdi, %rax
+leaq (, %rdi, 2), %rax
 ret
 varconst:
 testq $1, %rdi
 jnz raisesig
-salq %rdi, %rax
+leaq (, %rdi, 2), %rax
 ret
 varvar:
 testq $1, %rdi
@@ -17,5 +17,5 @@ ret
 varvarexpr:
 testq $1, %rdi
 jnz raisesig
-salq %rdi, %rax
+leaq (, %rdi, 2), %rax
 ret
