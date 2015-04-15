@@ -71,13 +71,15 @@ void lea(long int offset, const char *base, const char *index, int scale, const 
     if(offset == 0) {
         if(base == NULL) {
             if(scale == 1) {
-                gen_code("leaq (, %%%s), %%%s", index, dest);
+                if(strcmp(index, dest) != 0) // only if different
+                    move(index, dest);
             } else {
                 gen_code("leaq (, %%%s, %d), %%%s", index, scale, dest);
             }
         } else {
             if(index == NULL) {
-                gen_code("leaq (%%%s), %%%s", base, dest);
+                if(strcmp(base, dest) != 0) // only if different
+                    move(base, dest);
             } else {
                 if(scale == 1) {
                     gen_code("leaq (%%%s, %%%s), %%%s", base, index, dest);
