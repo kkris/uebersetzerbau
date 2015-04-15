@@ -73,7 +73,12 @@ t_expr: OP_SUB(OP_VAR, OP_VAR)  # 1 # gen_sub(bnode, TAGGED);
 t_expr: OP_SUB(t_expr, t_expr)  # 3 # gen_sub(bnode, TAGGED);
 t_expr: OP_SUB(t_expr, const)   # 2 # gen_sub(bnode, TAGGED);
 t_expr: OP_SUB(const, t_expr)   # 2 # gen_sub(bnode, TAGGED);
-t_expr: OP_SUB(zero, t_expr)    # 2 # gen_sub(bnode, TAGGED); gen_code("TODO: flip sign??");
+t_expr: OP_SUB(OP_VAR, const)   # 1 # gen_sub_var_const(bnode, TAGGED);
+t_expr: OP_SUB(const, OP_VAR)   # 1 # gen_sub_var_const(bnode, TAGGED);
+t_expr: OP_SUB(OP_VAR, t_expr)  # 1 # gen_sub(bnode, TAGGED);
+t_expr: OP_SUB(t_expr, OP_VAR)  # 1 # gen_sub(bnode, TAGGED);
+
+t_expr: OP_SUB(zero, t_expr)    # 2 # gen_sub(bnode, TAGGED); /*gen_code("TODO: flip sign??");*/
 t_expr: OP_SUB(t_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 
 t_expr: OP_MUL(t_expr, t_expr)  # 1 # gen_mul_tagged(bnode, TAGGED);
