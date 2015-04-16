@@ -19,7 +19,8 @@ void debug(const char *msg, ...)
 
 static char *type_checked_vars[5] = {NULL, NULL, NULL, NULL, NULL};
 
-char *get_next_reg(const char *prev, int reuse) {
+char *get_next_reg(const char *prev, int reuse)
+{
     fprintf(stderr, "next_reg(%s, ", prev);
     if(prev == NULL)
         return strdup("rdi");
@@ -40,6 +41,17 @@ char *get_next_reg(const char *prev, int reuse) {
     debug("Upps, no register left. Implement a better allocation algorithm!");
 
     return NULL;
+}
+
+char *get_lower_byte_reg(const char *reg)
+{
+    if(strcmp(reg, "rax") == 0) return strdup("al");
+    if(strcmp(reg, "rbx") == 0) return strdup("bl");
+    if(strcmp(reg, "rcx") == 0) return strdup("cl");
+    if(strcmp(reg, "rdx") == 0) return strdup("dl");
+    if(strcmp(reg, "rsi") == 0) return strdup("sil");
+    if(strcmp(reg, "rdi") == 0) return strdup("dil");
+    gen_code("TODO");
 }
 
 void gen_code(const char *code, ...)
@@ -477,17 +489,27 @@ void gen_mul_var_const(struct tree *node)
     gen_mul_reg_const(varnode->var_reg, dest, constnode->value);
 }
 
+/**
+ * reg is bitwise compared with constant. result is untagged 1 if they are equal
+ * else 0
+ */
 static void gen_eq_const(long int value, const char *source, const char *dest)
 {
     debug("gen_eq_const");
 
     value = tag_const(value);
 
-    gen_code("xorq %%%s, %%%s", dest);
-    gen_code("testq $%ld, %%%s", value, source);
-    gen_code("cmovqe $2, %%%s", dest);
+    char *byte = get_lower_byte_reg(dest);
+
+    gen_code("cmp $%ld, %%%s", value, source);
+    gen_code("setz %%%s", byte);
+    gen_code("movzx %%%s, %%%s", byte, dest);
 }
 
+/**
+ * lhs is bitwise compared with rhs. result is untagged 1 if they are equal
+ * else 0
+ */
 void gen_eq(struct tree *node)
 {
     debug("gen_eq");
@@ -511,17 +533,20 @@ void gen_eq(struct tree *node)
             gen_eq_const(rhs->value, lhs->reg, dest);
     } else if(lhs->op == OP_VAR && rhs->op == OP_VAR) {
         if(strcmp(lhs->name, rhs->name) == 0) {
-            gen_code("movq $2, %%%s", dest);
+            gen_code("movq $1, %%%s", dest); // possible to optimize by not requiring for later tag op
         } else {
-            gen_code("xorq %%%s, %%%s", dest, dest);
-            gen_code("testq %%%s, %%%s", lhs->var_reg, rhs->var_reg);
-            gen_code("cmovqe $2, %%%s", dest);
+            char *byte = get_lower_byte_reg(dest);
 
+            gen_code("cmp $%ld, %%%s", lhs->var_reg, rhs->var_reg);
+            gen_code("setz %%%s", byte);
+            gen_code("movzx %%%s, %%%s", byte, dest);
         }
     } else {
-        gen_code("xorq %%%s, %%%s", dest, dest);
-        gen_code("testq %%%s, %%%s", lhs->reg, rhs->reg);
-        gen_code("cmovqe $2, %%%s", dest);
+        char *byte = get_lower_byte_reg(dest);
+
+        gen_code("cmp %%%s, %%%s", lhs->reg, rhs->reg);
+        gen_code("setz %%%s", byte);
+        gen_code("movzx %%%s, %%%s", byte, dest);
     }
 }
 

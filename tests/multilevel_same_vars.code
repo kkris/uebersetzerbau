@@ -4,5 +4,5 @@ ret
 bar:
 testq $1, %rdi
 jnz raisesig
-leaq (%rdi, %rdi, 1), %rax
+leaq (%rdi, %rdi), %rax
 ret

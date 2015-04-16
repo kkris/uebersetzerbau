@@ -2,14 +2,18 @@ f1:
 movq $2, %rax
 ret
 f2:
-xorq %rax, %rax
-testq $10, %rdi
-cmovqe $2, %rax
+# check type
+cmp $10, %rdi
+setz %al
+movzx %al, %rax
+salq $1, %rax
 ret
 f3:
-xorq %rax, %rax
-testq $10, %rdi
-cmovqe $2, %rax
+# check type
+cmp $10, %rdi
+setz %al
+movzx %al, %rax
+salq $1, %rax
 ret
 f4:
 movq $2, %rax
@@ -18,14 +22,32 @@ f5:
 movq $2, %rax
 ret
 f6:
-TODO
+# check type
+leaq 2(%rdi), %rax
+leaq 2(%rdi), %rsi
+cmp %rax, %rsi
+setz %al
+movzx %al, %rax
+salq $1, %rax
 ret
 f7:
-TODO
+# check type??
+movq $0, %rax
 ret
 f8:
-TODO
+# check type
+movq %rdi, %rax
+xorq $2, %rax
+cmp $10, %rax
+setz %al
+movzx %al, %rax
+salq $1, %rax
 ret
 f9:
-TODO
+# check type
+leaq (, %rdi, 2), %rax
+cmp $20, %rax
+setz %al
+movzx %al, %rax
+salq $1, %rax
 ret

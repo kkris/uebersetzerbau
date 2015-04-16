@@ -85,10 +85,10 @@ testq $1, %rdi
 jnz raisesig
 leaq -2(%rdi), %rax
 leaq -4(%rdi), %rsi
-leaq (%rax, %rsi, 1), %rax
+leaq (%rax, %rsi), %rax
 leaq -6(%rdi), %rsi
 leaq -10(%rdi), %rdx
-leaq (%rsi, %rdx, 1), %rsi
+leaq (%rsi, %rdx), %rsi
 subq %rsi, %rax
 ret
 f16:

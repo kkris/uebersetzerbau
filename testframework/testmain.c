@@ -43,6 +43,18 @@ long int untag(long int value)
     sig_raised = 0; \
 } while(0)
 
+#define RAISES_NOT(FUNC, INPUT) do {\
+    expect_sig = 0; \
+    FUNC(INPUT); \
+    if(sig_raised == 1) {\
+        printf("\tFF Did not expect signal in %s, but was raised\n", #FUNC); \
+        errors++;\
+    }\
+    expect_sig = 0; \
+    sig_raised = 0; \
+} while(0)
+
+
 int main(void) {
     #include "TESTCASE"
 

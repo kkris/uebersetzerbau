@@ -11,7 +11,7 @@ ret
 varvar:
 testq $1, %rdi
 jnz raisesig
-leaq (%rdi, %rdi, 1), %rax
+leaq (%rdi, %rdi), %rax
 ret
 varvarexpr:
 testq $1, %rdi
