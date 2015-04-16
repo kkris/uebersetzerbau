@@ -349,8 +349,15 @@ void gen_sub(struct tree *node, int tag_type)
             gen_code("subq %%%s, %%%s", rhs->var_reg, dest);
         }
     } else {
-        move(lhs->reg, dest);
-        gen_code("subq %%%s, %%%s", rhs->reg, dest);
+        if(lhs->op == OP_VAR) {
+            move(lhs->var_reg, dest);
+            gen_code("subq %%%s, %%%s", rhs->reg, dest);
+        } else if(rhs->op == OP_VAR){
+            gen_code("subq %%%s, %%%s", rhs->var_reg, dest);
+        } else {
+            move(lhs->reg, dest);
+            gen_code("subq %%%s, %%%s", rhs->reg, dest);
+        }
     }
 }
 
