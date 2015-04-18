@@ -1,5 +1,10 @@
 %{
     #include "y.tab.h"
+
+    #include <limits.h>
+    #include <stdlib.h>
+
+    int lineno = 1;
 %}
 
 %option yylineno
@@ -9,11 +14,12 @@
 DIGIT [0-9]
 HEXDIGIT [0-9a-fA-F]
 CHAR [a-zA-Z]
+NEWLINE [\n]
 WHITESPACE [ \r\n\t]
 
 IDENTIFIER {CHAR}({CHAR}|{DIGIT})*
-NUM_DEC {DIGIT}*
-NUM_HEX ${HEXDIGIT}*
+NUM_DEC {DIGIT}+
+NUM_HEX ${HEXDIGIT}+
 COMMENT \/\/.*
 KEYWORD (fun|if|then|else|let|in|not|head|tail|and|end|isnum|islist|isfun)
 LEXEM (;|=|\+|-|\*|\.|<|=|\(|\)|->)
@@ -47,16 +53,32 @@ LEXEM (;|=|\+|-|\*|\.|<|=|\(|\)|->)
 }
 
 {NUM_DEC} {
+    long int num = strtol(yytext, NULL, 10);
+    if ((num == LONG_MIN || num == LONG_MAX) && errno == ERANGE) {
+        printf("Error: number literal too big\n");
+        exit(1);
+    }
+
     return NUM;
 }
 
 {NUM_HEX} {
+    long int num = strtol(yytext + 1, NULL, 16);
+    if ((num == LONG_MIN || num == LONG_MAX) && errno == ERANGE) {
+        printf("Error: number literal too big\n");
+        exit(1);
+    }
+
     return NUM;
 }
 
 
 {COMMENT} { /* ignore comments */
 
+}
+
+{NEWLINE} {
+    lineno++;
 }
 
 {WHITESPACE} { /* ignore whitespace */
