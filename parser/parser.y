@@ -34,21 +34,44 @@ Expr: IF Expr THEN Expr ELSE Expr END
     | Lambda
     | LET IDENT '=' Expr IN Expr END
     | Term
-    | NOT Term
-    | HEAD Term
-    | TAIL Term
-    | ISNUM Term
-    | ISLIST Term
-    | ISFUN Term
-    | Term '+' Term
+    | UnaryOps Term
+    | Term PlusTerm
     | Term '-' Term
-    | Term '*' Term
-    | Term '.' Term
-    | Term AND Term
+    | Term MulTerm
+    | Term ListTerm
+    | Term AndTerm
     | Term '<' Term
     | Term '=' Term
     | Expr Term     /* Funktionsaufruf */
     ;
+
+UnaryOp: NOT
+       | HEAD
+       | TAIL
+       | ISNUM
+       | ISLIST
+       | ISFUN
+       ;
+
+PlusTerm: /* empty */
+        | PlusTerm '+' Term
+        ;
+
+MulTerm: /* empty */
+       | MulTerm '*' Term
+       ;
+
+AndTerm: /* empty */
+       | AndTerm AND Term
+       ;
+
+ListTerm: /* empty */
+        | ListTerm '.' Term
+        ;
+
+UnaryOps: UnaryOp
+        | UnaryOps UnaryOp
+        ;
 
 Term: '(' Expr ')'
     | NUM
