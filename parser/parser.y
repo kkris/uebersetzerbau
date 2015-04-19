@@ -53,19 +53,19 @@ UnaryOp: NOT
        | ISFUN
        ;
 
-PlusTerm: /* empty */
+PlusTerm: '+' Term
         | PlusTerm '+' Term
         ;
 
-MulTerm: /* empty */
+MulTerm: '*' Term
        | MulTerm '*' Term
        ;
 
-AndTerm: /* empty */
+AndTerm: AND Term
        | AndTerm AND Term
        ;
 
-ListTerm: /* empty */
+ListTerm: '.' Term
         | ListTerm '.' Term
         ;
 
