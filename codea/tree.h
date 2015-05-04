@@ -3,6 +3,8 @@
 
 #include "stdio.h"
 
+#include "symbol.h"
+
 
 /* iburg macros */
 #define LEFT_CHILD(t) ((t)->kids[0])
@@ -52,7 +54,7 @@ struct tree {
 struct tree *new_node(int op, struct tree *left, struct tree *right);
 struct tree *new_node_with_reg(int op, struct tree *left, struct tree *right, char *reg);
 struct tree *new_const_node(int op, struct tree *left, struct tree *right, long int value);
-struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name, const char *var_reg);
+struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name, struct symbol *sym);
 
 void make_constant(struct tree *node, long int value);
 void make_equal_to(struct tree *dest, struct tree *source);

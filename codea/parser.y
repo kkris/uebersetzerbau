@@ -118,7 +118,8 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
     | ISLIST Term
     @{
         @i @Expr.node@ = new_node(OP_ISLIST, @Term.node@, NULL);
-        /*@codegen @Expr.node@->reg = get_reg();*/
+
+        @reg @Term.node@->reg = @Expr.node@->reg;
     @}
     | ISFUN Term
     @{
@@ -181,7 +182,7 @@ Term: '(' Expr ')'
     @}
     | IDENT         /* Variablenverwendung */
     @{ 
-        @i @Term.node@ = new_ident_node(OP_VAR, NULL, NULL, @IDENT.name@, symbol_find(@Term.symbols@, @IDENT.name@)->reg);
+        @i @Term.node@ = new_ident_node(OP_VAR, NULL, NULL, @IDENT.name@, symbol_find(@Term.symbols@, @IDENT.name@));
         @verify check_variable(@Term.symbols@, @IDENT.name@); 
     @}
     ;

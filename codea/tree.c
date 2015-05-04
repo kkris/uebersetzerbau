@@ -60,12 +60,14 @@ struct tree *new_const_node(int op, struct tree *left, struct tree *right, long 
     return t;
 }
 
-struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name, const char *var_reg)
+struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name, struct symbol *sym)
 {
     struct tree *t = new_node(op, left, right);
 
     t->name = strdup(name);
-    t->var_reg = strdup(var_reg);
+
+    if(sym != NULL)
+        t->var_reg = strdup(sym->reg);
 
     return t;
 }
