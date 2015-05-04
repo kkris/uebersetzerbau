@@ -35,7 +35,9 @@
 
 @attributes { struct symbol *symbols; struct symbol *defs; } Program Def
 
-@attributes { struct symbol *symbols; struct tree *node; } Term Expr Lambda LambdaToplevel
+@attributes { struct symbol *symbols; struct tree *node; } Term Expr Lambda LambdaToplevel PlusTerm MulTerm ListTerm AndTerm UnaryOps
+
+@attributes { int op; } UnaryOp
 
 
 %%
@@ -47,7 +49,7 @@ Start:  Program
      @}
      ;
 
-Program:
+Program: /* empty */
        @{ @i @Program.defs@ = NULL; @}
        |
        IDENT '=' LambdaToplevel ';' Program
@@ -94,7 +96,8 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
     @{
         @i @Expr.node@ = @Term.node@;
     @}
-    | NOT Term
+    | UnaryOps
+    /*| NOT Term
     @{
          @i @Expr.node@ = new_node(OP_NOT, @Term.node@, NULL);
          @reg @Term.node@->reg = @Expr.node@->reg;
@@ -107,7 +110,7 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
     | TAIL Term
     @{
         @i @Expr.node@ = new_node(OP_TAIL, @Term.node@, NULL);
-        /*@codegen @Expr.node@->reg = get_reg();*/
+        /*@codegen @Expr.node@->reg = get_reg();*
     @}
     | ISNUM Term
     @{
@@ -126,7 +129,7 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
         @i @Expr.node@ = new_node(OP_ISFUN, @Term.node@, NULL);
 
         @reg @Term.node@->reg = @Expr.node@->reg;
-    @}
+    @}*/
     | Term '+' Term
     @{
         @i @Expr.node@ = new_node(OP_ADD, @Term.0.node@, @Term.1.node@);
@@ -170,6 +173,26 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
     @}
     /*| Expr Term */    /* Funktionsaufruf */
     ;
+
+UnaryOp: NOT 
+       @{ @i @UnaryOp.op@ = OP_NOT; @}
+       | HEAD
+       @{ @i @UnaryOp.op@ = OP_HEAD; @}
+       | TAIL
+       @{ @i @UnaryOp.op@ = OP_TAIL; @}
+       | ISNUM
+       @{ @i @UnaryOp.op@ = OP_ISNUM; @}
+       | ISLIST
+       @{ @i @UnaryOp.op@ = OP_ISLIST; @}
+       | ISFUN
+       @{ @i @UnaryOp.op@ = OP_ISFUN; @}
+       ;
+
+UnaryOps: UnaryOp Term
+   @{ @i @UnaryOps.node@ = new_node(@UnaryOp.op@, @Term.node@, NULL); @}
+   | UnaryOp UnaryOps
+   @{ @i @UnaryOps.0.node@ = new_node(@UnaryOp.op@, @UnaryOps.1.node@, NULL); @}
+        ;
 
 Term: '(' Expr ')'
     @{
