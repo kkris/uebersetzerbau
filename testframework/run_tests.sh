@@ -3,8 +3,10 @@
 TESTS=${1%/} # remove trailing /
 BIN=$2
 
-for t in $TESTS/*.{0,1,2}
+for t in $TESTS/*.{0,1,2,3}
 do
+    test -f "$t" || continue
+
     testcase="${t##*/}"
     expected="${t: -1}"
 
