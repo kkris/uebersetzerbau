@@ -1,13 +1,18 @@
-generator: clean
+all: ag
+
+ox:
 	ox parser.y scanner.l
+
+yacc: ox
 	yacc -d oxout.y
+
+flex: yacc
 	flex oxout.l
 
-
-ag: generator
+ag: flex
 	gcc -o ag lex.yy.c y.tab.c symbol.c -lfl
 
-debug: generator
+debug: flex
 	gcc -o ag lex.yy.c y.tab.c symbol.c -lfl -DENDEBUG
 
 
@@ -15,7 +20,7 @@ test: ag
 	./ag
 
 tests: ag
-	../run_tests.sh ../tests/ ./ag
+	../testframework/run_tests.sh ../tests/ ./ag
 
 
 clean:
