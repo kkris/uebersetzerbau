@@ -7,8 +7,6 @@
     int lineno = 1;
 %}
 
-%option yylineno
-
 /* definitions */
 
 DIGIT [0-9]
@@ -86,6 +84,6 @@ LEXEM (;|=|\+|-|\*|\.|<|=|\(|\)|->)
 }
 
 . { /* unknown token, error */
-    printf("Error: unknown token %s at line %d\n", yytext, yylineno);
+    printf("Error: unknown token %s at line %d\n", yytext, lineno);
     exit(1);
 }

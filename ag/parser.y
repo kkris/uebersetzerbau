@@ -27,7 +27,7 @@
 @attributes { char *name; } IDENT
 
 @attributes { struct symbol *symbols; struct symbol *defs; } Program Def
-@attributes { struct symbol *symbols; } Lambda Expr Term
+@attributes { struct symbol *symbols; } Lambda Expr Term PlusTerm MulTerm ListTerm AndTerm
 
 
 %%
@@ -38,8 +38,8 @@ Start:  Program
      @{ @i @Program.symbols@ = @Program.defs@; @}
      ;
 
-Program:
-       @{ @i @Program.defs@ = symbol_new(); @}
+Program: /*empty */
+       @{ @i @Program.defs@ = NULL; @}
        |
        IDENT '=' Lambda ';' Program
        @{ @i @Program.0.defs@ = symbol_add(@Program.1.defs@, @IDENT.name@);
@@ -57,21 +57,45 @@ Expr: IF Expr THEN Expr ELSE Expr END
     | LET IDENT '=' Expr IN Expr END
     @{ @i @Expr.2.symbols@ = symbol_add(@Expr.0.symbols@, @IDENT.name@); @}
     | Term
-    | NOT Term
-    | HEAD Term
-    | TAIL Term
-    | ISNUM Term
-    | ISLIST Term
-    | ISFUN Term
-    | Term '+' Term
+    | UnaryOps Term
+    | Term PlusTerm
     | Term '-' Term
-    | Term '*' Term
-    | Term '.' Term
-    | Term AND Term
+    | Term MulTerm
+    | Term ListTerm
+    | Term AndTerm
     | Term '<' Term
     | Term '=' Term
     | Expr Term     /* Funktionsaufruf */
     ;
+
+UnaryOp: NOT
+       | HEAD
+       | TAIL
+       | ISNUM
+       | ISLIST
+       | ISFUN
+       ;
+
+UnaryOps: UnaryOp
+        | UnaryOps UnaryOp
+        ;
+
+
+PlusTerm: '+' Term
+        | PlusTerm '+' Term
+        ;
+
+MulTerm: '*' Term
+       | MulTerm '*' Term
+       ;
+
+AndTerm: AND Term
+       | AndTerm AND Term
+       ;
+
+ListTerm: '.' Term
+        | ListTerm '.' Term
+
 
 Term: '(' Expr ')'
     | NUM
@@ -83,9 +107,11 @@ Term: '(' Expr ')'
 
 /* subroutines */
 
+extern int lineno;
+
 void yyerror(char *s) {
     errors++;
-    fprintf(stderr, "Error: %s\n", s);
+    fprintf(stderr, "Error: %s at line %d\n", s, lineno);
 }
 
 int main(void) {
