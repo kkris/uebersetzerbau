@@ -101,12 +101,12 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
         @i @Expr.node@ = @UnaryOps.node@;
         @reg @UnaryOps.node@->reg = @Expr.node@->reg;
     @}
-    | Term '+' Term
+    | Term PlusTerm
     @{
-        @i @Expr.node@ = new_node(OP_ADD, @Term.0.node@, @Term.1.node@);
+        @i @Expr.node@ = new_node(OP_ADD, @Term.node@, @PlusTerm.node@);
 
-        @reg @Term.0.node@->reg = @Expr.node@->reg;
-        @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg, @Term.0.node@->constant);
+        @reg @Term.node@->reg = @Expr.node@->reg;
+        @reg @PlusTerm.node@->reg = get_next_reg(@Term.node@->reg, @Term.node@->constant);
     @}
     | Term '-' Term
     @{
@@ -170,6 +170,18 @@ UnaryOps: UnaryOp Term
         @reg @UnaryOps.1.node@->reg = @UnaryOps.0.node@->reg;
    @}
     ;
+
+PlusTerm: '+' Term
+        @{
+            @i @PlusTerm.node@ = @Term.node@;
+        @}
+        | PlusTerm '+' Term
+        @{
+            @i @PlusTerm.0.node@ = new_node(OP_ADD, @PlusTerm.1.node@, @Term.node@);
+            @reg @PlusTerm.1.node@->reg = @PlusTerm.0.node@->reg;
+            @reg @Term.node@->reg = get_next_reg(@PlusTerm.1.node@->reg, @PlusTerm.1.node@->constant);
+        @}
+        ;
 
 Term: '(' Expr ')'
     @{
