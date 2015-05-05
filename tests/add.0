@@ -13,3 +13,4 @@ f12 = fun x -> x + (0 + (1 * 0)) end;
 f13 = fun x -> x + (5 - 5) end;
 f14 = fun x -> x + (3 - (not 2)) end;
 f15 = fun x -> ((x + 1) + (x + 2)) + ((x + 3) + (x + 4)) end;
+f16 = fun x -> x + 1 + x + 2 + x + 3 + x + 4 end;

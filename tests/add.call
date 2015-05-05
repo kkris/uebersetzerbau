@@ -13,6 +13,7 @@ extern long f12(long int);
 extern long f13(long int);
 extern long f14(long int);
 extern long f15(long int);
+extern long f16(long int);
 
 CHECK(f1, 0, 1);
 CHECK(f1, 1, 2);
