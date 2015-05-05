@@ -1,0 +1,7 @@
+f1 = fun x -> 0.1.2.3.4 end;
+f2 = fun x -> (((0.1).2).3).4 end;
+f3 = fun x -> 0.(1.(2.(3.4))) end;
+f4 = fun x -> 4.3.2.1.0 end;
+f5 = fun x -> x.x.x end;
+f6 = fun x -> x.2.x end;
+f7 = fun x -> x.1.2.3 end;
