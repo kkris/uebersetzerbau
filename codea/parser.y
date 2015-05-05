@@ -97,39 +97,10 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
         @i @Expr.node@ = @Term.node@;
     @}
     | UnaryOps
-    /*| NOT Term
     @{
-         @i @Expr.node@ = new_node(OP_NOT, @Term.node@, NULL);
-         @reg @Term.node@->reg = @Expr.node@->reg;
+        @i @Expr.node@ = @UnaryOps.node@;
+        @reg @UnaryOps.node@->reg = @Expr.node@->reg;
     @}
-    | HEAD Term
-    @{
-        @i @Expr.node@ = new_node(OP_HEAD, @Term.node@, NULL);
-        @reg @Term.node@->reg = @Expr.node@->reg;
-    @}
-    | TAIL Term
-    @{
-        @i @Expr.node@ = new_node(OP_TAIL, @Term.node@, NULL);
-        /*@codegen @Expr.node@->reg = get_reg();*
-    @}
-    | ISNUM Term
-    @{
-        @i @Expr.node@ = new_node(OP_ISNUM, @Term.node@, NULL);
-
-        @reg @Term.node@->reg = @Expr.node@->reg;
-    @}
-    | ISLIST Term
-    @{
-        @i @Expr.node@ = new_node(OP_ISLIST, @Term.node@, NULL);
-
-        @reg @Term.node@->reg = @Expr.node@->reg;
-    @}
-    | ISFUN Term
-    @{
-        @i @Expr.node@ = new_node(OP_ISFUN, @Term.node@, NULL);
-
-        @reg @Term.node@->reg = @Expr.node@->reg;
-    @}*/
     | Term '+' Term
     @{
         @i @Expr.node@ = new_node(OP_ADD, @Term.0.node@, @Term.1.node@);
@@ -189,10 +160,16 @@ UnaryOp: NOT
        ;
 
 UnaryOps: UnaryOp Term
-   @{ @i @UnaryOps.node@ = new_node(@UnaryOp.op@, @Term.node@, NULL); @}
+   @{ 
+        @i @UnaryOps.node@ = new_node(@UnaryOp.op@, @Term.node@, NULL); 
+        @reg @Term.node@->reg = @UnaryOps.node@->reg;
+   @}
    | UnaryOp UnaryOps
-   @{ @i @UnaryOps.0.node@ = new_node(@UnaryOp.op@, @UnaryOps.1.node@, NULL); @}
-        ;
+   @{ 
+        @i @UnaryOps.0.node@ = new_node(@UnaryOp.op@, @UnaryOps.1.node@, NULL); 
+        @reg @UnaryOps.1.node@->reg = @UnaryOps.0.node@->reg;
+   @}
+    ;
 
 Term: '(' Expr ')'
     @{
