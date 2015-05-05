@@ -123,11 +123,12 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
         @reg @MulTerm.node@->reg = get_next_reg(@Term.node@->reg, @Term.node@->constant);
     @}
     /*| Term '.' Term*/
-    | Term AND Term
+    | Term AndTerm
     @{
-        @i @Expr.node@ = new_node(OP_AND, @Term.0.node@, @Term.1.node@);
-        /*@codegen @Term.0.node@->reg = get_reg();
-        @codegen @Term.1.node@->reg = get_reg();*/
+        @i @Expr.node@ = new_node(OP_AND, @Term.node@, @AndTerm.node@);
+
+        @reg @Term.node@->reg = @Expr.node@->reg;
+        @reg @AndTerm.node@->reg = get_next_reg(@Term.node@->reg, @Term.node@->constant);
     @}
     | Term '<' Term
     @{
@@ -197,6 +198,18 @@ MulTerm: '*' Term
         @}
         ;
 
+AndTerm: AND Term
+        @{
+            @i @AndTerm.node@ = @Term.node@;
+        @}
+        | AndTerm AND Term
+        @{
+            @i @AndTerm.0.node@ = new_node(OP_AND, @AndTerm.1.node@, @Term.node@);
+
+            @reg @AndTerm.1.node@->reg = @AndTerm.0.node@->reg;
+            @reg @Term.node@->reg = get_next_reg(@AndTerm.1.node@->reg, @AndTerm.1.node@->constant);
+        @}
+        ;
 
 
 Term: '(' Expr ')'
