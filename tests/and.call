@@ -1,0 +1,110 @@
+extern long f1(long int);
+extern long f2(long int);
+extern long f3(long int);
+extern long f4(long int);
+extern long f5(long int);
+extern long f6(long int);
+extern long f7(long int);
+extern long f8(long int);
+extern long f9(long int);
+extern long f10(long int);
+
+RAISES(f1, 1);
+CHECK(f1, 0, 0);
+CHECK(f1, 1, 1);
+CHECK(f1, -1,  -1);
+CHECK(f1, -2, -2);
+CHECK(f1, 5, 5);
+CHECK(f1, 1000, 1000);
+
+RAISES(f2, 1);
+CHECK(f2, 0, 0);
+CHECK(f2, 1, 1);
+CHECK(f2, -1,  -1);
+CHECK(f2, -2, -2);
+CHECK(f2, 5, 5);
+CHECK(f2, 1000, 1000);
+
+RAISES(f3, 1);
+CHECK(f3, 0, 0);
+CHECK(f3, 1, 0);
+CHECK(f3, -1,  0);
+CHECK(f3, -2, 0);
+CHECK(f3, 5, 0);
+CHECK(f3, 1000, 0);
+
+RAISES(f4, 1);
+CHECK(f4, 0, 0);
+CHECK(f4, 1, 0);
+CHECK(f4, -1,  0);
+CHECK(f4, -2, 0);
+CHECK(f4, 5, 0);
+CHECK(f4, 1000, 0);
+
+RAISES(f5, 1);
+CHECK(f5, 0, 0);
+CHECK(f5, 1, 0);
+CHECK(f5, -1, 0);
+CHECK(f5, -2, 0);
+CHECK(f5, 5, 0);
+CHECK(f5, 1000, 0);
+
+RAISES(f6, 1);
+CHECK(f6, 0, 0);
+CHECK(f6, 1, 0);
+CHECK(f6, -1,  8);
+CHECK(f6, -2, 8);
+CHECK(f6, 5, 0);
+CHECK(f6, 1000, 0);
+CHECK(f6, 8, 8);
+CHECK(f6, 24, 8);
+CHECK(f6, 16, 0);
+
+RAISES(f7, 1);
+CHECK(f7, 0, 0);
+CHECK(f7, 1, 0);
+CHECK(f7, -1,  8);
+CHECK(f7, -2, 8);
+CHECK(f7, 5, 0);
+CHECK(f7, 1000, 0);
+CHECK(f7, 8, 8);
+CHECK(f7, 24, 8);
+CHECK(f7, 16, 0);
+
+RAISES(f8, 1);
+CHECK(f8, 0, 0);
+CHECK(f8, 1, 0);
+CHECK(f8, -1,  -2);
+CHECK(f8, -2, -4);
+CHECK(f8, 5, 0);
+CHECK(f8, 1000, 0);
+CHECK(f8, 8, 0);
+CHECK(f8, 24, 1);
+CHECK(f8, 6, 4);
+CHECK(f8, 16, 0);
+
+RAISES(9, 1);
+CHECK(f9, 0, 0);
+CHECK(f9, 1, 0);
+CHECK(f9, -1,  0);
+CHECK(f9, -2, 0);
+CHECK(f9, 5, 0);
+CHECK(f9, 1000, 0);
+CHECK(f9, 8, 0);
+CHECK(f9, 24, 0);
+CHECK(f9, 16, 0);
+
+RAISES(f10, 1);
+CHECK(f10, 0, 1);
+CHECK(f10, 1, 0);
+CHECK(f10, -1,  -2);
+CHECK(f10, -2, -2);
+CHECK(f10, 5, 4);
+CHECK(f10, 1000, 1000);
+CHECK(f10, 8, 8);
+CHECK(f10, 24, 24);
+CHECK(f10, 16, 16);
+
+
+
+
