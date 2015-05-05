@@ -24,7 +24,7 @@ ret: OP_RET(const)          # 0 # ret(LEFT_CHILD(bnode), UNTAGGED, TYPE_NUMBER);
 ret: OP_RET(OP_VAR)         # 0 # move(LEFT_CHILD(bnode)->var_reg, "rax"); gen_code("ret");
 ret: OP_RET(t_expr)         # 1 # ret(LEFT_CHILD(bnode), TAGGED, 0);
 ret: OP_RET(t_word)         # 1 # ret(LEFT_CHILD(bnode), TAGGED, 0);
-ret: OP_RET(u_list)           # 1 # ret(LEFT_CHILD(bnode), UNTAGGED, TYPE_LIST);
+ret: OP_RET(u_list)         # 1 # ret(LEFT_CHILD(bnode), UNTAGGED, TYPE_LIST);
 
 
 u_expr: const                   # 0 # bnode->constant = 1;
