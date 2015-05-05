@@ -8,3 +8,4 @@ f7 = fun x -> x and (4 * 2) and 24 end;
 f8 = fun x -> x and (2 * x) end;
 f9 = fun x -> 0 and x end;
 f10 = fun x -> x and (not not not x) end;
+f11 = fun x -> (x - x) and x end;

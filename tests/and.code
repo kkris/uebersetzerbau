@@ -1,2 +1,10 @@
 f1:
 XXX
+
+f9:
+XXX: check type??
+movq $0, %rax
+ret
+f11:
+XXX: check type??
+movq $0, %rax
