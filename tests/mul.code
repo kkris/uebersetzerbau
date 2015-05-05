@@ -100,6 +100,19 @@ movq %rdi, %rsi
 sarq $1, %rax
 imulq %rsi, %rax
 ret
+f18a:
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rax
+sarq $1, %rax
+imulq %rdi, %rax
+movq %rdi, %rsi
+sarq $1, %rax
+imulq %rsi, %rax
+movq %rdi, %rsi
+sarq $1, %rax
+imulq %rsi, %rax
+ret
 f19:
 testq $1, %rdi
 jnz raisesig
@@ -109,6 +122,16 @@ imulq %rdi, %rdx
 movq $0, %rax
 ret
 f20:
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rax
+movq %rdi, %rsi
+sarq $1, %rsi
+imulq %rdi, %rsi
+sarq $1, %rax
+imulq %rsi, %rax
+ret
+f20a:
 testq $1, %rdi
 jnz raisesig
 movq %rdi, %rax

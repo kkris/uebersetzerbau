@@ -13,6 +13,24 @@ extern long f12(long int);
 extern long f13(long int);
 extern long f14(long int);
 extern long f15(long int);
+extern long f16(long int);
+extern long f17(long int);
+extern long f18(long int);
+extern long f18a(long int);
+extern long f19(long int);
+extern long f20(long int);
+extern long f20a(long int);
+extern long f21(long int);
+extern long f22(long int);
+extern long f23(long int);
+extern long f24(long int);
+extern long f25(long int);
+extern long f26(long int);
+extern long f27(long int);
+extern long f28(long int);
+extern long f29(long int);
+extern long f30(long int);
+
 
 RAISES(f1, 1);
 CHECK(f1, 0, 0);
@@ -162,6 +180,14 @@ CHECK(f18, -2, 16);
 CHECK(f18, 5, 625);
 CHECK(f18, 100, 100000000);
 
+RAISES(f18a, 1); // ???
+CHECK(f18a, 0, 0);
+CHECK(f18a, 1, 1);
+CHECK(f18a, -1,  1);
+CHECK(f18a, -2, 16);
+CHECK(f18a, 5, 625);
+CHECK(f18a, 100, 100000000);
+
 RAISES(f19, 1); // ???
 CHECK(f19, 0, 0);
 CHECK(f19, 1, 0);
@@ -177,6 +203,14 @@ CHECK(f20, -1,  -1);
 CHECK(f20, -2, -8);
 CHECK(f20, 5, 125);
 CHECK(f20, 100, 1000000);
+
+RAISES(f20a, 1); // ???
+CHECK(f20a, 0, 0);
+CHECK(f20a, 1, 1);
+CHECK(f20a, -1,  -1);
+CHECK(f20a, -2, -8);
+CHECK(f20a, 5, 125);
+CHECK(f20a, 100, 1000000);
 
 RAISES(f21, 1); // ???
 CHECK(f21, 0, 0);
