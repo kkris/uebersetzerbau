@@ -115,12 +115,12 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
         @reg @Term.0.node@->reg = @Expr.node@->reg;
         @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg, @Term.0.node@->constant);
    @}
-    | Term '*' Term
+    | Term MulTerm
     @{
-        @i @Expr.node@ = new_node(OP_MUL, @Term.0.node@, @Term.1.node@);
+        @i @Expr.node@ = new_node(OP_MUL, @Term.node@, @MulTerm.node@);
 
-        @reg @Term.0.node@->reg = @Expr.node@->reg;
-        @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg, @Term.0.node@->constant);
+        @reg @Term.node@->reg = @Expr.node@->reg;
+        @reg @MulTerm.node@->reg = get_next_reg(@Term.node@->reg, @Term.node@->constant);
     @}
     /*| Term '.' Term*/
     | Term AND Term
@@ -178,10 +178,26 @@ PlusTerm: '+' Term
         | PlusTerm '+' Term
         @{
             @i @PlusTerm.0.node@ = new_node(OP_ADD, @PlusTerm.1.node@, @Term.node@);
+
             @reg @PlusTerm.1.node@->reg = @PlusTerm.0.node@->reg;
             @reg @Term.node@->reg = get_next_reg(@PlusTerm.1.node@->reg, @PlusTerm.1.node@->constant);
         @}
         ;
+
+MulTerm: '*' Term
+        @{
+            @i @MulTerm.node@ = @Term.node@;
+        @}
+        | MulTerm '*' Term
+        @{
+            @i @MulTerm.0.node@ = new_node(OP_MUL, @MulTerm.1.node@, @Term.node@);
+
+            @reg @MulTerm.1.node@->reg = @MulTerm.0.node@->reg;
+            @reg @Term.node@->reg = get_next_reg(@MulTerm.1.node@->reg, @MulTerm.1.node@->constant);
+        @}
+        ;
+
+
 
 Term: '(' Expr ')'
     @{
