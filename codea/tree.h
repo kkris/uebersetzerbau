@@ -33,6 +33,7 @@ enum {
     OP_RET,
     OP_ZERO,
     OP_ONE,
+    OP_LIST,
     OP_UNKNOWN
 };
 

@@ -157,6 +157,9 @@ void tag(int type, const char *source, const char *dest)
     if(type == TYPE_NUMBER) {
         move(source, dest);
         gen_code("salq $1, %%%s", dest);
+    } else if(type == TYPE_LIST) {
+        move(source, dest);
+        gen_code("addq $1, %%%s", dest);
     } else {
         printf("Not implemented\n");
     }
@@ -204,6 +207,9 @@ void ret(struct tree *node, int tag_type, int type)
         } else if(type == TYPE_REG) {
             move(node->reg, "rax");
             tag(TYPE_NUMBER, "rax", "rax");
+        } else if(type == TYPE_LIST) {
+            move(node->reg, "rax");
+            tag(TYPE_LIST, "rax", "rax");
         } else {
             gen_code("ret todo");
         }
@@ -660,3 +666,55 @@ void gen_islist(struct tree *node)
     gen_code(".after:");
 }
 
+static void set_head_const(const char *list_reg, long int value)
+{
+    gen_code("movq $%ld, (%%%s)", value, list_reg);
+}
+
+static void set_head_reg(const char *list_reg, const char *reg)
+{
+    gen_code("movq %%%s, (%%%s)", reg, list_reg);
+}
+
+static void set_tail_const(const char *list_reg, long int value)
+{
+    gen_code("movq $%ld, 8(%%%s)", value, list_reg);
+}
+
+static void set_tail_reg(const char *list_reg, const char *reg)
+{
+    gen_code("movq %%%s, 8(%%%s)", reg, list_reg);
+}
+
+
+/**
+ * Constructs a list from a const, var or expression as lhs and rhs. The
+ * resulting address is untagged.
+ */
+void gen_list(struct tree *node)
+{
+    debug("gen_list");
+
+    struct tree *lhs = LEFT_CHILD(node);
+    struct tree *rhs = RIGHT_CHILD(node);
+
+    const char *dest = node->reg;
+
+    if(lhs->constant)
+        set_head_const("r15", lhs->value);
+    else if(lhs->op == OP_VAR)
+        set_head_reg("r15", lhs->var_reg);
+    else
+        set_head_reg("r15", lhs->reg);
+
+    if(rhs->constant)
+        set_tail_const("r15", rhs->value);
+    else if(rhs->op == OP_VAR)
+        set_tail_reg("r15", rhs->var_reg);
+    else
+        set_tail_reg("r15", rhs->reg);
+
+    // return cell address and advance list pointer in r15
+    move("r15", dest);
+    gen_code("addq $16, %%%s", "r15");
+}

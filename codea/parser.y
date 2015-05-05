@@ -122,7 +122,13 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
         @reg @Term.node@->reg = @Expr.node@->reg;
         @reg @MulTerm.node@->reg = get_next_reg(@Term.node@->reg, @Term.node@->constant);
     @}
-    /*| Term '.' Term*/
+    | Term ListTerm
+    @{
+        @i @Expr.node@ = new_node(OP_LIST, @Term.node@, @ListTerm.node@);
+
+        @reg @Term.node@->reg = @Expr.node@->reg;
+        @reg @ListTerm.node@->reg = get_next_reg(@Term.node@->reg, @Term.node@->constant);
+    @}
     | Term AndTerm
     @{
         @i @Expr.node@ = new_node(OP_AND, @Term.node@, @AndTerm.node@);
@@ -211,6 +217,17 @@ AndTerm: AND Term
         @}
         ;
 
+ListTerm: '.' Term
+        @{
+            @i @ListTerm.node@ = @Term.node@;
+        @}
+        | ListTerm '.' Term
+        @{
+            @i @ListTerm.0.node@ = new_node(OP_LIST, @ListTerm.1.node@, @Term.node@);
+
+            @reg @ListTerm.1.node@->reg = @ListTerm.0.node@->reg;
+            @reg @Term.node@->reg = get_next_reg(@ListTerm.1.node@->reg, @ListTerm.1.node@->constant);
+        @}
 
 Term: '(' Expr ')'
     @{
