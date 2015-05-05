@@ -104,8 +104,16 @@ t_expr: OP_MUL(one, t_expr)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 t_expr: OP_MUL(OP_VAR, one)     # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 t_expr: OP_MUL(one, OP_VAR)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 
-
 t_expr: OP_NOT(neg_t_expr)      # 0 # make_equal_to(bnode, LEFT_CHILD(LEFT_CHILD(bnode)));
+
+t_expr: OP_AND(OP_VAR, OP_VAR)  # 1 # gen_and(bnode, TAGGED);
+t_expr: OP_AND(t_expr, t_expr)  # 1 # gen_and(bnode, TAGGED);
+t_expr: OP_AND(t_expr, const)   # 1 # gen_and(bnode, TAGGED);
+t_expr: OP_AND(const, t_expr)   # 1 # gen_and(bnode, TAGGED);
+t_expr: OP_AND(OP_VAR, const)   # 1 # gen_and_var_const(bnode, TAGGED);
+t_expr: OP_AND(const, OP_VAR)   # 1 # gen_and_var_const(bnode, TAGGED);
+t_expr: OP_AND(OP_VAR, t_expr)  # 1 # gen_and(bnode, TAGGED);
+t_expr: OP_AND(t_expr, OP_VAR)  # 1 # gen_and(bnode, TAGGED);
 
 t_expr: OP_ISLIST(t_word)       # 1 # gen_islist(bnode);
 t_expr: OP_ISLIST(t_expr)       # 1 # gen_islist(bnode);
@@ -157,6 +165,9 @@ zero: OP_MUL(OP_VAR, zero)  # 0 # make_constant(bnode, 0);
 zero: OP_MUL(zero, OP_VAR)  # 0 # make_constant(bnode, 0);
 
 zero: OP_ADD(zero, zero)    # 0 # make_constant(bnode, 0);
+
+zero: OP_AND(zero, OP_VAR)  # 0 # make_constant(bnode, 0);
+zero: OP_AND(OP_VAR, zero)  # 0 # make_constant(bnode, 0);
 
 zero: OP_ISLIST(const)      # 0 # make_constant(bnode, 0);
 zero: OP_ISFUN(const)       # 0 # make_constant(bnode, 0);

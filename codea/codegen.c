@@ -230,6 +230,76 @@ void gen_not(const char *source, const char *dest, int tag_type)
     }
 }
 
+static void gen_and_reg_const(long int value, const char *source, const char *dest, int tag_type)
+{
+    debug("gen_and_reg_const");
+
+    if(tag_type == TAGGED)
+        value = tag_const(value);
+
+    move(source, dest);
+    gen_code("andq $%ld, %%%s", value, dest);
+}
+
+void gen_and(struct tree *node, int tag_type)
+{
+    debug("gen_and");
+
+    struct tree *lhs = LEFT_CHILD(node);
+    struct tree *rhs = RIGHT_CHILD(node);
+
+    const char *dest = node->reg;
+
+    if(lhs->constant && rhs->constant) {
+        gen_code("TODO: upps, constant fold!");
+    } else if(lhs->constant) {
+        gen_and_reg_const(lhs->value, rhs->reg, dest, tag_type);
+    } else if(rhs->constant) {
+        gen_and_reg_const(rhs->value, lhs->reg, dest, tag_type);
+    } else if(lhs->op == OP_VAR && rhs->op == OP_VAR){
+        expect(lhs->var_reg, TYPE_NUMBER);
+        expect(rhs->var_reg, TYPE_NUMBER);
+        if(strcmp(lhs->name, rhs->name) == 0)
+            move(lhs->var_reg, dest);
+        else {
+            move(lhs->var_reg, dest);
+            gen_code("andq %%%s, %%%s", rhs->var_reg, dest);
+        }
+    } else {
+        if(lhs->op == OP_VAR) {
+            move(lhs->var_reg, dest);
+            gen_code("andq %%%s, %%%s", rhs->reg, dest);
+        } else if(rhs->op == OP_VAR){
+            move(lhs->reg, dest);
+            gen_code("andq %%%s, %%%s", rhs->var_reg, dest);
+        } else {
+            move(lhs->reg, dest);
+            gen_code("andq %%%s, %%%s", rhs->reg, dest);
+        }
+    }
+}
+
+void gen_and_var_const(struct tree *node, int tag_type)
+{
+    debug("gen_and_var_const");
+
+    struct tree *lhs = LEFT_CHILD(node);
+    struct tree *rhs = RIGHT_CHILD(node);
+
+    const char *dest = node->reg;
+
+    struct tree *constnode = lhs->constant ? lhs : rhs;
+    struct tree *varnode = lhs->op == OP_VAR ? lhs : rhs;
+
+    long int value = constnode->value;
+    if(tag_type == TAGGED)
+        value = tag_const(value);
+
+    expect(varnode->var_reg, TYPE_NUMBER);
+
+    gen_and_reg_const(constnode->value, varnode->var_reg, dest, tag_type);
+}
+
 static void gen_add_reg_const(long int value, const char *source, const char *dest, int tag_type)
 {
     debug("gen_add_reg_const");
