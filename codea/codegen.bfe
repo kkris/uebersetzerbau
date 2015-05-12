@@ -101,8 +101,8 @@ t_expr: OP_MUL(const, OP_VAR)   # 1 # gen_mul_var_const(bnode);
 
 t_expr: OP_MUL(t_expr, one)     # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 t_expr: OP_MUL(one, t_expr)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
-t_expr: OP_MUL(OP_VAR, one)     # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
-t_expr: OP_MUL(one, OP_VAR)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+t_expr: OP_MUL(OP_VAR, one)     # 0 # expect_num(LEFT_CHILD(bnode)); make_equal_to(bnode, LEFT_CHILD(bnode));
+t_expr: OP_MUL(one, OP_VAR)     # 0 # expect_num(RIGHT_CHILD(bnode)); make_equal_to(bnode, RIGHT_CHILD(bnode));
 
 t_expr: OP_NOT(neg_t_expr)      # 0 # make_equal_to(bnode, LEFT_CHILD(LEFT_CHILD(bnode)));
 

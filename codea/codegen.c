@@ -153,6 +153,12 @@ void expect(const char *var_reg, int type)
     }
 }
 
+void expect_num(struct tree *node)
+{
+    if(node->op == OP_VAR)
+        expect(node->var_reg, TYPE_NUMBER);
+}
+
 void tag(int type, const char *source, const char *dest)
 {
     debug("tag(%s, %s)", source, dest);
