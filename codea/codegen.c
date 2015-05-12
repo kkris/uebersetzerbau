@@ -480,57 +480,17 @@ static void gen_mul_reg_const(const char *source, const char *dest, long int val
     }
 }
 
-void gen_mul_untagged(struct tree *node, int input_tag_type)
+
+void gen_mul(struct tree *node)
 {
-    debug("gen_mul_untagged");
+    debug("gen_mul");
 
     struct tree *lhs = LEFT_CHILD(node);
     struct tree *rhs = RIGHT_CHILD(node);
 
     const char *dest = node->reg;
 
-    if(input_tag_type == TAGGED) {
-        if(lhs->op == OP_VAR) {
-            move(lhs->var_reg, dest);
-            gen_code("sarq $1, %%%s", dest);
-            gen_code("imulq %%%s, %%%s", rhs->reg, dest);
-            gen_code("sarq $1, %%%s", dest);
-        } else if(rhs->op == OP_VAR) {
-            gen_code("sarq $1, %%%s", dest);
-            gen_code("imulq %%%s, %%%s", rhs->var_reg, dest);
-            gen_code("sarq $1, %%%s", dest);
-        } else {
-            move(lhs->reg, dest);
-            gen_code("sarq $1, %%%s", dest);
-            gen_code("imulq %%%s, %%%s", rhs->reg, dest);
-            gen_code("sarq $1, %%%s", dest);
-        }
-    } else {
-        if(lhs->constant) {
-            gen_mul_reg_const(rhs->reg, dest, lhs->value);
-        } else if(rhs->constant) {
-            gen_mul_reg_const(lhs->reg, dest, rhs->value);
-        } else {
-            move(lhs->reg, dest);
-            gen_code("imulq %%%s, %%%s", rhs->reg, dest);
-        }
-    }
-}
-
-void gen_mul_tagged(struct tree *node, int tag_type)
-{
-    debug("gen_mul_tagged");
-
-    struct tree *lhs = LEFT_CHILD(node);
-    struct tree *rhs = RIGHT_CHILD(node);
-
-    const char *dest = node->reg;
-
-    assert(tag_type == TAGGED);
-
-    if(lhs->constant && rhs->constant) {
-        gen_code("TODO: upps, constant fold!");
-    } else if(lhs->constant) {
+    if(lhs->constant) {
         gen_mul_reg_const(rhs->reg, dest, lhs->value);
     } else if(rhs->constant) {
         gen_mul_reg_const(lhs->reg, dest, rhs->value);
