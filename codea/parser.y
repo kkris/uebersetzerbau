@@ -200,7 +200,7 @@ MulTerm: '*' Term
             @i @MulTerm.0.node@ = new_node(OP_MUL, @MulTerm.1.node@, @Term.node@);
 
             @reg @MulTerm.1.node@->reg = @MulTerm.0.node@->reg;
-            @reg @Term.node@->reg = get_next_reg(@MulTerm.1.node@->reg, @MulTerm.1.node@->constant);
+            @reg @Term.node@->reg = @MulTerm.0.node@->reg;
         @}
         ;
 

@@ -153,6 +153,8 @@ void expect(const char *var_reg, int type)
 
 void expect_num(struct tree *node)
 {
+    debug("expect_num");
+
     if(node->op == OP_VAR)
         expect(node->var_reg, TYPE_NUMBER);
 }
@@ -177,9 +179,17 @@ long int tag_const(long int value)
     return value << 1;
 }
 
-void untag(const char *source, const char *dest)
+void tag_num_into(const char *source, const char *dest)
 {
-    debug("untag(%s, %s)", source, dest);
+    debug("tag_num_into(%s, %s)", source, dest);
+
+    move(source, dest);
+    gen_code("salq $1, %%%s", dest);
+}
+
+void untag_num_into(const char *source, const char *dest)
+{
+    debug("untag_num_into(%s, %s)", source, dest);
 
     move(source, dest);
     gen_code("sarq $1, %%%s", dest);
@@ -230,16 +240,21 @@ void ret(struct tree *node, int tag_type, int type)
     }
 }
 
-void gen_not(const char *source, const char *dest, int tag_type)
+void gen_not(struct tree *node)
 {
     debug("gen_not");
 
-    move(source, dest);
+    struct tree *lhs = LEFT_CHILD(node);
 
-    if(tag_type == TAGGED) {
+    const char *dest = node->reg;
+
+    if(lhs->op == OP_VAR) {
+        expect_num(lhs);
+        move(lhs->var_reg, dest);
         gen_code("xorq $2, %%%s", dest);
     } else {
-        gen_code("xorq $1, %%%s", dest);
+        move(lhs->reg, dest);
+        gen_code("xorq $2, %%%s", dest);
     }
 }
 
@@ -490,26 +505,60 @@ void gen_mul(struct tree *node)
 
     const char *dest = node->reg;
 
-    if(lhs->constant) {
+    int op1 = lhs->op;
+    int op2 = rhs->op;
+
+    if(lhs->constant && rhs->constant) {
+        gen_code("upps");
+    }
+
+    if(op1 == OP_VAR && op2 == OP_VAR) {
+        expect(lhs->var_reg, TYPE_NUMBER);
+        expect(rhs->var_reg, TYPE_NUMBER);
+        untag_num_into(lhs->var_reg, dest);
+        gen_code("imulq %%%s, %%%s", rhs->var_reg, dest);
+        gen_code("sarq $1, %%%s", dest);
+    } else if(op1 == OP_VAR) {
+        if(rhs->constant)
+            gen_mul_reg_const(lhs->var_reg, dest, rhs->value);
+        else {
+            move(rhs->reg, dest);
+            gen_code("imulq %%%s, %%%s", lhs->var_reg, dest);
+        }
+    } else if(op2 == OP_VAR) {
+        if(lhs->constant)
+            gen_mul_reg_const(rhs->var_reg, dest, lhs->value);
+        else {
+            gen_code("imulq %%%s, %%%s", rhs->var_reg, dest);
+        }
+    } else {
+        if(lhs->constant)
+            gen_mul_reg_const(rhs->reg, dest, lhs->value);
+        else if(rhs->constant)
+            gen_mul_reg_const(lhs->reg, dest, rhs->value);
+        else
+            gen_code("imulq %%%s, %%%s", rhs->reg, dest);
+    }
+
+    /*if(lhs->constant) {
         gen_mul_reg_const(rhs->reg, dest, lhs->value);
     } else if(rhs->constant) {
         gen_mul_reg_const(lhs->reg, dest, rhs->value);
     } else if(lhs->op == OP_VAR && rhs->op == OP_VAR){
         expect(lhs->var_reg, TYPE_NUMBER);
         expect(rhs->var_reg, TYPE_NUMBER);
-        move(lhs->var_reg, dest);
-        gen_code("sarq $1, %%%s", dest);
+        untag_num_into(lhs->var_reg, dest);
         gen_code("imulq %%%s, %%%s", rhs->var_reg, dest);
-    } else {
-        /* t_expr * t_expr, type checked earlier */
-        move(lhs->reg, dest);
         gen_code("sarq $1, %%%s", dest);
+    } else {
+        /* u_expr * u_expr, type checked earlier *
+        //move(lhs->reg, dest);
         gen_code("imulq %%%s, %%%s", rhs->reg, dest);
-    }
+    }*/
 }
 
 /**
- *  result is tagged because var is tagged
+ *  result is untagged
  */
 void gen_mul_var_const(struct tree *node)
 {
@@ -524,7 +573,9 @@ void gen_mul_var_const(struct tree *node)
     struct tree *varnode = lhs->op == OP_VAR ? lhs : rhs;
 
     expect(varnode->var_reg, TYPE_NUMBER);
+    //untag_num_into(varnode->var_reg, dest);
     gen_mul_reg_const(varnode->var_reg, dest, constnode->value);
+    gen_code("sarq $1, %%%s", dest);
 }
 
 /**

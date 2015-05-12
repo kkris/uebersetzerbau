@@ -34,7 +34,7 @@ void load_num(const char *var_reg, const char *dest);
 
 void ret(struct tree *node, int tag_type, int type);
 
-void gen_not(const char *source, const char *dest, int tag_type);
+void gen_not(struct tree *node);
 
 void gen_and(struct tree *node, int tag_type);
 void gen_and_var_const(struct tree *node, int tag_type);

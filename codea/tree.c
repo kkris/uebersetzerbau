@@ -109,6 +109,10 @@ void print_indent(int indent) {
 
 void print_tree(struct tree *node, int indent) {
 	print_indent(indent);
+
+    if(node->constant)
+	    fprintf(stderr, "%s, %d\n", opnames[node->op - 1], node->value);
+    else
 	fprintf(stderr, "%s, %s, %s\n", opnames[node->op - 1], node->name, node->reg);
 	if(node->kids[0] != NULL || node->kids[1] != NULL) {
 		if(node->kids[0] != NULL) {

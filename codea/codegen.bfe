@@ -27,9 +27,21 @@ ret: OP_RET(t_word)         # 1 # ret(LEFT_CHILD(bnode), TAGGED, 0);
 ret: OP_RET(u_list)         # 1 # ret(LEFT_CHILD(bnode), UNTAGGED, TYPE_LIST);
 
 
-u_expr: const                   # 0 # bnode->constant = 1;
-u_expr: t_expr                  # 9 # untag(bnode->reg, bnode->reg);
-u_expr: var                     # 8 # untag(bnode->var_reg, bnode->reg); /* cheaper to load var directly than var -> t_expr -> u_expr */
+u_expr: const                   # 1 # 
+u_expr: t_expr                  # 9 # expect_num(bnode); untag_num_into(bnode->reg, bnode->reg);
+
+u_expr: OP_MUL(u_expr, u_expr)  # 5 # gen_mul(bnode);
+u_expr: OP_MUL(u_expr, var)     # 5 # gen_mul(bnode);
+u_expr: OP_MUL(var, u_expr)     # 5 # gen_mul(bnode);
+u_expr: OP_MUL(var, var)        # 6 # gen_mul(bnode);
+u_expr: OP_MUL(u_expr, const)   # 1 # gen_mul(bnode);
+u_expr: OP_MUL(const, u_expr)   # 1 # gen_mul(bnode);
+u_expr: OP_MUL(var, const)      # 2 # gen_mul_var_const(bnode);
+u_expr: OP_MUL(const, var)      # 2 # gen_mul_var_const(bnode);
+
+u_expr: OP_MUL(u_expr, one)     # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
+u_expr: OP_MUL(one, u_expr)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+
 
 
 u_expr: OP_ISNUM(var)           # 0 # gen_isnum(bnode);
@@ -46,9 +58,9 @@ u_expr: OP_EQ(u_expr, u_expr)   # 1 # gen_eq(bnode);
 
 
 
-t_expr: var                     # 3 # load_tagged_num(bnode->var_reg, bnode->reg);
+t_expr: u_expr                  # 9 # tag_num_into(bnode->reg, bnode->reg, TYPE_NUMBER);
 
-t_expr: OP_NOT(t_expr)          # 1 # gen_not(LEFT_CHILD(bnode)->reg, bnode->reg, TAGGED);
+t_expr: OP_NOT(t_expr)          # 1 # gen_not(bnode);
 
 t_expr: OP_ADD(var, var)  # 1 # gen_add(bnode);
 t_expr: OP_ADD(t_expr, t_expr)  # 3 # gen_add(bnode);
@@ -74,19 +86,10 @@ t_expr: OP_SUB(t_expr, var)  # 1 # gen_sub(bnode, TAGGED);
 t_expr: OP_SUB(zero, t_expr)    # 2 # gen_sub(bnode, TAGGED); /*gen_code("TODO: flip sign??");*/
 t_expr: OP_SUB(t_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 
-t_expr: OP_MUL(t_expr, t_expr)  # 2 # gen_mul(bnode);
-t_expr: OP_MUL(var, var)  # 1 # gen_mul(bnode);
-t_expr: OP_MUL(t_expr, const)   # 2 # gen_mul(bnode);
-t_expr: OP_MUL(const, t_expr)   # 2 # gen_mul(bnode);
-t_expr: OP_MUL(var, const)   # 1 # gen_mul_var_const(bnode);
-t_expr: OP_MUL(const, var)   # 1 # gen_mul_var_const(bnode);
-
-t_expr: OP_MUL(t_expr, one)     # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
-t_expr: OP_MUL(one, t_expr)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
-t_expr: OP_MUL(var, one)     # 0 # expect_num(LEFT_CHILD(bnode)); make_equal_to(bnode, LEFT_CHILD(bnode));
-t_expr: OP_MUL(one, var)     # 0 # expect_num(RIGHT_CHILD(bnode)); make_equal_to(bnode, RIGHT_CHILD(bnode));
 
 t_expr: OP_NOT(neg_t_expr)      # 0 # make_equal_to(bnode, LEFT_CHILD(LEFT_CHILD(bnode)));
+t_expr: neg_t_expr              # 5 # gen_not(bnode);
+t_expr: neg_t_word              # 5 # gen_not(bnode);
 
 t_expr: OP_AND(var, var)  # 1 # gen_and(bnode, TAGGED);
 t_expr: OP_AND(t_expr, t_expr)  # 1 # gen_and(bnode, TAGGED);
@@ -100,13 +103,15 @@ t_expr: OP_AND(t_expr, var)  # 1 # gen_and(bnode, TAGGED);
 t_expr: OP_ISLIST(t_word)       # 1 # gen_islist(bnode);
 t_expr: OP_ISLIST(t_expr)       # 1 # gen_islist(bnode);
 
-t_word: var                  # 1 #
+t_word: var                     # 0 #
 t_word: OP_NOT(neg_t_word)      # 0 # make_equal_to(bnode, LEFT_CHILD(LEFT_CHILD(bnode)));
 
 neg_t_word: OP_NOT(t_word)      # 0 #
 neg_t_expr: OP_NOT(t_expr)      # 0 #
 
 var: OP_VAR                     # 0 #
+var: OP_MUL(var, one)           # 0 # expect_num(LEFT_CHILD(bnode)); make_equal_to(bnode, LEFT_CHILD(bnode));
+var: OP_MUL(one, var)           # 0 # expect_num(RIGHT_CHILD(bnode)); make_equal_to(bnode, RIGHT_CHILD(bnode));
 
 
 
@@ -130,7 +135,7 @@ one: OP_ADD(zero, one)      # 0 # make_constant(bnode, 1);
 
 one: OP_SUB(one, zero)      # 0 # make_constant(bnode, 1);
 
-one: OP_MUL(one, one)       # 0 # make_constant(bnode, 0);
+one: OP_MUL(one, one)       # 0 # make_constant(bnode, 1);
 
 one: OP_ISNUM(t_expr)       # 0 # make_constant(bnode, 1);
 one: OP_ISNUM(u_expr)       # 0 # make_constant(bnode, 1);
@@ -145,8 +150,8 @@ zero: OP_MUL(const, zero)   # 0 # make_constant(bnode, 0);
 zero: OP_MUL(zero, const)   # 0 # make_constant(bnode, 0);
 zero: OP_MUL(t_expr, zero)  # 0 # make_constant(bnode, 0);
 zero: OP_MUL(zero, t_expr)  # 0 # make_constant(bnode, 0);
-zero: OP_MUL(var, zero)  # 0 # expect_num(LEFT_CHILD(bnode)); make_constant(bnode, 0);
-zero: OP_MUL(zero, vr)  # 0 # expect_num(RIGHT_CHILD(bnode)); make_constant(bnode, 0);
+zero: OP_MUL(var, zero)     # 0 # expect_num(LEFT_CHILD(bnode)); make_constant(bnode, 0);
+zero: OP_MUL(zero, var)      # 0 # expect_num(RIGHT_CHILD(bnode)); make_constant(bnode, 0);
 
 zero: OP_ADD(zero, zero)    # 0 # make_constant(bnode, 0);
 
