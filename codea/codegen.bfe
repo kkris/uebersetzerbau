@@ -31,24 +31,6 @@ u_expr: const                   # 0 # bnode->constant = 1;
 u_expr: t_expr                  # 9 # untag(bnode->reg, bnode->reg);
 u_expr: OP_VAR                  # 8 # untag(bnode->var_reg, bnode->reg); /* cheaper to load var directly than var -> t_expr -> u_expr */
 
-u_expr: OP_ADD(const, u_expr)   # 1 # gen_add(bnode, UNTAGGED);
-u_expr: OP_ADD(u_expr, const)   # 1 # gen_add(bnode, UNTAGGED);
-u_expr: OP_ADD(u_expr, u_expr)  # 1 # gen_add(bnode, UNTAGGED);
-u_expr: OP_ADD(u_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
-u_expr: OP_ADD(zero, u_expr)    # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
-
-u_expr: OP_SUB(const, u_expr)   # 1 # gen_sub(bnode, UNTAGGED);
-u_expr: OP_SUB(u_expr, const)   # 1 # gen_sub(bnode, UNTAGGED);
-u_expr: OP_SUB(u_expr, u_expr)  # 1 # gen_sub(bnode, UNTAGGED);
-u_expr: OP_SUB(zero, u_expr)    # 1 # gen_sub(bnode, UNTAGGED);
-u_expr: OP_SUB(u_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
-
-
-u_expr: OP_MUL(u_expr, const)   # 2 # gen_mul_untagged(bnode, UNTAGGED);
-u_expr: OP_MUL(const, u_expr)   # 2 # gen_mul_untagged(bnode, UNTAGGED);
-u_expr: OP_MUL(u_expr, u_expr)  # 2 # gen_mul_untagged(bnode, UNTAGGED);
-u_expr: OP_MUL(u_expr, one)     # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
-u_expr: OP_MUL(one, u_expr)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 
 u_expr: OP_ISNUM(OP_VAR)        # 0 # gen_isnum(bnode);
 
@@ -68,14 +50,14 @@ t_expr: OP_VAR                  # 3 # load_tagged_num(bnode->var_reg, bnode->reg
 
 t_expr: OP_NOT(t_expr)          # 1 # gen_not(LEFT_CHILD(bnode)->reg, bnode->reg, TAGGED);
 
-t_expr: OP_ADD(OP_VAR, OP_VAR)  # 1 # gen_add(bnode, TAGGED);
-t_expr: OP_ADD(t_expr, t_expr)  # 3 # gen_add(bnode, TAGGED);
-t_expr: OP_ADD(t_expr, const)   # 2 # gen_add(bnode, TAGGED);
-t_expr: OP_ADD(const, t_expr)   # 2 # gen_add(bnode, TAGGED);
-t_expr: OP_ADD(OP_VAR, const)   # 1 # gen_add_var_const(bnode, TAGGED);
-t_expr: OP_ADD(const, OP_VAR)   # 1 # gen_add_var_const(bnode, TAGGED);
-t_expr: OP_ADD(OP_VAR, t_expr)   # 1 # gen_add(bnode, TAGGED);
-t_expr: OP_ADD(t_expr, OP_VAR)   # 1 # gen_add(bnode, TAGGED);
+t_expr: OP_ADD(OP_VAR, OP_VAR)  # 1 # gen_add(bnode);
+t_expr: OP_ADD(t_expr, t_expr)  # 3 # gen_add(bnode);
+t_expr: OP_ADD(t_expr, const)   # 2 # gen_add(bnode);
+t_expr: OP_ADD(const, t_expr)   # 2 # gen_add(bnode);
+t_expr: OP_ADD(OP_VAR, const)   # 1 # gen_add_var_const(bnode);
+t_expr: OP_ADD(const, OP_VAR)   # 1 # gen_add_var_const(bnode);
+t_expr: OP_ADD(OP_VAR, t_expr)   # 1 # gen_add(bnode);
+t_expr: OP_ADD(t_expr, OP_VAR)   # 1 # gen_add(bnode);
 
 t_expr: OP_ADD(zero, t_expr)    # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 t_expr: OP_ADD(t_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));

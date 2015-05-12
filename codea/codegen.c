@@ -313,18 +313,17 @@ void gen_and_var_const(struct tree *node, int tag_type)
     gen_and_reg_const(constnode->value, varnode->var_reg, dest, tag_type);
 }
 
-static void gen_add_reg_const(long int value, const char *source, const char *dest, int tag_type)
+static void gen_add_reg_const(long int value, const char *source, const char *dest)
 {
     debug("gen_add_reg_const");
 
-    if(tag_type == TAGGED)
-        value = tag_const(value);
+    value = tag_const(value);
 
     move(source, dest);
     gen_code("addq $%ld, %%%s", value, dest);
 }
 
-void gen_add(struct tree *node, int tag_type)
+void gen_add(struct tree *node)
 {
     debug("gen_add");
 
@@ -333,12 +332,10 @@ void gen_add(struct tree *node, int tag_type)
 
     const char *dest = node->reg;
 
-    if(lhs->constant && rhs->constant) {
-        gen_code("TODO: upps, constant fold!");
-    } else if(lhs->constant) {
-        gen_add_reg_const(lhs->value, rhs->reg, dest, tag_type);
+    if(lhs->constant) {
+        gen_add_reg_const(lhs->value, rhs->reg, dest);
     } else if(rhs->constant) {
-        gen_add_reg_const(rhs->value, lhs->reg, dest, tag_type);
+        gen_add_reg_const(rhs->value, lhs->reg, dest);
     } else if(lhs->op == OP_VAR && rhs->op == OP_VAR){
         expect(lhs->var_reg, TYPE_NUMBER);
         expect(rhs->var_reg, TYPE_NUMBER);
@@ -354,7 +351,7 @@ void gen_add(struct tree *node, int tag_type)
     }
 }
 
-void gen_add_var_const(struct tree *node, int tag_type)
+void gen_add_var_const(struct tree *node)
 {
     debug("gen_add_var_const");
 
@@ -366,9 +363,7 @@ void gen_add_var_const(struct tree *node, int tag_type)
     struct tree *constnode = lhs->constant ? lhs : rhs;
     struct tree *varnode = lhs->op == OP_VAR ? lhs : rhs;
 
-    long int value = constnode->value;
-    if(tag_type == TAGGED)
-        value = tag_const(value);
+    long int value = tag_const(constnode->value);
 
     expect(varnode->var_reg, TYPE_NUMBER);
 
