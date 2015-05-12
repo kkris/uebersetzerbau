@@ -187,7 +187,7 @@ PlusTerm: '+' Term
             @i @PlusTerm.0.node@ = new_node(OP_ADD, @PlusTerm.1.node@, @Term.node@);
 
             @reg @PlusTerm.1.node@->reg = @PlusTerm.0.node@->reg;
-            @reg @Term.node@->reg = get_next_reg(@PlusTerm.1.node@->reg, @PlusTerm.1.node@->constant);
+            @reg @Term.node@->reg = @PlusTerm.0.node@->reg;
         @}
         ;
 
