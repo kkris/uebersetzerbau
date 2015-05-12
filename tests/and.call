@@ -34,7 +34,6 @@ CHECK(f3, -2, 0);
 CHECK(f3, 5, 0);
 CHECK(f3, 1000, 0);
 
-RAISES(f4, 1);
 CHECK(f4, 0, 0);
 CHECK(f4, 1, 0);
 CHECK(f4, -1,  0);
@@ -117,5 +116,15 @@ CHECK(f11, 8, 0);
 CHECK(f11, 24, 0);
 CHECK(f11, 16, 0);
 
+RAISES(f12, 1);
+CHECK(f11, 0, 0);
+CHECK(f11, 1, 0);
+CHECK(f11, -1, 0);
+CHECK(f11, -2, 0);
+CHECK(f11, 5, 0);
+CHECK(f11, 1000, 0);
+CHECK(f11, 8, 0);
+CHECK(f11, 24, 0);
+CHECK(f11, 16, 0);
 
 

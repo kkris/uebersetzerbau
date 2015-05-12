@@ -142,13 +142,13 @@ zero: OP_MUL(const, zero)   # 0 # make_constant(bnode, 0);
 zero: OP_MUL(zero, const)   # 0 # make_constant(bnode, 0);
 zero: OP_MUL(t_expr, zero)  # 0 # make_constant(bnode, 0);
 zero: OP_MUL(zero, t_expr)  # 0 # make_constant(bnode, 0);
-zero: OP_MUL(OP_VAR, zero)  # 0 # make_constant(bnode, 0);
-zero: OP_MUL(zero, OP_VAR)  # 0 # make_constant(bnode, 0);
+zero: OP_MUL(OP_VAR, zero)  # 0 # expect_num(LEFT_CHILD(bnode)); make_constant(bnode, 0);
+zero: OP_MUL(zero, OP_VAR)  # 0 # expect_num(RIGHT_CHILD(bnode)); make_constant(bnode, 0);
 
 zero: OP_ADD(zero, zero)    # 0 # make_constant(bnode, 0);
 
-zero: OP_AND(zero, OP_VAR)  # 0 # make_constant(bnode, 0);
-zero: OP_AND(OP_VAR, zero)  # 0 # make_constant(bnode, 0);
+zero: OP_AND(zero, OP_VAR)  # 0 # expect_num(RIGHT_CHILD(bnode)); make_constant(bnode, 0);
+zero: OP_AND(OP_VAR, zero)  # 0 # expect_num(LEFT_CHILD(bnode)); make_constant(bnode, 0);
 
 zero: OP_ISLIST(const)      # 0 # make_constant(bnode, 0);
 zero: OP_ISFUN(const)       # 0 # make_constant(bnode, 0);
