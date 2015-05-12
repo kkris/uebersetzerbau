@@ -172,14 +172,18 @@ zero: OP_ISLIST(const)      # 0 # make_constant(bnode, 0);
 zero: OP_ISFUN(const)       # 0 # make_constant(bnode, 0);
 
 
-u_list: OP_LIST(const, const)   # 0 # gen_list(bnode);
-u_list: OP_LIST(OP_VAR, OP_VAR) # 0 # gen_list(bnode);
-u_list: OP_LIST(OP_VAR, const)  # 0 # gen_list(bnode);
-u_list: OP_LIST(const, OP_VAR)  # 0 # gen_list(bnode);
-u_list: OP_LIST(const, t_expr)  # 0 # gen_list(bnode);
-u_list: OP_LIST(t_expr, const)  # 0 # gen_list(bnode);
-u_list: OP_LIST(t_expr, t_expr) # 0 # gen_list(bnode);
-u_list: OP_LIST(OP_VAR, t_expr) # 0 # gen_list(bnode);
-u_list: OP_LIST(t_expr, OP_VAR) # 0 # gen_list(bnode);
+u_list: OP_LIST(const, const)   # 0 # gen_list_simple(bnode);
+u_list: OP_LIST(OP_VAR, OP_VAR) # 0 # gen_list_simple(bnode);
+u_list: OP_LIST(OP_VAR, const)  # 0 # gen_list_simple(bnode);
+u_list: OP_LIST(const, OP_VAR)  # 0 # gen_list_simple(bnode);
+u_list: OP_LIST(const, t_expr)  # 0 # gen_list_simple(bnode);
+u_list: OP_LIST(t_expr, const)  # 0 # gen_list_simple(bnode);
+u_list: OP_LIST(t_expr, t_expr) # 0 # gen_list_simple(bnode);
+u_list: OP_LIST(OP_VAR, t_expr) # 0 # gen_list_simple(bnode);
+u_list: OP_LIST(t_expr, OP_VAR) # 0 # gen_list_simple(bnode);
+
+u_list: OP_LIST(const, u_list)   # 0 # gen_list_prepend(bnode);
+u_list: OP_LIST(OP_VAR, u_list)  # 0 # gen_list_prepend(bnode);
+u_list: OP_LIST(t_expr, u_list)  # 0 # gen_list_prepend(bnode);
 %%
 

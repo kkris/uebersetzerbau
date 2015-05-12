@@ -53,6 +53,7 @@ void gen_eq_untagged(struct tree *node);
 
 void gen_isnum(struct tree *node);
 
-void gen_list(struct tree *node);
+void gen_list_simple(struct tree *node);
+void gen_list_prepend(struct tree *node);
 
 #endif // CODEGEN_H

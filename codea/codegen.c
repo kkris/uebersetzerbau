@@ -5,6 +5,9 @@
 #include <string.h>
 #include <assert.h>
 
+const char *heap_ptr = "r10";
+const char *temp_reg = "r11";
+
 void debug(const char *msg, ...)
 {
     return;
@@ -25,7 +28,7 @@ char *get_next_reg(const char *prev, int reuse)
     if(prev == NULL)
         return strdup("rdi");
 
-    char* registers[] = {"rdi", "rax", "rsi", "rdx", "rcx", "r8", "r9", "r10"};
+    char* registers[] = {"rdi", "rax", "rsi", "rdx", "rcx", "r8", "r9"};
 
     int i = 0;
     for(; i < sizeof(registers) / sizeof(registers[0]) - 1; i++) {
@@ -655,20 +658,19 @@ void gen_islist(struct tree *node)
     } else {
         source = lhs->reg;
     }
+
+    gen_code("movq $0, %%%s", temp_reg);
+
     move(source, dest);
     gen_code("andq $3, %%%s", dest);
-    gen_code("testq $2, %%%s", dest);
-    gen_code("jz .nolist");
-    gen_code("movq $2 %%%s", dest);
-    gen_code("jmp .after");
-    gen_code(".nolist:");
-    gen_code("movq $0, %%%s", dest);
-    gen_code(".after:");
+    gen_code("cmpq $1, %%%s", dest);
+    gen_code("lea 0(,1), %%%s", dest);
+    gen_code("cmovz %%%s, %%%s", temp_reg, dest);
 }
 
 static void set_head_const(const char *list_reg, long int value)
 {
-    gen_code("movq $%ld, (%%%s)", value, list_reg);
+    gen_code("movq $%ld, (%%%s)", tag_const(value), list_reg);
 }
 
 static void set_head_reg(const char *list_reg, const char *reg)
@@ -678,7 +680,7 @@ static void set_head_reg(const char *list_reg, const char *reg)
 
 static void set_tail_const(const char *list_reg, long int value)
 {
-    gen_code("movq $%ld, 8(%%%s)", value, list_reg);
+    gen_code("movq $%ld, 8(%%%s)", tag_const(value), list_reg);
 }
 
 static void set_tail_reg(const char *list_reg, const char *reg)
@@ -691,7 +693,7 @@ static void set_tail_reg(const char *list_reg, const char *reg)
  * Constructs a list from a const, var or expression as lhs and rhs. The
  * resulting address is untagged.
  */
-void gen_list(struct tree *node)
+void gen_list_simple(struct tree *node)
 {
     debug("gen_list");
 
@@ -713,6 +715,31 @@ void gen_list(struct tree *node)
         set_tail_reg("r15", rhs->var_reg);
     else
         set_tail_reg("r15", rhs->reg);
+
+    // return cell address and advance list pointer in r15
+    move("r15", dest);
+    gen_code("addq $16, %%%s", "r15");
+}
+
+void gen_list_prepend(struct tree *node)
+{
+    debug("gen_list_expr_list");
+
+    struct tree *lhs = LEFT_CHILD(node);
+    struct tree *listnode = RIGHT_CHILD(node);
+
+    const char *dest = node->reg;
+
+    if(lhs->constant)
+        set_head_const("r15", lhs->value);
+    else if(lhs->op == OP_VAR)
+        set_head_reg("r15", lhs->var_reg);
+    else
+        set_head_reg("r15", lhs->reg);
+
+    // set tail and tag it
+    gen_code("movq %%%s, 8(%%%s)", listnode->reg, "r15");
+    gen_code("addq $1, 8(%%%s)", "r15");
 
     // return cell address and advance list pointer in r15
     move("r15", dest);
