@@ -30,3 +30,4 @@ f27 = fun x -> (0-7) * x end;
 f28 = fun x -> x * (0-7) end;
 f29 = fun x -> x * 7 end;
 f30 = fun x -> 7 * x end;
+f31 = fun x -> x * 1 * x * 2 * x * 3 * x * 4 * x * 5 end;

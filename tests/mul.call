@@ -30,6 +30,7 @@ extern long f27(long int);
 extern long f28(long int);
 extern long f29(long int);
 extern long f30(long int);
+extern long f31(long int);
 
 
 RAISES(f1, 1);
@@ -291,4 +292,11 @@ CHECK(f30, -1,  -7);
 CHECK(f30, -2, -14);
 CHECK(f30, 5, 35);
 CHECK(f30, 100, 700);
+
+RAISES(f31, 1);
+CHECK(f31, 0, 0);
+CHECK(f31, 1, 120);
+CHECK(f31, -1,  -120);
+CHECK(f31, -2, -3840);
+CHECK(f31, 5, 375000);
 
