@@ -11,17 +11,14 @@ ret
 f3:
 testq $1, %rdi
 jnz raisesig
-??
+movq %rdi, %rsi
+andq $2, %rsi
+andq $6, %rsi
+movq %rdi, %rax
+andq %rsi, %rax
 ret
 f4:
 movq $0, %rax
-ret
-f5:
-testq $1, %rdi
-jnz raisesig
-leaq 2(%rdi), %rsi
-movq %rdi, %rax
-andq %rsi, %rax
 ret
 f5:
 testq $1, %rdi

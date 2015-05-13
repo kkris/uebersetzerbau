@@ -11,21 +11,21 @@ extern long int f9(long int);
 RAISES_NOT(f1, 1);
 CHECK(f1, 1337, 1);
 
-RAISES(f2, 1);
+RAISES_NOT(f2, 1);
 CHECK(f2, 0, 0);
 CHECK(f2, 1, 0);
 CHECK(f2, -1, 0);
 CHECK(f2, 5, 1);
 CHECK(f2, -5, 0);
 
-RAISES(f3, 1);
+RAISES_NOT(f3, 1);
 CHECK(f3, 0, 0);
 CHECK(f3, 1, 0);
 CHECK(f3, -1, 0);
 CHECK(f3, 5, 1);
 CHECK(f3, -5, 0);
 
-RAISES(f4, 1);
+RAISES_NOT(f4, 1);
 CHECK(f4, 0, 1);
 CHECK(f4, 1, 1);
 CHECK(f4, -1, 1);

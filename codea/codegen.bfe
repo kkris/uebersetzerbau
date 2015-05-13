@@ -46,17 +46,6 @@ u_expr: OP_MUL(one, u_expr)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 
 u_expr: OP_ISNUM(var)           # 0 # gen_isnum(bnode);
 
-u_expr: OP_EQ(t_word, t_word)   # 2 # gen_eq(bnode);
-u_expr: OP_EQ(t_word, const)    # 1 # gen_eq(bnode);
-u_expr: OP_EQ(const, t_word)    # 1 # gen_eq(bnode);
-
-u_expr: OP_EQ(t_expr, t_expr)   # 2 # gen_eq(bnode);
-u_expr: OP_EQ(const, t_expr)    # 1 # gen_eq(bnode);
-u_expr: OP_EQ(t_expr, const)    # 1 # gen_eq(bnode);
-
-u_expr: OP_EQ(u_expr, u_expr)   # 1 # gen_eq(bnode);
-
-
 
 t_expr: u_expr                  # 9 # tag_num_into(bnode->reg, bnode->reg, TYPE_NUMBER);
 
@@ -99,6 +88,15 @@ t_expr: OP_AND(var, const)   # 1 # gen_and_var_const(bnode, TAGGED);
 t_expr: OP_AND(const, var)   # 1 # gen_and_var_const(bnode, TAGGED);
 t_expr: OP_AND(var, t_expr)  # 1 # gen_and(bnode, TAGGED);
 t_expr: OP_AND(t_expr, var)  # 1 # gen_and(bnode, TAGGED);
+
+t_expr: OP_EQ(var, var)         # 1 # gen_eq(bnode);
+t_expr: OP_EQ(const, var)       # 1 # gen_eq(bnode);
+t_expr: OP_EQ(var, const)       # 1 # gen_eq(bnode);
+t_expr: OP_EQ(t_expr, t_expr)   # 1 # gen_eq(bnode);
+t_expr: OP_EQ(t_expr, const)    # 1 # gen_eq(bnode);
+t_expr: OP_EQ(const, t_expr)     # 1 # gen_eq(bnode);
+t_expr: OP_EQ(t_expr, var)      # 1 # gen_eq(bnode);
+t_expr: OP_EQ(var, t_expr)     # 1 # gen_eq(bnode);
 
 t_expr: OP_ISLIST(t_word)       # 1 # gen_islist(bnode);
 t_expr: OP_ISLIST(t_expr)       # 1 # gen_islist(bnode);

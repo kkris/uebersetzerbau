@@ -566,27 +566,29 @@ void gen_mul_var_const(struct tree *node)
     gen_code("sarq $1, %%%s", dest);
 }
 
-/**
- * reg is bitwise compared with constant. result is untagged 1 if they are equal
- * else 0
- */
 static void gen_eq_const(long int value, const char *source, const char *dest)
 {
     debug("gen_eq_const");
 
     value = tag_const(value);
 
-    char *byte = get_lower_byte_reg(dest);
-
+    gen_code("movq $2, %%%s", temp_reg);
     gen_code("cmp $%ld, %%%s", value, source);
-    gen_code("setz %%%s", byte);
-    gen_code("movzx %%%s, %%%s", byte, dest);
+    gen_code("leaq 0(, 1), %%%s", dest);
+    gen_code("cmovz %%%s, %%%s", temp_reg, dest);
 }
 
-/**
- * lhs is bitwise compared with rhs. result is untagged 1 if they are equal
- * else 0
- */
+static void gen_eq_reg_reg(const char *s1, const char *s2, const char *dest)
+{
+    debug("gen_eq_reg_reg");
+
+    gen_code("movq $2, %%%s", temp_reg);
+    gen_code("cmp %%%s, %%%s", s1, s2);
+    gen_code("leaq 0(, 1), %%%s", dest);
+    gen_code("cmovz %%%s, %%%s", temp_reg, dest);
+
+}
+
 void gen_eq(struct tree *node)
 {
     debug("gen_eq");
@@ -596,34 +598,27 @@ void gen_eq(struct tree *node)
 
     const char *dest = node->reg;
 
-    if(lhs->constant && rhs->constant) {
-        gen_code("TODO: upps, constant fold!");
-    } else if(lhs->constant) {
-        if(rhs->op == OP_VAR)
-            gen_eq_const(lhs->value, rhs->var_reg, dest);
-        else
-            gen_eq_const(lhs->value, rhs->reg, dest);
-    } else if(rhs->constant) {
-        if(lhs->op == OP_VAR)
+    if(lhs->op == OP_VAR && rhs->op == OP_VAR) {
+        gen_eq_reg_reg(lhs->var_reg, rhs->var_reg, dest);
+    } else if(lhs->op == OP_VAR) {
+        if(rhs->constant) {
             gen_eq_const(rhs->value, lhs->var_reg, dest);
-        else
-            gen_eq_const(rhs->value, lhs->reg, dest);
-    } else if(lhs->op == OP_VAR && rhs->op == OP_VAR) {
-        if(strcmp(lhs->name, rhs->name) == 0) {
-            gen_code("movq $1, %%%s", dest); // possible to optimize by not requiring for later tag op
         } else {
-            char *byte = get_lower_byte_reg(dest);
-
-            gen_code("cmp $%ld, %%%s", lhs->var_reg, rhs->var_reg);
-            gen_code("setz %%%s", byte);
-            gen_code("movzx %%%s, %%%s", byte, dest);
+            gen_eq_reg_reg(lhs->var_reg, rhs->reg, dest);
+        }
+    } else if(rhs->op == OP_VAR) {
+        if(lhs->constant) {
+            gen_eq_const(lhs->value, rhs->var_reg, dest);
+        } else {
+            gen_eq_reg_reg(rhs->var_reg, lhs->reg, dest);
         }
     } else {
-        char *byte = get_lower_byte_reg(dest);
-
-        gen_code("cmp %%%s, %%%s", lhs->reg, rhs->reg);
-        gen_code("setz %%%s", byte);
-        gen_code("movzx %%%s, %%%s", byte, dest);
+        if(lhs->constant)
+            gen_eq_const(lhs->value, rhs->reg, dest);
+        else if(rhs->constant)
+            gen_eq_const(rhs->value, lhs->reg, dest);
+        else
+            gen_eq_reg_reg(lhs->reg, rhs->reg, dest);
     }
 }
 

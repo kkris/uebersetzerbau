@@ -2,52 +2,62 @@ f1:
 movq $2, %rax
 ret
 f2:
-# check type
+movq $2, %r11
 cmp $10, %rdi
-setz %al
-movzx %al, %rax
-salq $1, %rax
+leaq 0(, 1), %rax
+cmovz %r11, %rax
 ret
 f3:
-# check type
+movq $2, %r11
 cmp $10, %rdi
-setz %al
-movzx %al, %rax
-salq $1, %rax
+leaq 0(, 1), %rax
+cmovz %r11, %rax
 ret
 f4:
-movq $2, %rax
+movq $2, %r11
+cmp %rdi, %rdi
+leaq 0(, 1), %rax
+cmovz %r11, %rax
 ret
 f5:
 movq $2, %rax
 ret
 f6:
-# check type
+testq $1, %rdi
+jnz raisesig
 leaq 2(%rdi), %rax
 leaq 2(%rdi), %rsi
+movq $2, %r11
 cmp %rax, %rsi
-setz %al
-movzx %al, %rax
-salq $1, %rax
+leaq 0(, 1), %rax
+cmovz %r11, %rax
 ret
 f7:
-# check type??
-movq $0, %rax
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rsi
+xorq $2, %rsi
+movq $2, %r11
+cmp %rdi, %rsi
+leaq 0(, 1), %rax
+cmovz %r11, %rax
 ret
 f8:
-# check type
+testq $1, %rdi
+jnz raisesig
 movq %rdi, %rax
 xorq $2, %rax
+movq $2, %r11
 cmp $10, %rax
-setz %al
-movzx %al, %rax
-salq $1, %rax
+leaq 0(, 1), %rax
+cmovz %r11, %rax
 ret
 f9:
-# check type
+testq $1, %rdi
+jnz raisesig
 leaq (, %rdi, 2), %rax
+movq $2, %r11
 cmp $20, %rax
-setz %al
-movzx %al, %rax
-salq $1, %rax
+leaq 0(, 1), %rax
+cmovz %r11, %rax
 ret
