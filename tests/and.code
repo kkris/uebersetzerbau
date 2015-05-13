@@ -1,10 +1,74 @@
 f1:
-XXX
-
-f9:
-XXX: check type??
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rax
+ret
+f2:
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rax
+ret
+f3:
+testq $1, %rdi
+jnz raisesig
+??
+ret
+f4:
 movq $0, %rax
 ret
-f11:
-XXX: check type??
+f5:
+testq $1, %rdi
+jnz raisesig
+leaq 2(%rdi), %rsi
+movq %rdi, %rax
+andq %rsi, %rax
+ret
+f5:
+testq $1, %rdi
+jnz raisesig
+leaq 2(%rdi), %rsi
+movq %rdi, %rax
+andq %rsi, %rax
+ret
+f6:
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rax
+andq $16, %rax
+ret
+f7:
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rax
+andq $16, %rax
+ret
+f8:
+testq $1, %rdi
+jnz raisesig
+leaq (, %rdi, 2), %rsi
+movq %rdi, %rax
+andq %rsi, %rax
+ret
+f9:
+testq $1, %rdi
+jnz raisesig
 movq $0, %rax
+ret
+f10:
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rsi
+xorq $2, %rsi
+movq %rdi, %rax
+andq %rsi, %rax
+ret
+f11:
+testq $1, %rdi
+jnz raisesig
+movq $0, %rax
+ret
+f12:
+testq $1, %rdi
+jnz raisesig
+movq $0, %rax
+ret

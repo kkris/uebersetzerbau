@@ -213,7 +213,7 @@ AndTerm: AND Term
             @i @AndTerm.0.node@ = new_node(OP_AND, @AndTerm.1.node@, @Term.node@);
 
             @reg @AndTerm.1.node@->reg = @AndTerm.0.node@->reg;
-            @reg @Term.node@->reg = get_next_reg(@AndTerm.1.node@->reg, @AndTerm.1.node@->constant);
+            @reg @Term.node@->reg = @AndTerm.0.node@->reg;
         @}
         ;
 

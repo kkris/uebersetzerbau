@@ -1,17 +1,21 @@
 f1:
-XXX: check type?
+testq $1, %rdi
+jnz raisesig
 movq %rdi, %rax
 ret
 f2:
-XXX: check type?
+testq $1, %rdi
+jnz raisesig
 movq %rdi, %rax
 ret
 f3:
-XXX: check type?
+testq $1, %rdi
+jnz raisesig
 movq $0, %rax
 ret
 f4:
-XXX: check type?
+testq $1, %rdi
+jnz raisesig
 movq $0, %rax
 ret
 f5:
@@ -77,15 +81,15 @@ ret
 f17:
 testq $1, %rdi
 jnz raisesig
-movq %rdi, %rax
-movq %rdi, %rsi
 movq %rdi, %rdx
 sarq $1, %rdx
 imulq %rdi, %rdx
+sarq $1, %rdx
+movq %rdx, %rsi
+imulq %rdi, %rsi
 sarq $1, %rsi
-imulq %rdx, %rsi
-sarq $1, %rax
-imulq %rsi, %rax
+movq %rsi, %rax
+imulq %rdi, %rax
 ret
 f18:
 testq $1, %rdi
@@ -93,25 +97,22 @@ jnz raisesig
 movq %rdi, %rax
 sarq $1, %rax
 imulq %rdi, %rax
-movq %rdi, %rsi
 sarq $1, %rax
-imulq %rsi, %rax
-movq %rdi, %rsi
+imulq %rdi, %rax
 sarq $1, %rax
-imulq %rsi, %rax
+imulq %rdi, %rax
 ret
 f18a:
 testq $1, %rdi
 jnz raisesig
-movq %rdi, %rax
-sarq $1, %rax
+movq %rdi, %rsi
+sarq $1, %rsi
+imulq %rdi, %rsi
+sarq $1, %rsi
+imulq %rdi, %rsi
+sarq $1, %rsi
+movq %rsi, %rax
 imulq %rdi, %rax
-movq %rdi, %rsi
-sarq $1, %rax
-imulq %rsi, %rax
-movq %rdi, %rsi
-sarq $1, %rax
-imulq %rsi, %rax
 ret
 f19:
 testq $1, %rdi
@@ -119,27 +120,28 @@ jnz raisesig
 movq %rdi, %rdx
 sarq $1, %rdx
 imulq %rdi, %rdx
+sarq $1, %rdx
 movq $0, %rax
 ret
 f20:
 testq $1, %rdi
 jnz raisesig
-movq %rdi, %rax
 movq %rdi, %rsi
 sarq $1, %rsi
 imulq %rdi, %rsi
-sarq $1, %rax
-imulq %rsi, %rax
+sarq $1, %rsi
+movq %rsi, %rax
+imulq %rdi, %rax
 ret
 f20a:
 testq $1, %rdi
 jnz raisesig
-movq %rdi, %rax
 movq %rdi, %rsi
 sarq $1, %rsi
 imulq %rdi, %rsi
-sarq $1, %rax
-imulq %rsi, %rax
+sarq $1, %rsi
+movq %rsi, %rax
+imulq %rdi, %rax
 ret
 f21:
 testq $1, %rdi
@@ -151,8 +153,10 @@ f22:
 testq $1, %rdi
 jnz raisesig
 leaq (, %rdi, 4), %rax
+sarq $1, %rax
 leaq (%rax, %rax, 2), %rax
 leaq (, %rax, 2), %rax
+salq $1, %rax
 ret
 f23:
 testq $1, %rdi
@@ -201,4 +205,21 @@ testq $1, %rdi
 jnz raisesig
 movq %rdi, %rax
 imulq $7, %rax
+ret
+f31:
+testq $1, %rdi
+jnz raisesig
+leaq (, %rdi, 2), %rsi
+sarq $1, %rsi
+imulq %rdi, %rsi
+sarq $1, %rsi
+leaq (%rsi, %rsi, 2), %rsi
+imulq %rdi, %rsi
+sarq $1, %rsi
+leaq (, %rsi, 4), %rsi
+imulq %rdi, %rsi
+sarq $1, %rsi
+leaq (%rsi, %rsi, 4), %rsi
+movq %rsi, %rax
+imulq %rdi, %rax
 ret
