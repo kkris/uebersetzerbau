@@ -1,0 +1,69 @@
+f1:
+movq $0, %rax
+ret
+f1a:
+movq $2, %rax
+ret
+f2:
+testq $1, %rdi
+jnz raisesig
+movq $2, %r11
+cmp $10, %rdi
+leaq 0(, 1), %rax
+cmovl %r11, %rax
+ret
+f3:
+testq $1, %rdi
+jnz raisesig
+movq $2, %r11
+cmp $10, %rdi
+leaq 0(, 1), %rax
+cmovg %r11, %rax
+ret
+f4:
+testq $1, %rdi
+jnz raisesig
+movq $0, %rax
+ret
+f5:
+movq $0, %rax
+ret
+f6:
+testq $1, %rdi
+jnz raisesig
+leaq 2(%rdi), %rax
+leaq 2(%rdi), %rsi
+movq $2, %r11
+cmp %rax, %rsi
+leaq 0(, 1), %rax
+cmovg %r11, %rax
+ret
+f7:
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rsi
+xorq $2, %rsi
+movq $2, %r11
+cmp %rdi, %rsi
+leaq 0(, 1), %rax
+cmovg %r11, %rax
+ret
+f8:
+testq $1, %rdi
+jnz raisesig
+movq %rdi, %rax
+xorq $2, %rax
+movq $2, %r11
+cmp $10, %rax
+leaq 0(, 1), %rax
+cmovg %r11, %rax
+ret
+f9:
+testq $1, %rdi
+jnz raisesig
+leaq (, %rdi, 2), %rax
+movq $2, %r11
+cmp $20, %rax
+leaq 0(, 1), %rax
+cmovg %r11, %rax
+ret
