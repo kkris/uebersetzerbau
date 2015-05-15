@@ -6,13 +6,17 @@ ret
 f2:
 testq $1, %rdi
 jnz raisesig
+movq %rdi, %rsi
+andq %rdi, %rsi
 movq %rdi, %rax
+andq %rsi, %rax
 ret
 f3:
 testq $1, %rdi
 jnz raisesig
 movq %rdi, %rsi
 andq $2, %rsi
+andq $4, %rsi
 andq $6, %rsi
 movq %rdi, %rax
 andq %rsi, %rax
@@ -63,6 +67,7 @@ f11:
 testq $1, %rdi
 jnz raisesig
 movq $0, %rax
+andq %rdi, %rax
 ret
 f12:
 testq $1, %rdi

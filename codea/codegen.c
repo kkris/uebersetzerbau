@@ -717,7 +717,8 @@ void gen_isnum(struct tree *node)
 
     if(lhs->op == OP_VAR) {
         move(lhs->var_reg, dest);
-        gen_code("xorq $1, %rax");
+        gen_code("andq $1, %%%s", dest);
+        gen_code("xorq $1, %%%s", dest);
     } else {
         gen_code("UNSUPPORTED");
     }
