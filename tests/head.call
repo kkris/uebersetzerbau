@@ -1,0 +1,91 @@
+extern long int f1(long int);
+extern long int f2(long int);
+extern long int f3(long int);
+extern long int f4(long int);
+extern long int f5(long int);
+extern long int f6(long int);
+extern long int f7(long int);
+extern long int f8(long int);
+extern long int f9(long int);
+extern long int f10(long int);
+extern long int f11(long int);
+extern long int f12(long int);
+extern long int f13(long int);
+extern long int f14(long int);
+extern long int f15(long int);
+
+RAISES(f1, 1);
+
+RAISES(f2, 1);
+
+RAISES_NOT(f3, 1);
+CHECK_RAW(f3, 0, 1);
+
+RAISES_NOT(f4, 1);
+CHECK_RAW(f4, 0, 1);
+
+RAISES_NOT(f5, 1);
+CHECK_RAW(f5, -42, -42);
+CHECK_RAW(f5, 0, 0);
+CHECK_RAW(f5, 1337, 1337);
+CHECK_RAW(f5, -55, -55);
+
+RAISES_NOT(f6, 1);
+CHECK_RAW(f6, -42, -42);
+CHECK_RAW(f6, 0, 0);
+CHECK_RAW(f6, 1337, 1337);
+CHECK_RAW(f6, -55, -55);
+
+RAISES_NOT(f7, 1);
+CHECK_RAW(f7, 0, 1);
+CHECK_RAW(f7, 1, 1);
+
+RAISES_NOT(f8, 1);
+CHECK_RAW(f8, 0, 6);
+CHECK_RAW(f8, 1, 6);
+
+RAISES_NOT(f9, 1);
+CHECK_RAW(f9, 0, 0);
+CHECK_RAW(f9, 1, 1);
+CHECK_RAW(f9, -1, -1);
+CHECK_RAW(f9, 5, 5);
+CHECK_RAW(f9, -5, -5);
+
+RAISES_NOT(f10, 1);
+CHECK_RAW(f10, 0, 1);
+CHECK_RAW(f10, 1, 1);
+CHECK_RAW(f10, -1, 1);
+CHECK_RAW(f10, 5, 1);
+CHECK_RAW(f10, -5, 1);
+
+RAISES(f11, 1);
+
+RAISES_NOT(f12, 1);
+CHECK_RAW(f12, 0, 1);
+CHECK_RAW(f12, 1, 1);
+CHECK_RAW(f12, -1, 1);
+CHECK_RAW(f12, 5, 1);
+CHECK_RAW(f12, -5, 1);
+
+RAISES_NOT(f13, 1);
+CHECK_RAW(f13, 0, 0);
+CHECK_RAW(f13, 1, 1);
+CHECK_RAW(f13, -1, -1);
+CHECK_RAW(f13, 5, 5);
+CHECK_RAW(f13, -5, -5);
+
+RAISES_NOT(f14, 1);
+CHECK_RAW(f14, 0, 0);
+CHECK_RAW(f14, 1, 2);
+CHECK_RAW(f14, -1, -2);
+CHECK_RAW(f14, 5, 10);
+CHECK_RAW(f14, -5, -10);
+
+RAISES_NOT(f15, 1);
+CHECK_RAW(f15, 0, 1);
+CHECK_RAW(f15, 1, 2);
+CHECK_RAW(f15, -1, 0);
+CHECK_RAW(f15, 5, 6);
+CHECK_RAW(f15, -5, -4);
+
+
