@@ -1,0 +1,16 @@
+extern long int f1(long int);
+extern long int f2(long int);
+extern long int f3(long int);
+extern long int f4(long int);
+
+RAISES_NOT(f1, 1);
+CHECK(f1, 1337, 5);
+
+RAISES_NOT(f2, 1);
+CHECK(f2, 0, 3405691582);
+
+RAISES_NOT(f3, 1);
+CHECK(f3, -42, 5);
+
+RAISES_NOT(f4, 1);
+CHECK(f4, 1234, 5);
