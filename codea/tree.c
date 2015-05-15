@@ -38,6 +38,7 @@ struct tree *new_node(int op, struct tree *left, struct tree *right)
     t->name = NULL;
     t->value = 0;
     t->constant = 0;
+    t->atomic = 0;
 
     return t;
 }
@@ -65,6 +66,7 @@ struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const
     struct tree *t = new_node(op, left, right);
 
     t->name = strdup(name);
+    t->atomic = 1;
 
     if(sym != NULL)
         t->reg = strdup(sym->reg);
@@ -76,6 +78,7 @@ void make_constant(struct tree *node, long int value)
 {
     node->value = value;
     node->constant = 1;
+    node->atomic = 1;
 
     if(value == 0)
         node->op = OP_ZERO;
@@ -92,12 +95,16 @@ void make_equal_to(struct tree *dest, struct tree *source)
     dest->name = source->name == NULL ? NULL : strdup(source->name);
     dest->value = source->value;
     dest->constant = source->constant;
+    dest->atomic = source->atomic;
 
     LEFT_CHILD(dest) = LEFT_CHILD(source);
     RIGHT_CHILD(dest) = RIGHT_CHILD(source);
 }
 
-
+int is_const_or_atomic(struct tree *node)
+{
+    return node->constant || node->atomic;
+}
 
 void print_indent(int indent) {
 	int i;

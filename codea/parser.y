@@ -188,7 +188,7 @@ PlusTerm: '+' Term
             @i @PlusTerm.0.node@ = new_node(OP_ADD, @PlusTerm.1.node@, @Term.node@);
 
             @reg @PlusTerm.1.node@->reg = @PlusTerm.0.node@->reg;
-            @reg @Term.node@->reg = @PlusTerm.0.node@->reg;
+            @reg @Term.node@->reg = get_next_reg(@PlusTerm.0.node@->reg, is_const_or_atomic(@PlusTerm.0.node@));
         @}
         ;
 
@@ -201,7 +201,7 @@ MulTerm: '*' Term
             @i @MulTerm.0.node@ = new_node(OP_MUL, @MulTerm.1.node@, @Term.node@);
 
             @reg @MulTerm.1.node@->reg = @MulTerm.0.node@->reg;
-            @reg @Term.node@->reg = @MulTerm.0.node@->reg;
+            @reg @Term.node@->reg = get_next_reg(@MulTerm.0.node@->reg, is_const_or_atomic(@MulTerm.0.node@));
         @}
         ;
 
@@ -214,7 +214,8 @@ AndTerm: AND Term
             @i @AndTerm.0.node@ = new_node(OP_AND, @AndTerm.1.node@, @Term.node@);
 
             @reg @AndTerm.1.node@->reg = @AndTerm.0.node@->reg;
-            @reg @Term.node@->reg = @AndTerm.0.node@->reg;
+            @reg @Term.node@->reg = get_next_reg(@AndTerm.0.node@->reg, is_const_or_atomic(@AndTerm.0.node@));
+;
         @}
         ;
 
@@ -227,13 +228,12 @@ ListTerm: '.' Term
             @i @ListTerm.0.node@ = new_node(OP_LIST, @Term.node@, @ListTerm.1.node@);
 
             @reg @ListTerm.1.node@->reg = @ListTerm.0.node@->reg;
-            @reg @Term.node@->reg = @ListTerm.0.node@->reg;
+            @reg @Term.node@->reg = get_next_reg(@ListTerm.0.node@->reg, is_const_or_atomic(@ListTerm.0.node@));
         @}
 
 Term: '(' Expr ')'
     @{
         @i @Term.node@ = @Expr.node@;
-        @reg @Expr.node@->reg = @Term.node@->reg;
     @}
     | NUM
     @{

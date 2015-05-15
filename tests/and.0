@@ -10,3 +10,4 @@ f9 = fun x -> 0 and x end;
 f10 = fun x -> x and (not not not x) end;
 f11 = fun x -> (x - x) and x end;
 f12 = fun x -> (x * 0) and x end;
+f13 = fun x -> (x + 1) and (x + 1) and (x + 1) and (x + 1) and (x + 1) end;

@@ -129,5 +129,11 @@ CHECK(f16, -2, 14);
 CHECK(f16, 5, 63);
 CHECK(f16, 1000, 7028);
 
+RAISES(f17, 1);
+CHECK(f17, 0, 15);
+CHECK(f17, -1,  10);
+CHECK(f17, -2, 5);
+CHECK(f17, 5, 40);
+CHECK(f17, 1000, 5015);
 
 

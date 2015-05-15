@@ -46,6 +46,7 @@ struct tree {
     long int value;             /* expression results */
 
     int constant;
+    int atomic;                 /* 1 if node is ident or constant term */
 
     struct burm_state *state; /* BURG state variable */
 };
@@ -58,6 +59,8 @@ struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const
 
 void make_constant(struct tree *node, long int value);
 void make_equal_to(struct tree *dest, struct tree *source);
+
+int is_const_or_atomic(struct tree *node);
 
 void print_tree(struct tree *node, int indent);
 

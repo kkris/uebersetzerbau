@@ -9,6 +9,8 @@ extern long f8(long int);
 extern long f9(long int);
 extern long f10(long int);
 extern long f11(long int);
+extern long f12(long int);
+extern long f13(long int);
 
 RAISES(f1, 1);
 CHECK(f1, 0, 0);
@@ -117,14 +119,24 @@ CHECK(f11, 24, 0);
 CHECK(f11, 16, 0);
 
 RAISES(f12, 1);
-CHECK(f11, 0, 0);
-CHECK(f11, 1, 0);
-CHECK(f11, -1, 0);
-CHECK(f11, -2, 0);
-CHECK(f11, 5, 0);
-CHECK(f11, 1000, 0);
-CHECK(f11, 8, 0);
-CHECK(f11, 24, 0);
-CHECK(f11, 16, 0);
+CHECK(f12, 0, 0);
+CHECK(f12, 1, 0);
+CHECK(f12, -1, 0);
+CHECK(f12, -2, 0);
+CHECK(f12, 5, 0);
+CHECK(f12, 1000, 0);
+CHECK(f12, 8, 0);
+CHECK(f12, 24, 0);
+CHECK(f12, 16, 0);
 
+RAISES(f13, 1);
+CHECK(f13, 0, 1);
+CHECK(f13, 1, 2);
+CHECK(f13, -1, 0);
+CHECK(f13, -2, -1);
+CHECK(f13, 5, 6);
+CHECK(f13, 1000, 1001);
+CHECK(f13, 8, 9);
+CHECK(f13, 24, 25);
+CHECK(f13, 16, 17);
 
