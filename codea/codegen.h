@@ -36,8 +36,7 @@ void ret(struct tree *node, int tag_type, int type);
 
 void gen_not(struct tree *node);
 
-void gen_and(struct tree *node, int tag_type);
-void gen_and_var_const(struct tree *node, int tag_type);
+void gen_and(struct tree *node);
 
 void gen_add(struct tree *node);
 void gen_add_var_const(struct tree *node);

@@ -75,14 +75,8 @@ t_expr: OP_NOT(neg_t_expr)      # 0 # make_equal_to(bnode, LEFT_CHILD(LEFT_CHILD
 t_expr: neg_t_expr              # 5 # gen_not(bnode);
 t_expr: OP_NOT(t_expr)          # 1 # gen_not(bnode);
 
-t_expr: OP_AND(var, var)        # 1 # gen_and(bnode, TAGGED);
-t_expr: OP_AND(t_expr, t_expr)  # 1 # gen_and(bnode, TAGGED);
-t_expr: OP_AND(t_expr, const)   # 1 # gen_and(bnode, TAGGED);
-t_expr: OP_AND(const, t_expr)   # 1 # gen_and(bnode, TAGGED);
-t_expr: OP_AND(var, const)   # 1 # gen_and_var_const(bnode, TAGGED);
-t_expr: OP_AND(const, var)   # 1 # gen_and_var_const(bnode, TAGGED);
-t_expr: OP_AND(var, t_expr)  # 1 # gen_and(bnode, TAGGED);
-t_expr: OP_AND(t_expr, var)  # 1 # gen_and(bnode, TAGGED);
+
+t_expr: OP_AND(t_expr, t_expr) # 1 # gen_and(bnode);
 
 t_expr: OP_LT(t_expr, t_expr)  # 1 # gen_lt(bnode);
 
