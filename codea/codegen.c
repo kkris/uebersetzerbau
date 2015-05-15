@@ -611,7 +611,10 @@ void gen_eq(struct tree *node)
     const char *dest = node->reg;
 
     if(lhs->op == OP_VAR && rhs->op == OP_VAR) {
-        gen_eq_reg_reg(lhs->var_reg, rhs->var_reg, dest);
+        if(strcmp(lhs->var_reg, rhs->var_reg) == 0)
+            gen_code("movq $2, %%%s", dest);
+        else
+            gen_eq_reg_reg(lhs->var_reg, rhs->var_reg, dest);
     } else if(lhs->op == OP_VAR) {
         if(rhs->constant) {
             gen_eq_const(rhs->value, lhs->var_reg, dest);
@@ -677,7 +680,10 @@ void gen_lt(struct tree *node)
     if(lhs->op == OP_VAR && rhs->op == OP_VAR) {
         expect_num(lhs);
         expect_num(rhs);
-        gen_lt_reg_reg(lhs->var_reg, rhs->var_reg, dest);
+        if(strcmp(lhs->var_reg, rhs->var_reg) == 0)
+            gen_code("movq $0, %%%s", dest);
+        else
+            gen_lt_reg_reg(lhs->var_reg, rhs->var_reg, dest);
     } else if(lhs->op == OP_VAR) {
         expect_num(lhs);
         if(rhs->constant) {

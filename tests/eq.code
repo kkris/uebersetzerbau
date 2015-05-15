@@ -14,10 +14,7 @@ leaq 0(, 1), %rax
 cmovz %r11, %rax
 ret
 f4:
-movq $2, %r11
-cmp %rdi, %rdi
-leaq 0(, 1), %rax
-cmovz %r11, %rax
+movq $2, %rax
 ret
 f5:
 movq $2, %rax
