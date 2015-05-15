@@ -272,10 +272,8 @@ static void gen_and_reg_const(long int value, const char *source, const char *de
 {
     debug("gen_and_reg_const");
 
-    value = tag_const(value);
-
     move(source, dest);
-    gen_code("andq $%ld, %%%s", value, dest);
+    gen_code("andq $%ld, %%%s", tag_const(value), dest);
 }
 
 static void gen_and_reg_reg(const char *s1, const char *s2, const char *dest)
@@ -330,21 +328,11 @@ void gen_add(struct tree *node)
     const char *dest = node->reg;
 
     if(lhs->constant) {
-        gen_add_reg_const(lhs->value, rhs->reg, dest);
+        lea_offset_base(tag_const(lhs->value), rhs->reg, dest);
     } else if(rhs->constant) {
-        gen_add_reg_const(rhs->value, lhs->reg, dest);
-    } else if(lhs->op == OP_VAR && rhs->op == OP_VAR){
-        expect(lhs->reg, TYPE_NUMBER);
-        expect(rhs->reg, TYPE_NUMBER);
-        lea_base_index(lhs->reg, rhs->reg, dest);
+        lea_offset_base(tag_const(rhs->value), lhs->reg, dest);
     } else {
-        if(lhs->op == OP_VAR) {
-            lea_base_index(lhs->reg, rhs->reg, dest);
-        } else if(rhs->op == OP_VAR){
-            gen_code("addq %%%s, %%%s", rhs->reg, dest);
-        } else {
-            lea_base_index(lhs->reg, rhs->reg, dest);
-        }
+        lea_base_index(lhs->reg, rhs->reg, dest);
     }
 }
 

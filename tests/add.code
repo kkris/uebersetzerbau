@@ -34,13 +34,13 @@ f7:
 testq $1, %rdi
 jnz raisesig
 leaq 2(%rdi), %rax
-addq %rdi, %rax
+leaq (%rax, %rdi), %rax
 ret
 f8:
 testq $1, %rdi
 jnz raisesig
 leaq 2(%rdi), %rax
-addq %rdi, %rax
+leaq (%rax, %rdi), %rax
 ret
 f9:
 testq $1, %rdi
@@ -89,16 +89,16 @@ f16:
 testq $1, %rdi
 jnz raisesig
 leaq 2(%rdi), %rsi
-addq $4, %rsi
-addq %rdi, %rsi
-addq $6, %rsi
-addq %rdi, %rsi
-addq $8, %rsi
-addq %rdi, %rsi
-addq $10, %rsi
-addq %rdi, %rsi
-addq $12, %rsi
-addq %rdi, %rsi
-addq $14, %rsi
+leaq 4(%rsi), %rsi
+leaq (%rsi, %rdi), %rsi
+leaq 6(%rsi), %rsi
+leaq (%rsi, %rdi), %rsi
+leaq 8(%rsi), %rsi
+leaq (%rsi, %rdi), %rsi
+leaq 10(%rsi), %rsi
+leaq (%rsi, %rdi), %rsi
+leaq 12(%rsi), %rsi
+leaq (%rsi, %rdi), %rsi
+leaq 14(%rsi), %rsi
 leaq (%rdi, %rsi), %rax
 ret

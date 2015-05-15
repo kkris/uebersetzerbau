@@ -47,15 +47,7 @@ t_expr: const                   # 8 # /* TODO: set down to zero */
 t_expr: var                     # 8 # expect_num(bnode);
 t_expr: u_expr                  # 9 # tag_num_inplace(bnode->reg);
 
-t_expr: OP_ADD(var, var)  # 1 # gen_add(bnode);
-t_expr: OP_ADD(t_expr, t_expr)  # 3 # gen_add(bnode);
-t_expr: OP_ADD(t_expr, const)   # 2 # gen_add(bnode);
-t_expr: OP_ADD(const, t_expr)   # 2 # gen_add(bnode);
-t_expr: OP_ADD(var, const)   # 1 # gen_add_var_const(bnode);
-t_expr: OP_ADD(const, var)   # 1 # gen_add_var_const(bnode);
-t_expr: OP_ADD(var, t_expr)   # 1 # gen_add(bnode);
-t_expr: OP_ADD(t_expr, var)   # 1 # gen_add(bnode);
-
+t_expr: OP_ADD(t_expr, t_expr)  # 1 # gen_add(bnode);
 t_expr: OP_ADD(zero, t_expr)    # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 t_expr: OP_ADD(t_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 
