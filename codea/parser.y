@@ -224,7 +224,7 @@ ListTerm: '.' Term
         @}
         | '.' Term ListTerm
         @{
-            @i @ListTerm.0.node@ = new_node(OP_LIST, @ListTerm.1.node@, @Term.node@);
+            @i @ListTerm.0.node@ = new_node(OP_LIST, @Term.node@, @ListTerm.1.node@);
 
             @reg @ListTerm.1.node@->reg = @ListTerm.0.node@->reg;
             @reg @Term.node@->reg = @ListTerm.0.node@->reg;

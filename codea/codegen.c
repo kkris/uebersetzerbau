@@ -8,15 +8,31 @@
 const char *heap_ptr = "r10";
 const char *temp_reg = "r11";
 
+int heap_ptr_initialized = 0;
+
 // global variable which tracks the just tagged register
 char *just_tagged = NULL;
 char *just_untagged = NULL;
+
+static char *type_checked_vars[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+
+static void reset_state()
+{
+    heap_ptr_initialized = 0;
+    just_tagged = NULL;
+    just_untagged = NULL;
+
+    int i;
+    for(i = 0; i < 10; i++) {
+        type_checked_vars[i] = NULL;
+    }
+}
 
 void maybe_force_tag_or_untag();
 
 void debug(const char *msg, ...)
 {
-    return;
+    //return;
 
     va_list ap;
 
@@ -25,8 +41,6 @@ void debug(const char *msg, ...)
     fprintf(stderr, "\n");
     va_end(ap);
 }
-
-static char *type_checked_vars[5] = {NULL, NULL, NULL, NULL, NULL};
 
 char *get_next_reg(const char *prev, int reuse)
 {
@@ -80,6 +94,11 @@ void move(const char *source, const char *dest)
     gen_code("movq %%%s, %%%s", source, dest);
 }
 
+static void move_const(long int value, const char *dest)
+{
+    gen_code("movq $%ld, %%%s", value, dest);
+}
+
 void lea(long int offset, const char *base, const char *index, int scale, const char *dest)
 {
     if(offset == 0) {
@@ -131,12 +150,17 @@ void lea_base_index(const char *base, const char *index, const char *dest)
     lea(0, base, index, 1, dest);
 }
 
+void raisesig()
+{
+    gen_code("jmp raisesig");
+}
+
 void expect(const char *var_reg, int type)
 {
     debug("expect");
 
     int i;
-    for(i = 0; i < 5; i++) {
+    for(i = 0; i < 10; i++) {
         if(type_checked_vars[i] == NULL) break;
         if(strcmp(var_reg, type_checked_vars[i]) == 0)
             return;
@@ -223,6 +247,21 @@ void untag_num_inplace(const char *reg)
     just_untagged = strdup(reg);
 }
 
+void tag_list_inplace(const char *reg)
+{
+    debug("tag_list_inplace(%s)", reg);
+
+    gen_code("addq $1, %%%s", reg);
+}
+
+void untag_list_inplace(const char *reg)
+{
+    debug("untag_list_inplace(%s)", reg);
+
+    gen_code("subq $1, %%%s", reg);
+}
+
+
 long int tag_const(long int value)
 {
     return value << 1;
@@ -237,7 +276,7 @@ void ret(struct tree *node, int tag_type, int type)
     } else {
         if(type == TYPE_NUMBER) {
             long int tagged = node->value << 1;
-            gen_code("movq $%ld, %rax", tagged);
+            move_const(tagged, "rax");
         } else if(type == TYPE_REG) {
             move(node->reg, "rax");
             tag_num_inplace("rax");
@@ -251,10 +290,7 @@ void ret(struct tree *node, int tag_type, int type)
 
     gen_code("ret");
 
-    int i;
-    for(i = 0; i < 5; i++) {
-        type_checked_vars[i] = NULL;
-    }
+    reset_state();
 }
 
 void gen_not(struct tree *node)
@@ -347,7 +383,7 @@ static void gen_sub_const_reg(long int value, const char *source, const char *de
 {
     debug("gen_sub_reg_const");
 
-    gen_code("movq $%ld, %%%s", value, dest);
+    move_const(value, dest);
     gen_code("subq %%%s, %%%s", source, dest);
 }
 
@@ -370,7 +406,7 @@ void gen_sub(struct tree *node)
 
     if(lhs->op == OP_VAR && rhs->op == OP_VAR) {
         if(strcmp(lhs->name, rhs->name) == 0)
-            gen_code("movq $0, %%%s", dest);
+            move_const(0, dest);
         else
             gen_sub_reg_reg(lhs->reg, rhs->reg, dest);
     } else if(lhs->constant) {
@@ -449,7 +485,7 @@ static void gen_eq_const_reg(long int value, const char *source, const char *des
 
     value = tag_const(value);
 
-    gen_code("movq $2, %%%s", temp_reg);
+    move_const(2, temp_reg);
     gen_code("cmp $%ld, %%%s", value, source);
     gen_code("leaq 0(, 1), %%%s", dest);
     gen_code("cmovz %%%s, %%%s", temp_reg, dest);
@@ -459,7 +495,7 @@ static void gen_eq_reg_reg(const char *s1, const char *s2, const char *dest)
 {
     debug("gen_eq_reg_reg");
 
-    gen_code("movq $2, %%%s", temp_reg);
+    move_const(2, temp_reg);
     gen_code("cmp %%%s, %%%s", s1, s2);
     gen_code("leaq 0(, 1), %%%s", dest);
     gen_code("cmovz %%%s, %%%s", temp_reg, dest);
@@ -477,7 +513,7 @@ void gen_eq(struct tree *node)
 
     if(lhs->op == OP_VAR && rhs->op == OP_VAR) {
         if(strcmp(lhs->reg, rhs->reg) == 0)
-            gen_code("movq $2, %%%s", dest);
+            move_const(2, dest);
         else
             gen_eq_reg_reg(lhs->reg, rhs->reg, dest);
     } else if(lhs->constant) {
@@ -493,7 +529,7 @@ static void gen_lt_reg_reg(const char *s1, const char *s2, const char *dest)
 {
     debug("gen_lt_reg_reg");
 
-    gen_code("movq $2, %%%s", temp_reg);
+    move_const(2, temp_reg);
     gen_code("cmp %%%s, %%%s", s1, s2);
     gen_code("leaq 0(, 1), %%%s", dest);
     gen_code("cmovg %%%s, %%%s", temp_reg, dest);
@@ -503,7 +539,7 @@ static void gen_lt_const_reg(long int value, const char *source, const char *des
 {
     debug("gen_lt_const");
 
-    gen_code("movq $2, %%%s", temp_reg);
+    move_const(2, temp_reg);
     gen_code("cmp $%ld, %%%s", tag_const(value), source);
     gen_code("leaq 0(, 1), %%%s", dest);
     gen_code("cmovg %%%s, %%%s", temp_reg, dest);
@@ -513,7 +549,7 @@ static void gen_lt_reg_const(long int value, const char *source, const char *des
 {
     debug("gen_lt_const");
 
-    gen_code("movq $2, %%%s", temp_reg);
+    move_const(2, temp_reg);
     gen_code("cmp $%ld, %%%s", tag_const(value), source);
     gen_code("leaq 0(, 1), %%%s", dest);
     gen_code("cmovl %%%s, %%%s", temp_reg, dest);
@@ -531,7 +567,7 @@ void gen_lt(struct tree *node)
 
     if(lhs->op == OP_VAR && rhs->op == OP_VAR) {
         if(strcmp(lhs->reg, rhs->reg) == 0)
-            gen_code("movq $0, %%%s", dest);
+            move_const(0, dest);
         else
             gen_lt_reg_reg(lhs->reg, rhs->reg, dest);
     } else if(lhs->constant) {
@@ -574,7 +610,7 @@ void gen_islist(struct tree *node)
         source = lhs->reg;
     }
 
-    gen_code("movq $0, %%%s", temp_reg);
+    move_const(0, temp_reg);
 
     move(source, dest);
     gen_code("andq $3, %%%s", dest);
@@ -614,12 +650,7 @@ static void set_tail_reg(const char *list_reg, const char *reg)
     gen_code("movq %%%s, 8(%%%s)", reg, list_reg);
 }
 
-
-/**
- * Constructs a list from a const, var or expression as lhs and rhs. The
- * resulting address is untagged.
- */
-void gen_list_simple(struct tree *node)
+void gen_list(struct tree *node)
 {
     debug("gen_list");
 
@@ -628,42 +659,23 @@ void gen_list_simple(struct tree *node)
 
     const char *dest = node->reg;
 
+    if(heap_ptr_initialized == 0) {
+        gen_code("movq %%%s, %%%s", "r15", heap_ptr);
+        heap_ptr_initialized = 1;
+    }
+
     if(lhs->constant)
-        set_head_const("r15", lhs->value);
+        gen_code("movq $%ld, (%%%s)", tag_const(lhs->value), heap_ptr);
     else
-        set_head_reg("r15", lhs->reg);
+        gen_code("movq %%%s, (%%%s)", lhs->reg, heap_ptr);
 
     if(rhs->constant)
-        set_tail_const("r15", rhs->value);
+        gen_code("movq $%ld, 8(%%%s)", tag_const(rhs->value), heap_ptr);
     else
-        set_tail_reg("r15", rhs->reg);
+        gen_code("movq %%%s, 8(%%%s)", rhs->reg, heap_ptr);
 
-    // return cell address and advance list pointer in r15
-    move("r15", dest);
-    gen_code("addq $16, %%%s", "r15");
-}
 
-void gen_list_prepend(struct tree *node)
-{
-    debug("gen_list_expr_list");
-
-    struct tree *lhs = LEFT_CHILD(node);
-    struct tree *listnode = RIGHT_CHILD(node);
-
-    const char *dest = node->reg;
-
-    if(lhs->constant)
-        set_head_const("r15", lhs->value);
-    else if(lhs->op == OP_VAR)
-        set_head_reg("r15", lhs->reg);
-    else
-        set_head_reg("r15", lhs->reg);
-
-    // set tail and tag it
-    gen_code("movq %%%s, 8(%%%s)", listnode->reg, "r15");
-    gen_code("addq $1, 8(%%%s)", "r15");
-
-    // return cell address and advance list pointer in r15
-    move("r15", dest);
-    gen_code("addq $16, %%%s", "r15");
+    // return cell address and advance heap ptr
+    move(heap_ptr, dest);
+    gen_code("addq $16, %%%s", heap_ptr);
 }

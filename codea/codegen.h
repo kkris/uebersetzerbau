@@ -7,7 +7,8 @@ enum {
     TYPE_NUMBER = 1,
     TYPE_LIST,
     TYPE_FUN,
-    TYPE_REG
+    TYPE_REG,
+    TYPE_WORD
 };
 
 enum {

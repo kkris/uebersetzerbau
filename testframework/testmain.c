@@ -6,6 +6,10 @@ int sig_raised = 0;
 
 int errors = 0;
 
+static long heap[1000000];
+register long *heapptr asm("%r15");
+
+
 void raisesig()
 {
     if(expect_sig == 0)
@@ -33,7 +37,7 @@ long int untag(long int value)
 } while(0)
 
 #define CHECK_RAW(FUNC, INPUT, EXPECTED) do {\
-    long int result = untag(FUNC(INPUT)); \
+    long int result = FUNC(INPUT); \
     if(result != EXPECTED) {\
         printf("\tFF %s(%s) == %ld but should be %s\n", #FUNC, #INPUT, result, #EXPECTED); \
         errors++;\
@@ -64,6 +68,8 @@ long int untag(long int value)
 
 
 int main(void) {
+    heapptr = heap;
+
     #include "TESTCASE"
 
     if(errors == 0) {
