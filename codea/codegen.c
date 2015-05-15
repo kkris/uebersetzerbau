@@ -519,6 +519,7 @@ void gen_mul(struct tree *node)
         gen_code("imulq %%%s, %%%s", rhs->var_reg, dest);
         gen_code("sarq $1, %%%s", dest);
     } else if(op1 == OP_VAR) {
+        expect_num(rhs);
         if(rhs->constant) {
             gen_mul_reg_const(lhs->var_reg, dest, rhs->value);
             gen_code("sarq $1, %%%s", dest);
@@ -528,6 +529,7 @@ void gen_mul(struct tree *node)
             gen_code("sarq $1, %%%s", dest);
         }
     } else if(op2 == OP_VAR) {
+        expect_num(rhs);
         if(lhs->constant) {
             gen_mul_reg_const(rhs->var_reg, dest, lhs->value);
             gen_code("sarq $1, %%%s", dest);
@@ -619,6 +621,74 @@ void gen_eq(struct tree *node)
             gen_eq_const(rhs->value, lhs->reg, dest);
         else
             gen_eq_reg_reg(lhs->reg, rhs->reg, dest);
+    }
+}
+
+static void gen_lt_reg_reg(const char *s1, const char *s2, const char *dest)
+{
+    debug("gen_lt_reg_reg");
+
+    gen_code("movq $2, %%%s", temp_reg);
+    gen_code("cmp %%%s, %%%s", s1, s2);
+    gen_code("leaq 0(, 1), %%%s", dest);
+    gen_code("cmovg %%%s, %%%s", temp_reg, dest);
+}
+
+static void gen_lt_const_reg(long int value, const char *source, const char *dest)
+{
+    debug("gen_lt_const");
+
+    gen_code("movq $2, %%%s", temp_reg);
+    gen_code("cmp $%ld, %%%s", tag_const(value), source);
+    gen_code("leaq 0(, 1), %%%s", dest);
+    gen_code("cmovg %%%s, %%%s", temp_reg, dest);
+}
+
+static void gen_lt_reg_const(long int value, const char *source, const char *dest)
+{
+    debug("gen_lt_const");
+
+    gen_code("movq $2, %%%s", temp_reg);
+    gen_code("cmp $%ld, %%%s", tag_const(value), source);
+    gen_code("leaq 0(, 1), %%%s", dest);
+    gen_code("cmovl %%%s, %%%s", temp_reg, dest);
+}
+
+
+void gen_lt(struct tree *node)
+{
+    debug("gen_lt");
+
+    struct tree *lhs = LEFT_CHILD(node);
+    struct tree *rhs = RIGHT_CHILD(node);
+
+    const char *dest = node->reg;
+
+    if(lhs->op == OP_VAR && rhs->op == OP_VAR) {
+        expect_num(lhs);
+        expect_num(rhs);
+        gen_lt_reg_reg(lhs->var_reg, rhs->var_reg, dest);
+    } else if(lhs->op == OP_VAR) {
+        expect_num(lhs);
+        if(rhs->constant) {
+            gen_lt_reg_const(rhs->value, lhs->var_reg, dest);
+        } else {
+            gen_lt_reg_reg(lhs->var_reg, rhs->reg, dest);
+        }
+    } else if(rhs->op == OP_VAR) {
+        expect_num(rhs);
+        if(lhs->constant) {
+            gen_lt_const_reg(lhs->value, rhs->var_reg, dest);
+        } else {
+            gen_lt_reg_reg(lhs->reg, rhs->var_reg, dest);
+        }
+    } else {
+        if(lhs->constant)
+            gen_lt_const_reg(lhs->value, rhs->reg, dest);
+        else if(rhs->constant)
+            gen_lt_reg_const(rhs->value, lhs->reg, dest);
+        else
+            gen_lt_reg_reg(lhs->reg, rhs->reg, dest);
     }
 }
 

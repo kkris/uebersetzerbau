@@ -1,0 +1,71 @@
+extern long int f1(long int);
+extern long int f2(long int);
+extern long int f3(long int);
+extern long int f4(long int);
+extern long int f5(long int);
+extern long int f6(long int);
+extern long int f7(long int);
+extern long int f8(long int);
+extern long int f9(long int);
+
+RAISES_NOT(f1, 1);
+CHECK(f1, 1337, 0);
+
+RAISES(f2, 1);
+CHECK(f2, 0, 1);
+CHECK(f2, 5, 0);
+CHECK(f2, -1, 1);
+CHECK(f2, 4, 1);
+CHECK(f2, 42, 0);
+
+RAISES(f3, 1);
+CHECK(f3, 0, 0);
+CHECK(f3, 5, 0);
+CHECK(f3, -1, 0);
+CHECK(f3, 4, 0);
+CHECK(f3, 42, 1);
+
+RAISES(f4, 1);
+CHECK(f4, 0, 0);
+CHECK(f4, 1, 0);
+CHECK(f4, -1, 0);
+CHECK(f4, 5, 0);
+CHECK(f4, -5, 0);
+
+RAISES_NOT(f5, 1);
+CHECK(f5, -42, 0);
+
+RAISES(f6, 1);
+CHECK(f6, 0, 0);
+CHECK(f6, 1, 0);
+CHECK(f6, -1, 0);
+CHECK(f6, 5, 0);
+CHECK(f6, -5, 0);
+
+RAISES(f7, 1);
+CHECK(f7, 0, 1);
+CHECK(f7, 1, 0);
+CHECK(f7, -1, 0);
+CHECK(f7, 5, 0);
+CHECK(f7, 6, 1);
+
+RAISES(f8, 1);
+CHECK(f8, 0, 0);
+CHECK(f8, 1, 0);
+CHECK(f8, -1, 0);
+CHECK(f8, 5, 0);
+CHECK(f8, 6, 1);
+CHECK(f8, 7, 1);
+
+RAISES(f9, 1);
+CHECK(f9, 0, 0);
+CHECK(f9, 1, 0);
+CHECK(f9, -1, 0);
+CHECK(f9, 5, 0);
+CHECK(f9, 6, 1);
+CHECK(f9, 42, 1);
+
+
+
+
+

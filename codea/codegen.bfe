@@ -89,6 +89,16 @@ t_expr: OP_AND(const, var)   # 1 # gen_and_var_const(bnode, TAGGED);
 t_expr: OP_AND(var, t_expr)  # 1 # gen_and(bnode, TAGGED);
 t_expr: OP_AND(t_expr, var)  # 1 # gen_and(bnode, TAGGED);
 
+t_expr: OP_LT(var, var)        # 1 # gen_lt(bnode);
+t_expr: OP_LT(t_expr, t_expr)  # 1 # gen_lt(bnode);
+t_expr: OP_LT(t_expr, const)   # 1 # gen_lt(bnode);
+t_expr: OP_LT(const, t_expr)   # 1 # gen_lt(bnode);
+t_expr: OP_LT(var, const)      # 1 # gen_lt(bnode);
+t_expr: OP_LT(const, var)      # 1 # gen_lt(bnode);
+t_expr: OP_LT(var, t_expr)     # 1 # gen_lt(bnode);
+t_expr: OP_LT(t_expr, var)     # 1 # gen_lt(bnode);
+
+
 t_expr: OP_EQ(var, var)         # 1 # gen_eq(bnode);
 t_expr: OP_EQ(const, var)       # 1 # gen_eq(bnode);
 t_expr: OP_EQ(var, const)       # 1 # gen_eq(bnode);
