@@ -46,6 +46,8 @@ t_expr: var                     # 8 # expect_num(bnode);
 t_expr: u_expr                  # 9 # tag_num_inplace(bnode->reg);
 t_expr: t_word                  # 9 # expect_num(bnode);
 
+t_expr: u_list                  # 9 # raisesig();
+
 t_expr: OP_ADD(t_expr, t_expr)  # 1 # gen_add(bnode);
 t_expr: OP_ADD(zero, t_expr)    # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 t_expr: OP_ADD(t_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
@@ -62,10 +64,8 @@ t_expr: OP_AND(t_expr, t_expr) # 1 # gen_and(bnode);
 
 t_expr: OP_LT(t_expr, t_expr)  # 1 # gen_lt(bnode);
 
-t_expr: OP_EQ(t_expr, t_expr)  # 1 # gen_eq(bnode); /* type checked */
-t_expr: OP_EQ(var, var)        # 1 # gen_eq(bnode); /* not type checked */
-t_expr: OP_EQ(var, t_expr)     # 1 # gen_eq(bnode); /* not type checked */
-t_expr: OP_EQ(t_expr, var)     # 1 # gen_eq(bnode); /* not type checked */
+t_expr: OP_EQ(t_expr, t_expr)  # 9 # gen_eq(bnode); /* type checked */
+t_expr: OP_EQ(t_word, t_word)  # 1 # gen_eq(bnode); /* not type checked */
 
 t_expr: OP_ISLIST(t_word)      # 0 # gen_islist(bnode);
 
@@ -127,6 +127,11 @@ zero: OP_AND(var, zero)  # 0 # expect_num(LEFT_CHILD(bnode)); make_constant(bnod
 
 one: OP_ISLIST(t_expr)      # 0 # make_constant(bnode, 0);
 zero: OP_ISFUN(const)       # 0 # make_constant(bnode, 0);
+
+t_word: t_expr              # 9 #
+t_word: t_list              # 9 #
+t_word: const               # 9 #
+t_word: var                 # 9 #
 
 
 t_word: OP_HEAD(u_list)     # 0 # gen_head(bnode);

@@ -6,3 +6,5 @@ f5 = fun x -> isnum (x * 0) end;
 f6 = fun x -> isnum (isnum (x + 1)) end;
 f7 = fun x -> isnum (isnum (x * 1)) end;
 f8 = fun x -> isnum (isnum (x * 2)) end;
+f9 = fun x -> isnum (x.x) end;
+f10 = fun x -> isnum tail (1.x.3) end;

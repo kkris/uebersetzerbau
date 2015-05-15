@@ -234,6 +234,7 @@ void tag_num_inplace(const char *reg)
     }
 
     just_tagged = strdup(reg);
+    just_untagged = NULL;
 }
 
 void untag_num_inplace(const char *reg)
@@ -248,6 +249,7 @@ void untag_num_inplace(const char *reg)
     }
 
     just_untagged = strdup(reg);
+    just_tagged = NULL;
 }
 
 void tag_list_inplace(const char *reg)

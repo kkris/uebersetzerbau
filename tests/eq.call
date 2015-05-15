@@ -64,7 +64,15 @@ CHECK(f9, -1, 0);
 CHECK(f9, 5, 1);
 CHECK(f9, -5, 0);
 
+CHECK(f10, 0, 0);
 
+CHECK(f11, 0, 0);
 
+CHECK(f12, 0, 0);
 
+CHECK(f13, 0, 1);
+CHECK(f13, 1, 1);
+CHECK(f13, -1, 1);
+CHECK(f13, 42, 1);
+CHECK(f13, -1337, 1);
 
