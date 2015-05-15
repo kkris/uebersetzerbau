@@ -130,7 +130,7 @@ zero: OP_ISFUN(const)       # 0 # make_constant(bnode, 0);
 
 
 t_word: OP_HEAD(u_list)     # 0 # gen_head(bnode);
-t_word: OP_HEAD(t_word)     # 0 # gen_head(bnode);
+t_word: OP_HEAD(t_word)     # 0 # expect_list(LEFT_CHILD(bnode)); untag_list_inplace(LEFT_CHILD(bnode)->reg); gen_head(bnode);
 t_word: OP_HEAD(t_expr)     # 0 # raisesig();
 
 
@@ -143,6 +143,8 @@ u_list: OP_LIST(var, var)       # 0 # gen_list(bnode);
 
 u_list: OP_LIST(t_expr, t_list) # 0 # gen_list(bnode);
 u_list: OP_LIST(t_list, t_expr) # 0 # gen_list(bnode);
+u_list: OP_LIST(var, t_list)    # 0 # gen_list(bnode);
+u_list: OP_LIST(t_list, var)    # 0 # gen_list(bnode);
 
 %%
 

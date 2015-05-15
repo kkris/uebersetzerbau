@@ -186,7 +186,10 @@ void expect_list(struct tree *node)
 {
     debug("expect_list");
 
-
+    gen_code("testq $1, %%%s", node->reg);
+    gen_code("jz raisesig");
+    gen_code("testq $2, %%%s", node->reg);
+    gen_code("jnz raisesig");
 }
 
 void tag(int type, const char *source, const char *dest)

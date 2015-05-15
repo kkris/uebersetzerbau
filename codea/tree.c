@@ -22,6 +22,7 @@ char *opnames[] = {
     "ret",
     "zero",
     "one",
+    "list",
     "unknown"
 };
 
