@@ -174,6 +174,20 @@ void tag(int type, const char *source, const char *dest)
     }
 }
 
+void tag_num_inplace(const char *reg)
+{
+    debug("tag_num_inplace(%s)", reg);
+
+    gen_code("salq $1, %%%s", reg);
+}
+
+void untag_num_inplace(const char *reg)
+{
+    debug("tag_num_inplace(%s)", reg);
+
+    gen_code("sarq $1, %%%s", reg);
+}
+
 long int tag_const(long int value)
 {
     return value << 1;
@@ -184,7 +198,7 @@ void tag_num_into(const char *source, const char *dest)
     debug("tag_num_into(%s, %s)", source, dest);
 
     move(source, dest);
-    gen_code("salq $1, %%%s", dest);
+    tag_num_inplace(dest);
 }
 
 void untag_num_into(const char *source, const char *dest)
@@ -192,7 +206,7 @@ void untag_num_into(const char *source, const char *dest)
     debug("untag_num_into(%s, %s)", source, dest);
 
     move(source, dest);
-    gen_code("sarq $1, %%%s", dest);
+    untag_num_inplace(dest);
 }
 
 void load_tagged_num(const char *var_reg, const char *dest)
@@ -223,7 +237,7 @@ void ret(struct tree *node, int tag_type, int type)
             gen_code("movq $%ld, %rax", tagged);
         } else if(type == TYPE_REG) {
             move(node->reg, "rax");
-            tag(TYPE_NUMBER, "rax", "rax");
+            tag_num_inplace("rax");
         } else if(type == TYPE_LIST) {
             move(node->reg, "rax");
             tag(TYPE_LIST, "rax", "rax");
@@ -517,25 +531,25 @@ void gen_mul(struct tree *node)
         expect(rhs->var_reg, TYPE_NUMBER);
         untag_num_into(lhs->var_reg, dest);
         gen_code("imulq %%%s, %%%s", rhs->var_reg, dest);
-        gen_code("sarq $1, %%%s", dest);
+        untag_num_inplace(dest);
     } else if(op1 == OP_VAR) {
         expect_num(rhs);
         if(rhs->constant) {
             gen_mul_reg_const(lhs->var_reg, dest, rhs->value);
-            gen_code("sarq $1, %%%s", dest);
+            untag_num_inplace(dest);
         } else {
             move(rhs->reg, dest);
             gen_code("imulq %%%s, %%%s", lhs->var_reg, dest);
-            gen_code("sarq $1, %%%s", dest);
+            untag_num_inplace(dest);
         }
     } else if(op2 == OP_VAR) {
         expect_num(rhs);
         if(lhs->constant) {
             gen_mul_reg_const(rhs->var_reg, dest, lhs->value);
-            gen_code("sarq $1, %%%s", dest);
+            untag_num_inplace(dest);
         } else {
             gen_code("imulq %%%s, %%%s", rhs->var_reg, dest);
-            gen_code("sarq $1, %%%s", dest);
+            untag_num_inplace(dest);
         }
     } else {
         if(lhs->constant)
@@ -565,7 +579,7 @@ void gen_mul_var_const(struct tree *node)
     expect(varnode->var_reg, TYPE_NUMBER);
     //untag_num_into(varnode->var_reg, dest);
     gen_mul_reg_const(varnode->var_reg, dest, constnode->value);
-    gen_code("sarq $1, %%%s", dest);
+    untag_num_inplace(dest);
 }
 
 static void gen_eq_const(long int value, const char *source, const char *dest)
