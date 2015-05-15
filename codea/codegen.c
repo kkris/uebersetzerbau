@@ -158,6 +158,13 @@ void expect_num(struct tree *node)
         expect(node->reg, TYPE_NUMBER);
 }
 
+void expect_list(struct tree *node)
+{
+    debug("expect_list");
+
+
+}
+
 void tag(int type, const char *source, const char *dest)
 {
     debug("tag(%s, %s)", source, dest);
@@ -576,6 +583,17 @@ void gen_islist(struct tree *node)
     gen_code("cmovz %%%s, %%%s", temp_reg, dest);
 }
 
+void gen_head(struct tree *node)
+{
+    debug("gen_head");
+
+    struct tree *lhs = LEFT_CHILD(node);
+
+    const char *dest = node->reg;
+
+    gen_code("movq (%%%s), %%%s", lhs->reg, dest);
+}
+
 static void set_head_const(const char *list_reg, long int value)
 {
     gen_code("movq $%ld, (%%%s)", tag_const(value), list_reg);
@@ -612,15 +630,11 @@ void gen_list_simple(struct tree *node)
 
     if(lhs->constant)
         set_head_const("r15", lhs->value);
-    else if(lhs->op == OP_VAR)
-        set_head_reg("r15", lhs->reg);
     else
         set_head_reg("r15", lhs->reg);
 
     if(rhs->constant)
         set_tail_const("r15", rhs->value);
-    else if(rhs->op == OP_VAR)
-        set_tail_reg("r15", rhs->reg);
     else
         set_tail_reg("r15", rhs->reg);
 

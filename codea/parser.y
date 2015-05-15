@@ -222,12 +222,12 @@ ListTerm: '.' Term
         @{
             @i @ListTerm.node@ = @Term.node@;
         @}
-        | ListTerm '.' Term
+        | '.' Term ListTerm
         @{
             @i @ListTerm.0.node@ = new_node(OP_LIST, @ListTerm.1.node@, @Term.node@);
 
             @reg @ListTerm.1.node@->reg = @ListTerm.0.node@->reg;
-            @reg @Term.node@->reg = get_next_reg(@ListTerm.1.node@->reg, @ListTerm.1.node@->constant);
+            @reg @Term.node@->reg = @ListTerm.0.node@->reg;
         @}
 
 Term: '(' Expr ')'

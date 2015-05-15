@@ -43,6 +43,7 @@ u_expr: OP_ISNUM(var)           # 0 # gen_isnum(bnode);
 t_expr: const                   # 8 # /* TODO: set down to zero */
 t_expr: var                     # 8 # expect_num(bnode);
 t_expr: u_expr                  # 9 # tag_num_inplace(bnode->reg);
+t_expr: t_word                  # 9 # expect_num(bnode);
 
 t_expr: OP_ADD(t_expr, t_expr)  # 1 # gen_add(bnode);
 t_expr: OP_ADD(zero, t_expr)    # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
@@ -74,8 +75,6 @@ var: OP_MUL(one, var)           # 0 # expect_num(RIGHT_CHILD(bnode)); make_equal
 var: OP_ADD(var, zero)          # 0 # expect_num(LEFT_CHILD(bnode)); make_equal_to(bnode, LEFT_CHILD(bnode));
 var: OP_ADD(zero, var)          # 0 # expect_num(RIGHT_CHILD(bnode)); make_equal_to(bnode, RIGHT_CHILD(bnode));
 var: OP_SUB(var, zero)          # 0 # expect_num(LEFT_CHILD(bnode)); make_equal_to(bnode, LEFT_CHILD(bnode));
-
-
 
 const: one                  # 0 #
 const: zero                 # 0 #
@@ -123,24 +122,16 @@ zero: OP_AND(var, zero)  # 0 # expect_num(LEFT_CHILD(bnode)); make_constant(bnod
 zero: OP_ISLIST(const)      # 0 # make_constant(bnode, 0);
 zero: OP_ISFUN(const)       # 0 # make_constant(bnode, 0);
 
-zero: OP_HEAD(const)        # 0 # make_constant(bnode, 0);
 zero: OP_HEAD(t_expr)       # 0 # make_constant(bnode, 0);
 zero: OP_HEAD(u_expr)       # 0 # make_constant(bnode, 0);
 
 zero: OP_TAIL(const)        # 0 # make_constant(bnode, 0);
 
-u_list: OP_LIST(const, const)   # 0 # gen_list_simple(bnode);
-u_list: OP_LIST(var, var) # 0 # gen_list_simple(bnode);
-u_list: OP_LIST(var, const)  # 0 # gen_list_simple(bnode);
-u_list: OP_LIST(const, var)  # 0 # gen_list_simple(bnode);
-u_list: OP_LIST(const, t_expr)  # 0 # gen_list_simple(bnode);
-u_list: OP_LIST(t_expr, const)  # 0 # gen_list_simple(bnode);
-u_list: OP_LIST(t_expr, t_expr) # 0 # gen_list_simple(bnode);
-u_list: OP_LIST(var, t_expr) # 0 # gen_list_simple(bnode);
-u_list: OP_LIST(t_expr, var) # 0 # gen_list_simple(bnode);
+t_word: OP_HEAD(u_list)     # 0 # gen_head(bnode);
 
-u_list: OP_LIST(const, u_list)   # 0 # gen_list_prepend(bnode);
-u_list: OP_LIST(var, u_list)  # 0 # gen_list_prepend(bnode);
-u_list: OP_LIST(t_expr, u_list)  # 0 # gen_list_prepend(bnode);
+u_list: OP_LIST(t_expr, t_expr) # 0 # gen_list_simple(bnode);
+
+u_list: OP_LIST(t_expr, u_list) # 0 # gen_list_prepend(bnode);
+u_list: OP_LIST(u_list, t_expr) # 0 # gen_list_prepend(bnode);
 %%
 
