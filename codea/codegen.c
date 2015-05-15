@@ -633,24 +633,15 @@ void gen_head(struct tree *node)
     gen_code("movq (%%%s), %%%s", lhs->reg, dest);
 }
 
-static void set_head_const(const char *list_reg, long int value)
+void gen_tail(struct tree *node)
 {
-    gen_code("movq $%ld, (%%%s)", tag_const(value), list_reg);
-}
+    debug("gen_tail");
 
-static void set_head_reg(const char *list_reg, const char *reg)
-{
-    gen_code("movq %%%s, (%%%s)", reg, list_reg);
-}
+    struct tree *lhs = LEFT_CHILD(node);
 
-static void set_tail_const(const char *list_reg, long int value)
-{
-    gen_code("movq $%ld, 8(%%%s)", tag_const(value), list_reg);
-}
+    const char *dest = node->reg;
 
-static void set_tail_reg(const char *list_reg, const char *reg)
-{
-    gen_code("movq %%%s, 8(%%%s)", reg, list_reg);
+    gen_code("movq 8(%%%s), %%%s", lhs->reg, dest);
 }
 
 void gen_list(struct tree *node)

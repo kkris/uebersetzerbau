@@ -227,8 +227,8 @@ ListTerm: '.' Term
         @{
             @i @ListTerm.0.node@ = new_node(OP_LIST, @Term.node@, @ListTerm.1.node@);
 
-            @reg @ListTerm.1.node@->reg = @ListTerm.0.node@->reg;
-            @reg @Term.node@->reg = get_next_reg(@ListTerm.0.node@->reg, is_const_or_atomic(@ListTerm.0.node@));
+            @reg @Term.node@->reg = @ListTerm.0.node@->reg;
+            @reg @ListTerm.1.node@->reg = get_next_reg(@Term.node@->reg, is_const_or_atomic(@Term.node@));
         @}
 
 Term: '(' Expr ')'

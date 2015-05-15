@@ -133,6 +133,10 @@ t_word: OP_HEAD(u_list)     # 0 # gen_head(bnode);
 t_word: OP_HEAD(t_word)     # 0 # expect_list(LEFT_CHILD(bnode)); untag_list_inplace(LEFT_CHILD(bnode)->reg); gen_head(bnode);
 t_word: OP_HEAD(t_expr)     # 0 # raisesig();
 
+t_word: OP_TAIL(u_list)     # 0 # gen_tail(bnode);
+t_word: OP_TAIL(t_word)     # 0 # expect_list(LEFT_CHILD(bnode)); untag_list_inplace(LEFT_CHILD(bnode)->reg); gen_tail(bnode);
+t_word: OP_TAIL(t_expr)     # 0 # raisesig();
+
 
 t_list: u_list              # 3 # tag_list_inplace(bnode->reg);
 
