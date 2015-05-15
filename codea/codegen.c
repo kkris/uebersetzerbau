@@ -336,50 +336,23 @@ void gen_add(struct tree *node)
     }
 }
 
-static void gen_sub_reg_const(long int value, const char *source, const char *dest, int tag_type)
+static void gen_sub_const_reg(long int value, const char *source, const char *dest)
 {
     debug("gen_sub_reg_const");
-
-    if(tag_type == TAGGED)
-        value = tag_const(value);
-
-    lea_offset_base(-value, source, dest);
-}
-
-static void gen_sub_const_reg(long int value, const char *source, const char *dest, int tag_type)
-{
-    debug("gen_sub_reg_const");
-
-    if(tag_type == TAGGED)
-        value = tag_const(value);
 
     gen_code("movq $%ld, %%%s", value, dest);
     gen_code("subq %%%s, %%%s", source, dest);
 }
 
-void gen_sub_var_const(struct tree *node, int tag_type)
+static void gen_sub_reg_reg(const char *s1, const char *s2, const char *dest)
 {
-    debug("gen_add_var_const");
+    debug("gen_sub_reg_reg");
 
-    struct tree *lhs = LEFT_CHILD(node);
-    struct tree *rhs = RIGHT_CHILD(node);
-
-    const char *dest = node->reg;
-
-    struct tree *constnode = lhs->constant ? lhs : rhs;
-    struct tree *varnode = lhs->op == OP_VAR ? lhs : rhs;
-
-    expect(varnode->reg, TYPE_NUMBER);
-
-    if(lhs->op == OP_VAR) {
-        gen_sub_reg_const(constnode->value, varnode->reg, dest, TAGGED);
-    } else {
-        gen_sub_const_reg(constnode->value, varnode->reg, dest, TAGGED);
-    }
+    move(s1, dest);
+    gen_code("subq %%%s, %%%s", s2, dest);
 }
 
-
-void gen_sub(struct tree *node, int tag_type)
+void gen_sub(struct tree *node)
 {
     debug("gen_sub");
 
@@ -388,32 +361,17 @@ void gen_sub(struct tree *node, int tag_type)
 
     const char *dest = node->reg;
 
-    if(lhs->constant && rhs->constant) {
-        gen_code("TODO: upps, constant fold!");
-    } else if(lhs->constant) {
-        gen_sub_const_reg(lhs->value, rhs->reg, dest, tag_type);
-    } else if(rhs->constant) {
-        gen_sub_reg_const(rhs->value, lhs->reg, dest, tag_type);
-    } else if(lhs->op == OP_VAR && rhs->op == OP_VAR){
-        if(strcmp(lhs->name, rhs->name) == 0) {
-            expect(lhs->reg, TYPE_NUMBER);
+    if(lhs->op == OP_VAR && rhs->op == OP_VAR) {
+        if(strcmp(lhs->name, rhs->name) == 0)
             gen_code("movq $0, %%%s", dest);
-        } else {
-            expect(lhs->reg, TYPE_NUMBER);
-            expect(rhs->reg, TYPE_NUMBER);
-            move(lhs->reg, dest);
-            gen_code("subq %%%s, %%%s", rhs->reg, dest);
-        }
+        else
+            gen_sub_reg_reg(lhs->reg, rhs->reg, dest);
+    } else if(lhs->constant) {
+        gen_sub_const_reg(tag_const(lhs->value), rhs->reg, dest);
+    } else if(rhs->constant) {
+        lea_offset_base(-tag_const(rhs->value), lhs->reg, dest);
     } else {
-        if(lhs->op == OP_VAR) {
-            move(lhs->reg, dest);
-            gen_code("subq %%%s, %%%s", rhs->reg, dest);
-        } else if(rhs->op == OP_VAR){
-            gen_code("subq %%%s, %%%s", rhs->reg, dest);
-        } else {
-            move(lhs->reg, dest);
-            gen_code("subq %%%s, %%%s", rhs->reg, dest);
-        }
+        gen_sub_reg_reg(lhs->reg, rhs->reg, dest);
     }
 }
 

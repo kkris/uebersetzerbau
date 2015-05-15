@@ -39,9 +39,8 @@ void gen_not(struct tree *node);
 void gen_and(struct tree *node);
 
 void gen_add(struct tree *node);
-void gen_add_var_const(struct tree *node);
 
-void gen_sub(struct tree *node, int tag_type);
+void gen_sub(struct tree *node);
 
 void gen_mul_untagged(struct tree *node, int input_tag_type);
 void gen_mul_tagged(struct tree *node, int tag_type);
