@@ -74,14 +74,14 @@ CHECK(f13, -1, -1);
 CHECK(f13, 5, 5);
 CHECK(f13, -5, -5);
 
-RAISES_NOT(f14, 1);
+RAISES(f14, 1);
 CHECK(f14, 0, 0);
 CHECK(f14, 1, 2);
 CHECK(f14, -1, -2);
 CHECK(f14, 5, 10);
 CHECK(f14, -5, -10);
 
-RAISES_NOT(f15, 1);
+RAISES(f15, 1);
 CHECK(f15, 0, 1);
 CHECK(f15, 1, 2);
 CHECK(f15, -1, 0);
