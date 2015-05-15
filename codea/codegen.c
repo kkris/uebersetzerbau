@@ -8,6 +8,12 @@
 const char *heap_ptr = "r10";
 const char *temp_reg = "r11";
 
+// global variable which tracks the just tagged register
+char *just_tagged = NULL;
+char *just_untagged = NULL;
+
+void maybe_force_tag_or_untag();
+
 void debug(const char *msg, ...)
 {
     return;
@@ -46,19 +52,12 @@ char *get_next_reg(const char *prev, int reuse)
     return NULL;
 }
 
-char *get_lower_byte_reg(const char *reg)
-{
-    if(strcmp(reg, "rax") == 0) return strdup("al");
-    if(strcmp(reg, "rbx") == 0) return strdup("bl");
-    if(strcmp(reg, "rcx") == 0) return strdup("cl");
-    if(strcmp(reg, "rdx") == 0) return strdup("dl");
-    if(strcmp(reg, "rsi") == 0) return strdup("sil");
-    if(strcmp(reg, "rdi") == 0) return strdup("dil");
-    gen_code("TODO");
-}
+
 
 void gen_code(const char *code, ...)
 {
+    maybe_force_tag_or_untag();
+
     va_list ap;
 
     va_start(ap, code);
@@ -174,18 +173,47 @@ void tag(int type, const char *source, const char *dest)
     }
 }
 
+/**
+ * We record the most recently tagged and untagged register and if the
+ * complementary operation is seen right after then we emit no code as the
+ * combination is a nop.
+ */
+void maybe_force_tag_or_untag()
+{
+    if(just_untagged != NULL)
+        fprintf(stdout, "\tsarq $1, %%%s\n", just_untagged);
+    if(just_tagged != NULL)
+        fprintf(stdout, "\tsalq $1, %%%s\n", just_tagged);
+
+    just_untagged = just_tagged = NULL;
+}
+
 void tag_num_inplace(const char *reg)
 {
     debug("tag_num_inplace(%s)", reg);
 
-    gen_code("salq $1, %%%s", reg);
+    if(just_untagged != NULL && strcmp(just_untagged, reg) == 0) {
+        // we just untagged this register. don't untag it in the first place
+        just_tagged = NULL;
+        just_untagged = NULL;
+        return;
+    }
+
+    just_tagged = strdup(reg);
 }
 
 void untag_num_inplace(const char *reg)
 {
     debug("tag_num_inplace(%s)", reg);
 
-    gen_code("sarq $1, %%%s", reg);
+    if(just_tagged != NULL && strcmp(just_tagged, reg) == 0) {
+        // we just tagged this register. don't tag it in the first place
+        just_tagged = NULL;
+        just_untagged = NULL;
+        return;
+    }
+
+    just_untagged = strdup(reg);
 }
 
 long int tag_const(long int value)
