@@ -250,9 +250,11 @@ Term: '(' Expr ')'
 
 /* subroutines */
 
+extern int lineno;
+
 void yyerror(char *s) {
     errors++;
-    fprintf(stderr, "Error: %s\n", s);
+    fprintf(stderr, "Error: %s at line %d\n", s, lineno);
 }
 
 int main(void) {
