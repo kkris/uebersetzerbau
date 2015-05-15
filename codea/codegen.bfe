@@ -86,15 +86,10 @@ t_expr: OP_AND(t_expr, var)  # 1 # gen_and(bnode, TAGGED);
 
 t_expr: OP_LT(t_expr, t_expr)  # 1 # gen_lt(bnode);
 
-
-t_expr: OP_EQ(var, var)         # 1 # gen_eq(bnode);
-t_expr: OP_EQ(const, var)       # 1 # gen_eq(bnode);
-t_expr: OP_EQ(var, const)       # 1 # gen_eq(bnode);
-t_expr: OP_EQ(t_expr, t_expr)   # 1 # gen_eq(bnode);
-t_expr: OP_EQ(t_expr, const)    # 1 # gen_eq(bnode);
-t_expr: OP_EQ(const, t_expr)     # 1 # gen_eq(bnode);
-t_expr: OP_EQ(t_expr, var)      # 1 # gen_eq(bnode);
-t_expr: OP_EQ(var, t_expr)     # 1 # gen_eq(bnode);
+t_expr: OP_EQ(t_expr, t_expr)  # 1 # gen_eq(bnode); /* type checked */
+t_expr: OP_EQ(var, var)        # 1 # gen_eq(bnode); /* not type checked */
+t_expr: OP_EQ(var, t_expr)     # 1 # gen_eq(bnode); /* not type checked */
+t_expr: OP_EQ(t_expr, var)     # 1 # gen_eq(bnode); /* not type checked */
 
 
 neg_t_expr: OP_NOT(t_expr)      # 0 # expect_num(LEFT_CHILD(bnode));

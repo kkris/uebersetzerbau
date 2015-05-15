@@ -578,7 +578,7 @@ void gen_mul_var_const(struct tree *node)
     untag_num_inplace(dest);
 }
 
-static void gen_eq_const(long int value, const char *source, const char *dest)
+static void gen_eq_const_reg(long int value, const char *source, const char *dest)
 {
     debug("gen_eq_const");
 
@@ -615,25 +615,12 @@ void gen_eq(struct tree *node)
             gen_code("movq $2, %%%s", dest);
         else
             gen_eq_reg_reg(lhs->reg, rhs->reg, dest);
-    } else if(lhs->op == OP_VAR) {
-        if(rhs->constant) {
-            gen_eq_const(rhs->value, lhs->reg, dest);
-        } else {
-            gen_eq_reg_reg(lhs->reg, rhs->reg, dest);
-        }
-    } else if(rhs->op == OP_VAR) {
-        if(lhs->constant) {
-            gen_eq_const(lhs->value, rhs->reg, dest);
-        } else {
-            gen_eq_reg_reg(rhs->reg, lhs->reg, dest);
-        }
+    } else if(lhs->constant) {
+        gen_eq_const_reg(lhs->value, rhs->reg, dest);
+    } else if(rhs->constant) {
+        gen_eq_const_reg(rhs->value, lhs->reg, dest);
     } else {
-        if(lhs->constant)
-            gen_eq_const(lhs->value, rhs->reg, dest);
-        else if(rhs->constant)
-            gen_eq_const(rhs->value, lhs->reg, dest);
-        else
-            gen_eq_reg_reg(lhs->reg, rhs->reg, dest);
+        gen_eq_reg_reg(lhs->reg, rhs->reg, dest);
     }
 }
 
