@@ -85,11 +85,11 @@ movq %rdi, %rdx
 sarq $1, %rdx
 imulq %rdi, %rdx
 sarq $1, %rdx
-movq %rdx, %rsi
-imulq %rdi, %rsi
+movq %rdi, %rsi
+imulq %rdx, %rsi
 sarq $1, %rsi
-movq %rsi, %rax
-imulq %rdi, %rax
+movq %rdi, %rax
+imulq %rsi, %rax
 ret
 f18:
 testq $1, %rdi
@@ -111,8 +111,8 @@ imulq %rdi, %rsi
 sarq $1, %rsi
 imulq %rdi, %rsi
 sarq $1, %rsi
-movq %rsi, %rax
-imulq %rdi, %rax
+movq %rdi, %rax
+imulq %rsi, %rax
 ret
 f19:
 testq $1, %rdi
@@ -130,8 +130,8 @@ movq %rdi, %rsi
 sarq $1, %rsi
 imulq %rdi, %rsi
 sarq $1, %rsi
-movq %rsi, %rax
-imulq %rdi, %rax
+movq %rdi, %rax
+imulq %rsi, %rax
 ret
 f20a:
 testq $1, %rdi
@@ -140,8 +140,8 @@ movq %rdi, %rsi
 sarq $1, %rsi
 imulq %rdi, %rsi
 sarq $1, %rsi
-movq %rsi, %rax
-imulq %rdi, %rax
+movq %rdi, %rax
+imulq %rsi, %rax
 ret
 f21:
 testq $1, %rdi
@@ -220,6 +220,6 @@ leaq (, %rsi, 4), %rsi
 imulq %rdi, %rsi
 sarq $1, %rsi
 leaq (%rsi, %rsi, 4), %rsi
-movq %rsi, %rax
-imulq %rdi, %rax
+movq %rdi, %rax
+imulq %rsi, %rax
 ret

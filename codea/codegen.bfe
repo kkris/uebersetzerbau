@@ -29,14 +29,11 @@ ret: OP_RET(u_list)         # 1 # ret(LEFT_CHILD(bnode), UNTAGGED, TYPE_LIST);
 u_expr: const                   # 1 # 
 u_expr: t_expr                  # 9 # expect_num(bnode); untag_num_inplace(bnode->reg);
 
-u_expr: OP_MUL(u_expr, u_expr)  # 5 # gen_mul(bnode);
-u_expr: OP_MUL(u_expr, var)     # 5 # gen_mul(bnode);
-u_expr: OP_MUL(var, u_expr)     # 5 # gen_mul(bnode);
-u_expr: OP_MUL(var, var)        # 6 # gen_mul(bnode);
-u_expr: OP_MUL(u_expr, const)   # 1 # gen_mul(bnode);
-u_expr: OP_MUL(const, u_expr)   # 1 # gen_mul(bnode);
-u_expr: OP_MUL(var, const)      # 2 # gen_mul_var_const(bnode);
-u_expr: OP_MUL(const, var)      # 2 # gen_mul_var_const(bnode);
+u_expr: OP_MUL(u_expr, u_expr) # 1 # gen_mul(bnode);
+
+u_expr: OP_MUL(u_expr, var)     # 1 # expect_num(RIGHT_CHILD(bnode)); gen_mul(bnode);
+u_expr: OP_MUL(var, u_expr)     # 1 # expect_num(LEFT_CHILD(bnode)); gen_mul(bnode);
+u_expr: OP_MUL(var, var)        # 1 # expect_num(LEFT_CHILD(bnode)); expect_num(RIGHT_CHILD(bnode)); gen_mul(bnode);
 
 u_expr: OP_MUL(u_expr, one)     # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 u_expr: OP_MUL(one, u_expr)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));

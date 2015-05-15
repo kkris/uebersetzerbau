@@ -375,10 +375,7 @@ void gen_sub(struct tree *node)
     }
 }
 
-/**
- * result is tagged if source reg is
- */
-static void gen_mul_reg_const(const char *source, const char *dest, long int value)
+static void gen_mul_const_reg(long int value, const char *source, const char *dest)
 {
     debug("gen_mul_reg_const");
 
@@ -404,6 +401,14 @@ static void gen_mul_reg_const(const char *source, const char *dest, long int val
     }
 }
 
+static void gen_mul_reg_reg(const char *s1, const char *s2, const char *dest)
+{
+    debug("gen_mul_reg_reg");
+
+    move(s1, dest);
+    gen_code("imulq %%%s, %%%s", s2, dest);
+}
+
 
 void gen_mul(struct tree *node)
 {
@@ -414,67 +419,21 @@ void gen_mul(struct tree *node)
 
     const char *dest = node->reg;
 
-    int op1 = lhs->op;
-    int op2 = rhs->op;
-
-    if(lhs->constant && rhs->constant) {
-        gen_code("upps");
-    }
-
-    if(op1 == OP_VAR && op2 == OP_VAR) {
-        expect(lhs->reg, TYPE_NUMBER);
-        expect(rhs->reg, TYPE_NUMBER);
+    if(lhs->op == OP_VAR && rhs->op == OP_VAR) {
         move(lhs->reg, dest);
         untag_num_inplace(dest);
         gen_code("imulq %%%s, %%%s", rhs->reg, dest);
         untag_num_inplace(dest);
-    } else if(op1 == OP_VAR) {
-        expect_num(rhs);
-        if(rhs->constant) {
-            gen_mul_reg_const(lhs->reg, dest, rhs->value);
-            untag_num_inplace(dest);
-        } else {
-            move(rhs->reg, dest);
-            gen_code("imulq %%%s, %%%s", lhs->reg, dest);
-            untag_num_inplace(dest);
-        }
-    } else if(op2 == OP_VAR) {
-        expect_num(rhs);
-        if(lhs->constant) {
-            gen_mul_reg_const(rhs->reg, dest, lhs->value);
-            untag_num_inplace(dest);
-        } else {
-            gen_code("imulq %%%s, %%%s", rhs->reg, dest);
-            untag_num_inplace(dest);
-        }
+    } else if(lhs->constant) {
+        gen_mul_const_reg(lhs->value, rhs->reg, dest);
+    } else if(rhs->constant) {
+        gen_mul_const_reg(rhs->value, lhs->reg, dest);
     } else {
-        if(lhs->constant)
-            gen_mul_reg_const(rhs->reg, dest, lhs->value);
-        else if(rhs->constant)
-            gen_mul_reg_const(lhs->reg, dest, rhs->value);
-        else
-            gen_code("imulq %%%s, %%%s", rhs->reg, dest);
+        gen_mul_reg_reg(lhs->reg, rhs->reg, dest);
     }
-}
 
-/**
- *  result is untagged
- */
-void gen_mul_var_const(struct tree *node)
-{
-    debug("gen_mul_var_const");
-
-    struct tree *lhs = LEFT_CHILD(node);
-    struct tree *rhs = RIGHT_CHILD(node);
-
-    const char *dest = node->reg;
-
-    struct tree *constnode = lhs->constant ? lhs : rhs;
-    struct tree *varnode = lhs->op == OP_VAR ? lhs : rhs;
-
-    expect(varnode->reg, TYPE_NUMBER);
-    gen_mul_reg_const(varnode->reg, dest, constnode->value);
-    untag_num_inplace(dest);
+    if(lhs->op == OP_VAR || rhs->op == OP_VAR)
+        untag_num_inplace(dest);
 }
 
 static void gen_eq_const_reg(long int value, const char *source, const char *dest)
