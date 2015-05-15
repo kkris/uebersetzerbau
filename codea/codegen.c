@@ -193,38 +193,6 @@ long int tag_const(long int value)
     return value << 1;
 }
 
-void tag_num_into(const char *source, const char *dest)
-{
-    debug("tag_num_into(%s, %s)", source, dest);
-
-    move(source, dest);
-    tag_num_inplace(dest);
-}
-
-void untag_num_into(const char *source, const char *dest)
-{
-    debug("untag_num_into(%s, %s)", source, dest);
-
-    move(source, dest);
-    untag_num_inplace(dest);
-}
-
-void load_tagged_num(const char *var_reg, const char *dest)
-{
-    debug("load_tagged_num");
-
-    expect(var_reg, TYPE_NUMBER);
-    move(var_reg, dest);
-}
-
-void load_num(const char *var_reg, const char *dest)
-{
-    debug("load_num");
-
-    expect(var_reg, TYPE_NUMBER);
-    gen_code("xxsarq %%%s, %%%s", var_reg, dest);
-}
-
 void ret(struct tree *node, int tag_type, int type)
 {
     if(node->op == OP_VAR) {
@@ -529,7 +497,8 @@ void gen_mul(struct tree *node)
     if(op1 == OP_VAR && op2 == OP_VAR) {
         expect(lhs->var_reg, TYPE_NUMBER);
         expect(rhs->var_reg, TYPE_NUMBER);
-        untag_num_into(lhs->var_reg, dest);
+        move(lhs->var_reg, dest);
+        untag_num_inplace(dest);
         gen_code("imulq %%%s, %%%s", rhs->var_reg, dest);
         untag_num_inplace(dest);
     } else if(op1 == OP_VAR) {
@@ -577,7 +546,6 @@ void gen_mul_var_const(struct tree *node)
     struct tree *varnode = lhs->op == OP_VAR ? lhs : rhs;
 
     expect(varnode->var_reg, TYPE_NUMBER);
-    //untag_num_into(varnode->var_reg, dest);
     gen_mul_reg_const(varnode->var_reg, dest, constnode->value);
     untag_num_inplace(dest);
 }

@@ -28,7 +28,7 @@ ret: OP_RET(u_list)         # 1 # ret(LEFT_CHILD(bnode), UNTAGGED, TYPE_LIST);
 
 
 u_expr: const                   # 1 # 
-u_expr: t_expr                  # 9 # expect_num(bnode); untag_num_into(bnode->reg, bnode->reg);
+u_expr: t_expr                  # 9 # expect_num(bnode); untag_num_inplace(bnode->reg);
 
 u_expr: OP_MUL(u_expr, u_expr)  # 5 # gen_mul(bnode);
 u_expr: OP_MUL(u_expr, var)     # 5 # gen_mul(bnode);
@@ -47,7 +47,7 @@ u_expr: OP_MUL(one, u_expr)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 u_expr: OP_ISNUM(var)           # 0 # gen_isnum(bnode);
 
 
-t_expr: u_expr                  # 9 # tag_num_into(bnode->reg, bnode->reg, TYPE_NUMBER);
+t_expr: u_expr                  # 9 # tag_num_inplace(bnode->reg);
 
 t_expr: OP_NOT(t_expr)          # 1 # gen_not(bnode);
 
