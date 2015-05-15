@@ -242,6 +242,7 @@ Term: '(' Expr ')'
     | IDENT         /* Variablenverwendung */
     @{ 
         @i @Term.node@ = new_ident_node(OP_VAR, NULL, NULL, @IDENT.name@, symbol_find(@Term.symbols@, @IDENT.name@));
+        @reg @Term.node@->reg = "rdi";
         @verify check_variable(@Term.symbols@, @IDENT.name@); 
     @}
     ;

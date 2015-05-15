@@ -42,7 +42,6 @@ struct tree {
     struct tree *kids[2];   /* child nodes */
 
     char *reg;
-    char *var_reg;          /* hold register where variable is saved, if OP_VAR */
     char *name;
     long int value;             /* expression results */
 

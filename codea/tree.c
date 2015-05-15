@@ -34,7 +34,6 @@ struct tree *new_node(int op, struct tree *left, struct tree *right)
     LEFT_CHILD(t) = left;
     RIGHT_CHILD(t) = right;
     t->reg = NULL;
-    t->var_reg = NULL;
     t->name = NULL;
     t->value = 0;
     t->constant = 0;
@@ -67,7 +66,7 @@ struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const
     t->name = strdup(name);
 
     if(sym != NULL)
-        t->var_reg = strdup(sym->reg);
+        t->reg = strdup(sym->reg);
 
     return t;
 }
@@ -89,7 +88,6 @@ void make_equal_to(struct tree *dest, struct tree *source)
 {
     dest->op = source->op;
     dest->reg = source->reg == NULL ? NULL : strdup(source->reg);
-    dest->var_reg = source->var_reg == NULL ? NULL : strdup(source->var_reg);
     dest->name = source->name == NULL ? NULL : strdup(source->name);
     dest->value = source->value;
     dest->constant = source->constant;

@@ -43,7 +43,8 @@ u_expr: OP_MUL(one, u_expr)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 
 u_expr: OP_ISNUM(var)           # 0 # gen_isnum(bnode);
 
-t_expr: var                     # 8 #
+t_expr: const                   # 8 # /* TODO: set down to zero */
+t_expr: var                     # 8 # expect_num(bnode);
 t_expr: u_expr                  # 9 # tag_num_inplace(bnode->reg);
 
 t_expr: OP_ADD(var, var)  # 1 # gen_add(bnode);
@@ -83,14 +84,7 @@ t_expr: OP_AND(const, var)   # 1 # gen_and_var_const(bnode, TAGGED);
 t_expr: OP_AND(var, t_expr)  # 1 # gen_and(bnode, TAGGED);
 t_expr: OP_AND(t_expr, var)  # 1 # gen_and(bnode, TAGGED);
 
-t_expr: OP_LT(var, var)        # 1 # gen_lt(bnode);
 t_expr: OP_LT(t_expr, t_expr)  # 1 # gen_lt(bnode);
-t_expr: OP_LT(t_expr, const)   # 1 # gen_lt(bnode);
-t_expr: OP_LT(const, t_expr)   # 1 # gen_lt(bnode);
-t_expr: OP_LT(var, const)      # 1 # gen_lt(bnode);
-t_expr: OP_LT(const, var)      # 1 # gen_lt(bnode);
-t_expr: OP_LT(var, t_expr)     # 1 # gen_lt(bnode);
-t_expr: OP_LT(t_expr, var)     # 1 # gen_lt(bnode);
 
 
 t_expr: OP_EQ(var, var)         # 1 # gen_eq(bnode);
