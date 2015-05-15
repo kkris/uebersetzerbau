@@ -336,25 +336,6 @@ void gen_add(struct tree *node)
     }
 }
 
-void gen_add_var_const(struct tree *node)
-{
-    debug("gen_add_var_const");
-
-    struct tree *lhs = LEFT_CHILD(node);
-    struct tree *rhs = RIGHT_CHILD(node);
-
-    const char *dest = node->reg;
-
-    struct tree *constnode = lhs->constant ? lhs : rhs;
-    struct tree *varnode = lhs->op == OP_VAR ? lhs : rhs;
-
-    long int value = tag_const(constnode->value);
-
-    expect(varnode->reg, TYPE_NUMBER);
-
-    lea_offset_base(value, varnode->reg, dest);
-}
-
 static void gen_sub_reg_const(long int value, const char *source, const char *dest, int tag_type)
 {
     debug("gen_sub_reg_const");
