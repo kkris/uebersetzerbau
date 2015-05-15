@@ -1,0 +1,23 @@
+extern long int f1(long int);
+extern long int f2(long int);
+extern long int f3(long int);
+extern long int f4(long int);
+extern long int f5(long int);
+extern long int f6(long int);
+extern long int f7(long int);
+extern long int f8(long int);
+extern long int f9(long int);
+extern long int f10(long int);
+extern long int f11(long int);
+
+RAISES(f1, 1);
+RAISES(f2, 1);
+RAISES(f3, 1);
+RAISES(f4, 1);
+RAISES(f5, 1);
+RAISES(f6, 1);
+RAISES(f7, 1);
+RAISES(f8, 1);
+RAISES(f9, 1);
+RAISES(f10, 1);
+RAISES(f11, 1);
