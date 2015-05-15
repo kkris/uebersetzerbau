@@ -74,3 +74,16 @@ testq $1, %rdi
 jnz raisesig
 movq $0, %rax
 ret
+f13:
+testq $1, %rdi
+jnz raisesig
+leaq 2(%rdi), %rax
+leaq 2(%rdi), %rsi
+leaq 2(%rdi), %rdx
+andq %rdx, %rsi
+leaq 2(%rdi), %rdx
+andq %rdx, %rsi
+leaq 2(%rdi), %rdx
+andq %rdx, %rsi
+andq %rsi, %rax
+ret

@@ -223,3 +223,24 @@ leaq (%rsi, %rsi, 4), %rsi
 movq %rdi, %rax
 imulq %rsi, %rax
 ret
+f32:
+testq $1, %rdi
+jnz raisesig
+leaq (, %rdi, 2), %rsi
+sarq $1, %rsi
+leaq (%rdi, %rdi, 2), %rdx
+sarq $1, %rdx
+imulq %rdx, %rsi
+leaq (, %rdi, 4), %rdx
+sarq $1, %rdx
+imulq %rdx, %rsi
+leaq (%rdi, %rdi, 4), %rdx
+sarq $1, %rdx
+imulq %rdx, %rsi
+movq %rdi, %rdx
+imulq $6, %rdx
+sarq $1, %rdx
+imulq %rdx, %rsi
+movq %rdi, %rax
+imulq %rsi, %rax
+ret
