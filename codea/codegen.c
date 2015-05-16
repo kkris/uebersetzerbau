@@ -236,9 +236,7 @@ long int tag_const(long int value)
 
 void ret(struct tree *node, int tag_type, int type)
 {
-    if(node->op == OP_VAR) {
-        move(node->reg, "rax");
-    } else if(tag_type == TAGGED) {
+    if(tag_type == TAGGED) {
         move(node->reg, "rax");
     } else {
         if(type == TYPE_NUMBER) {
@@ -250,8 +248,6 @@ void ret(struct tree *node, int tag_type, int type)
         } else if(type == TYPE_LIST) {
             move(node->reg, "rax");
             tag(TYPE_LIST, "rax", "rax");
-        } else {
-            gen_code("ret todo");
         }
     }
 
@@ -268,14 +264,8 @@ void gen_not(struct tree *node)
 
     const char *dest = node->reg;
 
-    if(lhs->op == OP_VAR) {
-        expect_num(lhs);
-        move(lhs->reg, dest);
-        gen_code("xorq $2, %%%s", dest);
-    } else {
-        move(lhs->reg, dest);
-        gen_code("xorq $2, %%%s", dest);
-    }
+    move(lhs->reg, dest);
+    gen_code("xorq $2, %%%s", dest);
 }
 
 static void gen_and_reg_const(long int value, const char *source, const char *dest)
@@ -315,17 +305,6 @@ void gen_and(struct tree *node)
     } else {
         gen_and_reg_reg(lhs->reg, rhs->reg, dest);
     }
-}
-
-
-static void gen_add_reg_const(long int value, const char *source, const char *dest)
-{
-    debug("gen_add_reg_const");
-
-    value = tag_const(value);
-
-    move(source, dest);
-    gen_code("addq $%ld, %%%s", value, dest);
 }
 
 void gen_add(struct tree *node)
