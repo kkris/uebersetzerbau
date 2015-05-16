@@ -53,16 +53,12 @@ struct tree {
 
 
 struct tree *new_node(int op, struct tree *left, struct tree *right);
-struct tree *new_node_with_reg(int op, struct tree *left, struct tree *right, char *reg);
 struct tree *new_const_node(int op, struct tree *left, struct tree *right, long int value);
-struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name, struct symbol *sym);
+struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name);
 
 void make_constant(struct tree *node, long int value);
 void make_equal_to(struct tree *dest, struct tree *source);
 
 int is_const_or_atomic(struct tree *node);
-
-void print_tree(struct tree *node, int indent);
-
 
 #endif // TREE_H

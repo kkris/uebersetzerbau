@@ -17,7 +17,7 @@ enum {
 };
 
 
-char *get_next_reg(const char *prev, int reuse);
+char *alloc_reg(const char *prev, int reuse);
 
 void gen_func(const char *name);
 

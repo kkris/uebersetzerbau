@@ -44,7 +44,7 @@ static void debug(const char *msg, ...)
     va_end(ap);
 }
 
-char *get_next_reg(const char *prev, int reuse)
+char *alloc_reg(const char *prev, int reuse)
 {
     if(prev == NULL)
         return strdup("rdi");

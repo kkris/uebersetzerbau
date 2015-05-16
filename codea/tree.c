@@ -4,29 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *opnames[] = {
-    "var",
-    "num",
-    "add",
-    "sub",
-    "mul",
-    "and",
-    "lt",
-    "eq",
-    "not",
-    "head",
-    "tail",
-    "isnum",
-    "islist",
-    "isfun",
-    "ret",
-    "zero",
-    "one",
-    "list",
-    "unknown"
-};
-
-
 struct tree *new_node(int op, struct tree *left, struct tree *right)
 {
     struct tree *t = malloc(sizeof(struct tree));
@@ -43,15 +20,6 @@ struct tree *new_node(int op, struct tree *left, struct tree *right)
     return t;
 }
 
-struct tree *new_node_with_reg(int op, struct tree *left, struct tree *right, char *reg)
-{
-    struct tree *t = new_node(op, left, right);
-
-    t->reg = strdup(reg);
-
-    return t;
-}
-
 struct tree *new_const_node(int op, struct tree *left, struct tree *right, long int value)
 {
     struct tree *t = new_node(op, left, right);
@@ -61,7 +29,7 @@ struct tree *new_const_node(int op, struct tree *left, struct tree *right, long 
     return t;
 }
 
-struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name, struct symbol *sym)
+struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name)
 {
     struct tree *t = new_node(op, left, right);
 
@@ -102,29 +70,4 @@ int is_const_or_atomic(struct tree *node)
 {
     return node->constant || node->atomic;
 }
-
-void print_indent(int indent) {
-	int i;
-	for(i = 0; i < indent; i++) {
-		fprintf(stderr, "|");
-	}
-}
-
-void print_tree(struct tree *node, int indent) {
-	print_indent(indent);
-
-    if(node->constant)
-	    fprintf(stderr, "%s, %d\n", opnames[node->op - 1], node->value);
-    else
-	fprintf(stderr, "%s, %s, %s\n", opnames[node->op - 1], node->name, node->reg);
-	if(node->kids[0] != NULL || node->kids[1] != NULL) {
-		if(node->kids[0] != NULL) {
-			print_tree(node->kids[0], indent+1);
-		}
-		if(node->kids[1] != NULL) {
-			print_tree(node->kids[1], indent+1);
-		}
-	}
-}
-
 
