@@ -591,12 +591,12 @@ void gen_isnum(struct tree *node)
     struct tree *lhs = LEFT_CHILD(node);
     const char *dest = node->reg;
 
-    if(lhs->op == OP_VAR) {
+    if(lhs->constant) {
+        move_const(2, dest);
+    } else {
         move(lhs->reg, dest);
         gen_code("andq $1, %%%s", dest);
         gen_code("xorq $1, %%%s", dest);
-    } else {
-        gen_code("UNSUPPORTED");
     }
 }
 

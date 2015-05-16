@@ -37,7 +37,7 @@ long int untag(long int value)
 } while(0)
 
 #define CHECK_RAW(FUNC, INPUT, EXPECTED) do {\
-    long int result = FUNC(INPUT); \
+    long int result = untag(FUNC(INPUT)); \
     if(result != EXPECTED) {\
         printf("\tFF %s(%s) == %ld but should be %s\n", #FUNC, #INPUT, result, #EXPECTED); \
         errors++;\

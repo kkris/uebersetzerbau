@@ -5,6 +5,10 @@ extern long int f4(long int);
 extern long int f5(long int);
 extern long int f6(long int);
 extern long int f7(long int);
+extern long int f8(long int);
+extern long int f9(long int);
+extern long int f10(long int);
+extern long int f11(long int);
 
 CHECK(f1, 1337, 1);
 
@@ -51,4 +55,29 @@ CHECK(f8, -1, 1);
 CHECK(f8, 5, 1);
 CHECK(f8, -5, 1);
 
+RAISES_NOT(f9, 1);
+CHECK(f9, 0, 0);
+CHECK(f9, 1, 0);
+CHECK(f9, -1, 0);
+CHECK(f9, 5, 0);
+CHECK(f9, -5, 0);
+
+RAISES_NOT(f10, 1);
+CHECK(f10, 0, 0);
+CHECK(f10, 1, 0);
+CHECK(f10, -1, 0);
+CHECK(f10, 5, 0);
+CHECK(f10, -5, 0);
+
+RAISES_NOT(f11, 1);
+CHECK(f11, 0, 1);
+CHECK(f11, 1, 1);
+CHECK(f11, -1, 1);
+CHECK(f11, 5, 1);
+CHECK(f11, -5, 1);
+CHECK_RAW(f11, 0, 1);
+CHECK_RAW(f11, 1, 0);
+CHECK_RAW(f11, -1, 0);
+CHECK_RAW(f11, 5, 0);
+CHECK_RAW(f11, 4, 1);
 

@@ -31,6 +31,7 @@ u_expr: OP_MUL(u_expr, one)     # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 u_expr: OP_MUL(one, u_expr)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 
 u_expr: OP_ISNUM(var)           # 0 # gen_isnum(bnode);
+u_expr: OP_ISNUM(t_word)        # 0 # gen_isnum(bnode);
 
 t_expr: const                   # 8 #
 t_expr: var                     # 8 # expect_num(bnode);
@@ -118,6 +119,8 @@ zero: OP_AND(var, zero)         # 0 # expect_num(LEFT_CHILD(bnode)); make_consta
 
 one: OP_ISLIST(t_expr)          # 0 # make_constant(bnode, 0);
 zero: OP_ISFUN(const)           # 0 # make_constant(bnode, 0);
+zero: OP_ISNUM(u_list)          # 0 # make_constant(bnode, 0);
+zero: OP_ISNUM(t_list)          # 0 # make_constant(bnode, 0);
 
 t_word: t_expr                  # 9 #
 t_word: t_list                  # 9 #
