@@ -74,23 +74,30 @@ LambdaToplevel: FUN IDENT ARROW Expr END
       ;
 
 
-/*Lambda: FUN IDENT ARROW Expr END
-      @{ 
-        @i @Expr.symbols@ = symbol_add(@Lambda.symbols@, @IDENT.name@, "todo"); 
+Lambda: FUN IDENT ARROW Expr END
+      @{
+        @i @Expr.symbols@ = symbol_add(@Lambda.symbols@, @IDENT.name@); 
         @i @Lambda.node@ = @Expr.node@;
 
       @}
       ;
-*/
 
-Expr: /*IF Expr THEN Expr ELSE Expr END
+
+Expr: IF Expr THEN Expr ELSE Expr END
+    @{
+        @i @Expr.0.node@ = NULL;
+    @}
     | Lambda
+    @{
+        @i @Expr.0.node@ = NULL;
+    @}
     | LET IDENT '=' Expr IN Expr END
     @{ 
-        @i @Expr.2.symbols@ = symbol_add(@Expr.0.symbols@, @IDENT.name@, "todo");
-        @i @Expr.0.node@ = @Expr.2.node@;
+        @i @Expr.2.symbols@ = symbol_add(@Expr.0.symbols@, @IDENT.name@);
+
+        @i @Expr.0.node@ = NULL;
     @}
-    |*/
+    |
     Term
     @{
         @i @Expr.node@ = @Term.node@;
@@ -149,7 +156,10 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
         @regalloc @Term.0.node@->reg = @Expr.node@->reg;
         @regalloc @Term.1.node@->reg = alloc_reg(@Term.0.node@->reg, @Term.0.node@->constant);
     @}
-    /*| Expr Term */    /* Funktionsaufruf */
+    | Expr Term    /* Funktionsaufruf */
+    @{
+        @i @Expr.0.node@ = NULL;
+    @}
     ;
 
 UnaryOp: NOT 
