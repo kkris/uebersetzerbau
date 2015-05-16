@@ -44,7 +44,7 @@ t_expr: OP_ADD(zero, t_expr)    # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 t_expr: OP_ADD(t_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 
 t_expr: OP_SUB(t_expr, t_expr)  # 1 # gen_sub(bnode);
-t_expr: OP_SUB(zero, t_expr)    # 2 # gen_sub(bnode); /*gen_code("TODO: flip sign??");*/
+t_expr: OP_SUB(zero, t_expr)    # 2 # gen_sub(bnode);
 t_expr: OP_SUB(t_expr, zero)    # 0 # make_equal_to(bnode, LEFT_CHILD(bnode));
 
 t_expr: OP_NOT(t_expr)          # 1 # gen_not(bnode);
@@ -135,6 +135,7 @@ t_word: OP_TAIL(t_expr)         # 0 # raisesig();
 
 
 t_list: u_list                  # 3 # tag_list_inplace(bnode->reg);
+u_list: t_list                  # 3 # untag_list_inplace(bnode->reg);
 
 u_list: OP_LIST(t_expr, t_expr) # 0 # gen_list(bnode);
 u_list: OP_LIST(var, t_expr)    # 0 # gen_list(bnode);
