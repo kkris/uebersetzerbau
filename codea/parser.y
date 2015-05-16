@@ -24,7 +24,7 @@
 
 
 @traversal @postorder verify
-@traversal @preorder reg
+@traversal @preorder regalloc
 @traversal @postorder codegen
 
 @autoinh symbols
@@ -69,7 +69,7 @@ LambdaToplevel: FUN IDENT ARROW Expr END
         @i @Expr.symbols@ = symbol_add(@LambdaToplevel.symbols@, @IDENT.name@, "rdi"); 
         @i @LambdaToplevel.node@ = new_node(OP_RET, @Expr.node@, NULL);
 
-        @reg @Expr.node@->reg = "rax";
+        @regalloc @Expr.node@->reg = "rax";
 
       @}
       ;
@@ -99,56 +99,56 @@ Expr: /*IF Expr THEN Expr ELSE Expr END
     | UnaryOps
     @{
         @i @Expr.node@ = @UnaryOps.node@;
-        @reg @UnaryOps.node@->reg = @Expr.node@->reg;
+        @regalloc @UnaryOps.node@->reg = @Expr.node@->reg;
     @}
     | Term PlusTerm
     @{
         @i @Expr.node@ = new_node(OP_ADD, @Term.node@, @PlusTerm.node@);
 
-        @reg @Term.node@->reg = @Expr.node@->reg;
-        @reg @PlusTerm.node@->reg = get_next_reg(@Term.node@->reg, @Term.node@->constant);
+        @regalloc @Term.node@->reg = @Expr.node@->reg;
+        @regalloc @PlusTerm.node@->reg = get_next_reg(@Term.node@->reg, @Term.node@->constant);
     @}
     | Term '-' Term
     @{
         @i @Expr.node@ = new_node(OP_SUB, @Term.0.node@, @Term.1.node@);
 
-        @reg @Term.0.node@->reg = @Expr.node@->reg;
-        @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg, @Term.0.node@->constant);
+        @regalloc @Term.0.node@->reg = @Expr.node@->reg;
+        @regalloc @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg, @Term.0.node@->constant);
    @}
     | Term MulTerm
     @{
         @i @Expr.node@ = new_node(OP_MUL, @Term.node@, @MulTerm.node@);
 
-        @reg @Term.node@->reg = @Expr.node@->reg;
-        @reg @MulTerm.node@->reg = get_next_reg(@Term.node@->reg, @Term.node@->constant);
+        @regalloc @Term.node@->reg = @Expr.node@->reg;
+        @regalloc @MulTerm.node@->reg = get_next_reg(@Term.node@->reg, @Term.node@->constant);
     @}
     | Term ListTerm
     @{
         @i @Expr.node@ = new_node(OP_LIST, @Term.node@, @ListTerm.node@);
 
-        @reg @Term.node@->reg = @Expr.node@->reg;
-        @reg @ListTerm.node@->reg = get_next_reg(@Term.node@->reg, @Term.node@->constant);
+        @regalloc @Term.node@->reg = @Expr.node@->reg;
+        @regalloc @ListTerm.node@->reg = get_next_reg(@Term.node@->reg, @Term.node@->constant);
     @}
     | Term AndTerm
     @{
         @i @Expr.node@ = new_node(OP_AND, @Term.node@, @AndTerm.node@);
 
-        @reg @Term.node@->reg = @Expr.node@->reg;
-        @reg @AndTerm.node@->reg = get_next_reg(@Term.node@->reg, @Term.node@->constant);
+        @regalloc @Term.node@->reg = @Expr.node@->reg;
+        @regalloc @AndTerm.node@->reg = get_next_reg(@Term.node@->reg, @Term.node@->constant);
     @}
     | Term '<' Term
     @{
         @i @Expr.node@ = new_node(OP_LT, @Term.0.node@, @Term.1.node@);
 
-        @reg @Term.0.node@->reg = @Expr.node@->reg;
-        @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg, @Term.0.node@->constant);
+        @regalloc @Term.0.node@->reg = @Expr.node@->reg;
+        @regalloc @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg, @Term.0.node@->constant);
     @}
     | Term '=' Term
     @{
         @i @Expr.node@ = new_node(OP_EQ, @Term.0.node@, @Term.1.node@);
 
-        @reg @Term.0.node@->reg = @Expr.node@->reg;
-        @reg @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg, @Term.0.node@->constant);
+        @regalloc @Term.0.node@->reg = @Expr.node@->reg;
+        @regalloc @Term.1.node@->reg = get_next_reg(@Term.0.node@->reg, @Term.0.node@->constant);
     @}
     /*| Expr Term */    /* Funktionsaufruf */
     ;
@@ -170,12 +170,12 @@ UnaryOp: NOT
 UnaryOps: UnaryOp Term
    @{ 
         @i @UnaryOps.node@ = new_node(@UnaryOp.op@, @Term.node@, NULL); 
-        @reg @Term.node@->reg = @UnaryOps.node@->reg;
+        @regalloc @Term.node@->reg = @UnaryOps.node@->reg;
    @}
    | UnaryOp UnaryOps
    @{ 
         @i @UnaryOps.0.node@ = new_node(@UnaryOp.op@, @UnaryOps.1.node@, NULL); 
-        @reg @UnaryOps.1.node@->reg = @UnaryOps.0.node@->reg;
+        @regalloc @UnaryOps.1.node@->reg = @UnaryOps.0.node@->reg;
    @}
     ;
 
@@ -187,8 +187,8 @@ PlusTerm: '+' Term
         @{
             @i @PlusTerm.0.node@ = new_node(OP_ADD, @PlusTerm.1.node@, @Term.node@);
 
-            @reg @PlusTerm.1.node@->reg = @PlusTerm.0.node@->reg;
-            @reg @Term.node@->reg = get_next_reg(@PlusTerm.0.node@->reg, is_const_or_atomic(@PlusTerm.0.node@));
+            @regalloc @PlusTerm.1.node@->reg = @PlusTerm.0.node@->reg;
+            @regalloc @Term.node@->reg = get_next_reg(@PlusTerm.0.node@->reg, is_const_or_atomic(@PlusTerm.0.node@));
         @}
         ;
 
@@ -200,8 +200,8 @@ MulTerm: '*' Term
         @{
             @i @MulTerm.0.node@ = new_node(OP_MUL, @MulTerm.1.node@, @Term.node@);
 
-            @reg @MulTerm.1.node@->reg = @MulTerm.0.node@->reg;
-            @reg @Term.node@->reg = get_next_reg(@MulTerm.0.node@->reg, is_const_or_atomic(@MulTerm.0.node@));
+            @regalloc @MulTerm.1.node@->reg = @MulTerm.0.node@->reg;
+            @regalloc @Term.node@->reg = get_next_reg(@MulTerm.0.node@->reg, is_const_or_atomic(@MulTerm.0.node@));
         @}
         ;
 
@@ -213,9 +213,8 @@ AndTerm: AND Term
         @{
             @i @AndTerm.0.node@ = new_node(OP_AND, @AndTerm.1.node@, @Term.node@);
 
-            @reg @AndTerm.1.node@->reg = @AndTerm.0.node@->reg;
-            @reg @Term.node@->reg = get_next_reg(@AndTerm.0.node@->reg, is_const_or_atomic(@AndTerm.0.node@));
-;
+            @regalloc @AndTerm.1.node@->reg = @AndTerm.0.node@->reg;
+            @regalloc @Term.node@->reg = get_next_reg(@AndTerm.0.node@->reg, is_const_or_atomic(@AndTerm.0.node@));
         @}
         ;
 
@@ -227,8 +226,8 @@ ListTerm: '.' Term
         @{
             @i @ListTerm.0.node@ = new_node(OP_LIST, @Term.node@, @ListTerm.1.node@);
 
-            @reg @Term.node@->reg = @ListTerm.0.node@->reg;
-            @reg @ListTerm.1.node@->reg = get_next_reg(@Term.node@->reg, is_const_or_atomic(@Term.node@));
+            @regalloc @Term.node@->reg = @ListTerm.0.node@->reg;
+            @regalloc @ListTerm.1.node@->reg = get_next_reg(@Term.node@->reg, is_const_or_atomic(@Term.node@));
         @}
 
 Term: '(' Expr ')'
@@ -242,8 +241,8 @@ Term: '(' Expr ')'
     | IDENT         /* Variablenverwendung */
     @{ 
         @i @Term.node@ = new_ident_node(OP_VAR, NULL, NULL, @IDENT.name@, symbol_find(@Term.symbols@, @IDENT.name@));
-        @reg @Term.node@->reg = "rdi";
-        @verify check_variable(@Term.symbols@, @IDENT.name@); 
+        @regalloc @Term.node@->reg = "rdi";
+        @verify check_variable(@Term.symbols@, @IDENT.name@);
     @}
     ;
 
