@@ -99,55 +99,17 @@ static void move_const(long int value, const char *dest)
     gen_code("movq $%ld, %%%s", value, dest);
 }
 
-void lea(long int offset, const char *base, const char *index, int scale, const char *dest)
+void lea_const_reg(long int offset, const char *base, const char *dest)
 {
-    if(offset == 0) {
-        if(base == NULL) {
-            if(scale == 1) {
-                move(index, dest);
-            } else {
-                gen_code("leaq (, %%%s, %d), %%%s", index, scale, dest);
-            }
-        } else {
-            if(index == NULL) {
-                move(base, dest);
-            } else {
-                if(scale == 1) {
-                    gen_code("leaq (%%%s, %%%s), %%%s", base, index, dest);
-                } else {
-                    gen_code("leaq (%%%s, %%%s, %d), %%%s", base, index, scale, dest);
-                }
-            }
-        }
-    } else {
-        if(base == NULL) {
-            if(scale == 1) {
-                gen_code("leaq %ld(, %%%s), %%%s", offset, index, dest);
-            } else {
-                gen_code("leaq %ld(, %%%s, %d), %%%s", offset, index, scale, dest);
-            }
-        } else {
-            if(index == NULL) {
-                gen_code("leaq %ld(%%%s), %%%s", offset, base, dest);
-            } else {
-                if(scale == 1) {
-                    gen_code("leaq %ld(%%%s, %%%s), %%%s", offset, base, index, dest);
-                } else {
-                    gen_code("leaq %ld(%%%s, %%%s, %d), %%%s", offset, base, index, scale, dest);
-                }
-            }
-        }
-    }
+    if(offset == 0)
+        move(base, dest);
+    else
+        gen_code("leaq %ld(%%%s), %%%s", offset, base, dest);
 }
 
-void lea_offset_base(long int offset, const char *base, const char *dest)
+void lea_reg_reg(const char *base, const char *index, const char *dest)
 {
-    lea(offset, base, NULL, -1, dest);
-}
-
-void lea_base_index(const char *base, const char *index, const char *dest)
-{
-    lea(0, base, index, 1, dest);
+    gen_code("leaq (%%%s, %%%s), %%%s", base, index, dest);
 }
 
 void raisesig()
@@ -376,11 +338,11 @@ void gen_add(struct tree *node)
     const char *dest = node->reg;
 
     if(lhs->constant) {
-        lea_offset_base(tag_const(lhs->value), rhs->reg, dest);
+        lea_const_reg(tag_const(lhs->value), rhs->reg, dest);
     } else if(rhs->constant) {
-        lea_offset_base(tag_const(rhs->value), lhs->reg, dest);
+        lea_const_reg(tag_const(rhs->value), lhs->reg, dest);
     } else {
-        lea_base_index(lhs->reg, rhs->reg, dest);
+        lea_reg_reg(lhs->reg, rhs->reg, dest);
     }
 }
 
@@ -417,7 +379,7 @@ void gen_sub(struct tree *node)
     } else if(lhs->constant) {
         gen_sub_const_reg(tag_const(lhs->value), rhs->reg, dest);
     } else if(rhs->constant) {
-        lea_offset_base(-tag_const(rhs->value), lhs->reg, dest);
+        lea_const_reg(-tag_const(rhs->value), lhs->reg, dest);
     } else {
         gen_sub_reg_reg(lhs->reg, rhs->reg, dest);
     }
@@ -432,17 +394,17 @@ static void gen_mul_const_reg(long int value, const char *source, const char *de
     case 1:
         gen_code("mul with 0, 1 should be handled else where"); break;
     case 2:
-        lea(0, NULL, source, 2, dest); break;
+        gen_code("leaq (, %%%s, 2), %%%s", source, dest); break;
     case 3:
-        lea(0, source, source, 2, dest); break;
+        gen_code("leaq (%%%s, %%%s, 2), %%%s", source, source, dest); break;
     case 4:
-        lea(0, NULL, source, 4, dest); break;
+        gen_code("leaq (, %%%s, 4), %%%s", source, dest); break;
     case 5:
-        lea(0, source, source, 4, dest); break;
+        gen_code("leaq (%%%s, %%%s, 4), %%%s", source, source, dest); break;
     case 8:
-        lea(0, NULL, source, 8, dest); break;
+        gen_code("leaq (, %%%s, 8), %%%s", source, dest); break;
     case 9:
-        lea(0, source, source, 8, dest); break;
+        gen_code("leaq (%%%s, %%%s, 8), %%%s", source, source, dest); break;
     default:
         move(source, dest);
         gen_code("imulq $%ld, %%%s", value, dest);
@@ -606,18 +568,10 @@ void gen_islist(struct tree *node)
 
     struct tree *lhs = LEFT_CHILD(node);
 
-    const char *source;
     const char *dest = node->reg;
 
-    if(lhs->op == OP_VAR) {
-        source = lhs->reg;
-    } else {
-        source = lhs->reg;
-    }
-
     move_const(0, temp_reg);
-
-    move(source, dest);
+    move(lhs->reg, dest);
     gen_code("andq $3, %%%s", dest);
     gen_code("cmpq $1, %%%s", dest);
     gen_code("lea 0(,1), %%%s", dest);
