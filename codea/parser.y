@@ -53,7 +53,7 @@ Program: /* empty */
        @{ @i @Program.defs@ = NULL; @}
        |
        IDENT '=' LambdaToplevel ';' Program
-       @{ @i @Program.0.defs@ = symbol_add(@Program.1.defs@, @IDENT.name@, "??");
+       @{ @i @Program.0.defs@ = symbol_add(@Program.1.defs@, @IDENT.name@);
           @i @Program.1.symbols@ = @Program.0.symbols@;
           @i @LambdaToplevel.symbols@ = @Program.0.symbols@;
 
@@ -66,7 +66,7 @@ Program: /* empty */
 
 LambdaToplevel: FUN IDENT ARROW Expr END
       @{ 
-        @i @Expr.symbols@ = symbol_add(@LambdaToplevel.symbols@, @IDENT.name@, "rdi"); 
+        @i @Expr.symbols@ = symbol_add(@LambdaToplevel.symbols@, @IDENT.name@);
         @i @LambdaToplevel.node@ = new_node(OP_RET, @Expr.node@, NULL);
 
         @regalloc @Expr.node@->reg = "rax";

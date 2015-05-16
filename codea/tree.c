@@ -68,9 +68,6 @@ struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const
     t->name = strdup(name);
     t->atomic = 1;
 
-    if(sym != NULL)
-        t->reg = strdup(sym->reg);
-
     return t;
 }
 
