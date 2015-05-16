@@ -5,6 +5,8 @@
 #include <string.h>
 #include <assert.h>
 
+char* registers[] = {"rdi", "rax", "rsi", "rdx", "rcx", "r8", "r9"};
+
 const char *heap_ptr = "r10";
 const char *temp_reg = "r11";
 
@@ -28,9 +30,9 @@ static void reset_state()
     }
 }
 
-void maybe_force_tag_or_untag();
+static void maybe_force_tag_or_untag();
 
-void debug(const char *msg, ...)
+static void debug(const char *msg, ...)
 {
     return;
 
@@ -44,16 +46,12 @@ void debug(const char *msg, ...)
 
 char *get_next_reg(const char *prev, int reuse)
 {
-    fprintf(stderr, "next_reg(%s, ", prev);
     if(prev == NULL)
         return strdup("rdi");
 
-    char* registers[] = {"rdi", "rax", "rsi", "rdx", "rcx", "r8", "r9"};
-
-    int i = 0;
+    unsigned int i = 0;
     for(; i < sizeof(registers) / sizeof(registers[0]) - 1; i++) {
         if(strcmp(prev, registers[i]) == 0) {
-            fprintf(stderr, "%s)\n", registers[i + 1]);
             if(reuse == 1)
                 return strdup(registers[i]);
             else
@@ -61,14 +59,11 @@ char *get_next_reg(const char *prev, int reuse)
         }
     }
 
-    debug("Upps, no register left. Implement a better allocation algorithm!");
-
     return NULL;
 }
 
 
-
-void gen_code(const char *code, ...)
+static void gen_code(const char *code, ...)
 {
     maybe_force_tag_or_untag();
 
@@ -86,7 +81,7 @@ void gen_func(const char *name)
     printf(".globl %s\n%s:\n", name, name);
 }
 
-void move(const char *source, const char *dest)
+static void move(const char *source, const char *dest)
 {
     if(strcmp(source, dest) == 0)
         return; // nop
@@ -99,7 +94,7 @@ static void move_const(long int value, const char *dest)
     gen_code("movq $%ld, %%%s", value, dest);
 }
 
-void lea_const_reg(long int offset, const char *base, const char *dest)
+static void lea_const_reg(long int offset, const char *base, const char *dest)
 {
     if(offset == 0)
         move(base, dest);
@@ -107,12 +102,12 @@ void lea_const_reg(long int offset, const char *base, const char *dest)
         gen_code("leaq %ld(%%%s), %%%s", offset, base, dest);
 }
 
-void lea_reg_reg(const char *base, const char *index, const char *dest)
+static void lea_reg_reg(const char *base, const char *index, const char *dest)
 {
     gen_code("leaq (%%%s, %%%s), %%%s", base, index, dest);
 }
 
-void raisesig()
+void raise_signal()
 {
     gen_code("jmp raisesig");
 }
@@ -174,7 +169,7 @@ void tag(int type, const char *source, const char *dest)
  * complementary operation is seen right after then we emit no code as the
  * combination is a nop.
  */
-void maybe_force_tag_or_untag()
+static void maybe_force_tag_or_untag()
 {
     if(just_untagged != NULL)
         fprintf(stdout, "\tsarq $1, %%%s\n", just_untagged);
@@ -229,7 +224,7 @@ void untag_list_inplace(const char *reg)
 }
 
 
-long int tag_const(long int value)
+static long int tag_const(long int value)
 {
     return value << 1;
 }
