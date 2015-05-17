@@ -59,16 +59,15 @@ leaq 0(, 1), %rax
 cmovz %r11, %rax
 ret
 f10:
-movq %r15, %r10
-movq $0, (%r10)
-movq $0, 8(%r10)
-movq %r10, %rax
-addq $16, %r10
+movq $0, (%r15)
+movq $0, 8(%r15)
+movq %r15, %rax
+addq $16, %r15
 addq $1, %rax
-movq $0, (%r10)
-movq $0, 8(%r10)
-movq %r10, %rsi
-addq $16, %r10
+movq $0, (%r15)
+movq $0, 8(%r15)
+movq %r15, %rsi
+addq $16, %r15
 addq $1, %rsi
 movq $2, %r11
 cmp %rax, %rsi
@@ -76,11 +75,10 @@ leaq 0(, 1), %rax
 cmovz %r11, %rax
 ret
 f11:
-movq %r15, %r10
-movq $0, (%r10)
-movq $0, 8(%r10)
-movq %r10, %rax
-addq $16, %r10
+movq $0, (%r15)
+movq $0, 8(%r15)
+movq %r15, %rax
+addq $16, %r15
 addq $1, %rax
 movq $2, %r11
 cmp $2, %rax
@@ -88,11 +86,10 @@ leaq 0(, 1), %rax
 cmovz %r11, %rax
 ret
 f12:
-movq %r15, %r10
-movq $0, (%r10)
-movq $0, 8(%r10)
-movq %r10, %rax
-addq $16, %r10
+movq $0, (%r15)
+movq $0, 8(%r15)
+movq %r15, %rax
+addq $16, %r15
 addq $1, %rax
 movq $2, %r11
 cmp $2, %rax
@@ -100,16 +97,15 @@ leaq 0(, 1), %rax
 cmovz %r11, %rax
 ret
 f13:
-movq %r15, %r10
-movq %rdi, (%r10)
-movq $2, 8(%r10)
-movq %r10, %rax
-addq $16, %r10
+movq %rdi, (%r15)
+movq $2, 8(%r15)
+movq %r15, %rax
+addq $16, %r15
 movq (%rax), %rax
-movq $2, (%r10)
-movq %rdi, 8(%r10)
-movq %r10, %rsi
-addq $16, %r10
+movq $2, (%r15)
+movq %rdi, 8(%r15)
+movq %r15, %rsi
+addq $16, %r15
 movq 8(%rsi), %rsi
 movq $2, %r11
 cmp %rax, %rsi

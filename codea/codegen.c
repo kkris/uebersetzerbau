@@ -5,12 +5,10 @@
 #include <string.h>
 #include <assert.h>
 
-char* registers[] = {"rdi", "rax", "rsi", "rdx", "rcx", "r8", "r9"};
+char* registers[] = {"rdi", "rax", "rsi", "rdx", "rcx", "r8", "r9", "r10"};
 
-const char *heap_ptr = "r10";
+const char *heap_ptr = "r15";
 const char *temp_reg = "r11";
-
-int heap_ptr_initialized = 0;
 
 // global variable which tracks the just tagged register
 char *just_tagged = NULL;
@@ -20,7 +18,6 @@ static char *type_checked_vars[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, 
 
 static void reset_state()
 {
-    heap_ptr_initialized = 0;
     just_tagged = NULL;
     just_untagged = NULL;
 
@@ -582,11 +579,6 @@ void gen_list(struct tree *node)
     struct tree *rhs = RIGHT_CHILD(node);
 
     const char *dest = node->reg;
-
-    if(heap_ptr_initialized == 0) {
-        gen_code("movq %%%s, %%%s", "r15", heap_ptr);
-        heap_ptr_initialized = 1;
-    }
 
     if(lhs->constant)
         gen_code("movq $%ld, (%%%s)", tag_const(lhs->value), heap_ptr);

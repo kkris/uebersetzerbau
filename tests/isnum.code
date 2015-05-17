@@ -43,35 +43,32 @@ sarq $1, %rax
 movq $2, %rax
 ret
 f9:
-movq %r15, %r10
-movq %rdi, (%r10)
-movq %rdi, 8(%r10)
-movq %r10, %rax
-addq $16, %r10
+movq %rdi, (%r15)
+movq %rdi, 8(%r15)
+movq %r15, %rax
+addq $16, %r15
 movq $0, %rax
 ret
 f10:
-movq %r15, %r10
-movq %rdi, (%r10)
-movq $6, 8(%r10)
-movq %r10, %rax
-addq $16, %r10
+movq %rdi, (%r15)
+movq $6, 8(%r15)
+movq %r15, %rax
+addq $16, %r15
 addq $1, %rax
-movq $2, (%r10)
-movq %rax, 8(%r10)
-movq %r10, %rax
-addq $16, %r10
+movq $2, (%r15)
+movq %rax, 8(%r15)
+movq %r15, %rax
+addq $16, %r15
 movq 8(%rax), %rax
 andq $1, %rax
 xorq $1, %rax
 salq $1, %rax
 ret
 f11:
-movq %r15, %r10
-movq %rdi, (%r10)
-movq %rdi, 8(%r10)
-movq %r10, %rax
-addq $16, %r10
+movq %rdi, (%r15)
+movq %rdi, 8(%r15)
+movq %r15, %rax
+addq $16, %r15
 movq (%rax), %rax
 andq $1, %rax
 xorq $1, %rax
