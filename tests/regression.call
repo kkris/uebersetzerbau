@@ -1,0 +1,25 @@
+extern long f1(long);
+extern long f2(long);
+extern long f3(long);
+extern long f4(long);
+
+long a[] = {4, 6};
+long b[] = {0, 0};
+
+RAISES(f1, (long)a);
+RAISES_NOT(f1, ((long)a)|1);
+RET(f1(((long)a)|1) == 4);
+
+RAISES(f2, (long)a);
+RAISES_NOT(f2, ((long)a)|1);
+RET(f2(((long)a)|1) == 6);
+
+RET(f3(6) == 0 && f3(((long)b)|1) == 2);
+
+CHECK_RAW(f4, 0, 0);
+CHECK_RAW(f4, 1, 0);
+CHECK_RAW(f4, 2, 0);
+CHECK_RAW(f4, 3, 1);
+CHECK_RAW(f4, 4, 0);
+CHECK_RAW(f4, 5, 0);
+

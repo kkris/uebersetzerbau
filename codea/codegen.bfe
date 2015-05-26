@@ -8,7 +8,7 @@
 %}
 
 %start ret
-%term OP_VAR=1 OP_NUM=2 OP_ADD=3 OP_SUB=4 OP_MUL=5 OP_AND=6 OP_LT=7 OP_EQ=8 OP_NOT=9 OP_HEAD=10 OP_TAIL=11 OP_ISNUM=12 OP_ISLIST=13 OP_ISFUN=14 OP_RET=15 OP_ZERO=16 OP_ONE=17 OP_LIST=18
+%term OP_VAR=1 OP_NUM=2 OP_ADD=3 OP_SUB=4 OP_MUL=5 OP_AND=6 OP_LT=7 OP_EQ=8 OP_NOT=9 OP_HEAD=10 OP_TAIL=11 OP_ISNUM=12 OP_ISLIST=13 OP_ISFUN=14 OP_RET=15 OP_ZERO=16 OP_ONE=17 OP_LIST=18 OP_FUN=19
 %%
 
 ret: OP_RET(u_expr)             # 1 # ret(LEFT_CHILD(bnode), UNTAGGED, TYPE_REG);
@@ -18,6 +18,7 @@ ret: OP_RET(t_expr)             # 1 # ret(LEFT_CHILD(bnode), TAGGED, 0);
 ret: OP_RET(u_list)             # 1 # ret(LEFT_CHILD(bnode), UNTAGGED, TYPE_LIST);
 ret: OP_RET(t_word)             # 0 # ret(LEFT_CHILD(bnode), TAGGED, TYPE_WORD);
 
+fun: OP_FUN                     # 0 #
 
 u_expr: const                   # 1 # 
 u_expr: t_expr                  # 9 # expect_num(bnode); untag_num_inplace(bnode->reg);
@@ -40,6 +41,7 @@ t_expr: u_expr                  # 9 # tag_num_inplace(bnode->reg);
 t_expr: t_word                  # 9 # expect_num(bnode);
 
 t_expr: u_list                  # 9 # raise_signal();
+t_expr: fun                     # 9 # raise_signal();
 
 t_expr: OP_ADD(t_expr, t_expr)  # 1 # gen_add(bnode);
 t_expr: OP_ADD(zero, t_expr)    # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
@@ -60,7 +62,11 @@ t_expr: OP_LT(t_expr, t_expr)   # 1 # gen_lt(bnode);
 t_expr: OP_EQ(t_expr, t_expr)   # 9 # gen_eq(bnode); /* type checked */
 t_expr: OP_EQ(t_word, t_word)   # 1 # gen_eq(bnode); /* not type checked */
 
+t_expr: OP_ISLIST(var)          # 0 # if(LEFT_CHILD(bnode)->symbol->type == SYMBOL_TYPE_FUN) { move_const(0, bnode->reg); } else { gen_islist(bnode); }
 t_expr: OP_ISLIST(t_word)       # 0 # gen_islist(bnode);
+
+t_expr: OP_ISFUN(var)           # 0 # gen_isfun(bnode);
+t_expr: OP_ISFUN(t_word)        # 0 # gen_isfun(bnode);
 
 
 neg_t_expr: OP_NOT(t_expr)      # 0 # expect_num(LEFT_CHILD(bnode));
@@ -99,6 +105,8 @@ one: OP_ISNUM(u_expr)           # 0 # make_constant(bnode, 1);
 
 one: OP_ISLIST(u_list)          # 0 # make_constant(bnode, 1);
 
+one: OP_ISFUN(fun)              # 0 # make_constant(bnode, 1);
+
 
 zero: OP_ZERO                   # 0 # make_constant(bnode, 0);
 
@@ -118,10 +126,16 @@ zero: OP_ADD(zero, zero)        # 0 # make_constant(bnode, 0);
 zero: OP_AND(zero, var)         # 0 # expect_num(RIGHT_CHILD(bnode)); make_constant(bnode, 0);
 zero: OP_AND(var, zero)         # 0 # expect_num(LEFT_CHILD(bnode)); make_constant(bnode, 0);
 
-one: OP_ISLIST(t_expr)          # 0 # make_constant(bnode, 0);
+zero: OP_ISLIST(fun)            # 0 # make_constant(bnode, 0);
+zero: OP_ISLIST(t_expr)         # 0 # make_constant(bnode, 0);
+
 zero: OP_ISFUN(const)           # 0 # make_constant(bnode, 0);
+
+zero: OP_ISNUM(fun)             # 0 # make_constant(bnode, 0);
 zero: OP_ISNUM(u_list)          # 0 # make_constant(bnode, 0);
 zero: OP_ISNUM(t_list)          # 0 # make_constant(bnode, 0);
+
+
 
 t_word: t_expr                  # 9 #
 t_word: t_list                  # 9 #
@@ -129,10 +143,12 @@ t_word: const                   # 9 #
 t_word: var                     # 9 #
 
 
+t_word: OP_HEAD(var)            # 0 # expect_list(LEFT_CHILD(bnode)); untag_list_inplace(LEFT_CHILD(bnode)->reg); gen_head(bnode);
 t_word: OP_HEAD(u_list)         # 0 # gen_head(bnode);
 t_word: OP_HEAD(t_word)         # 0 # expect_list(LEFT_CHILD(bnode)); untag_list_inplace(LEFT_CHILD(bnode)->reg); gen_head(bnode);
 t_word: OP_HEAD(t_expr)         # 0 # raise_signal();
 
+t_word: OP_TAIL(var)            # 0 # expect_list(LEFT_CHILD(bnode)); untag_list_inplace(LEFT_CHILD(bnode)->reg); gen_tail(bnode);
 t_word: OP_TAIL(u_list)         # 0 # gen_tail(bnode);
 t_word: OP_TAIL(t_word)         # 0 # expect_list(LEFT_CHILD(bnode)); untag_list_inplace(LEFT_CHILD(bnode)->reg); gen_tail(bnode);
 t_word: OP_TAIL(t_expr)         # 0 # raise_signal();

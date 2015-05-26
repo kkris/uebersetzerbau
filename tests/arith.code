@@ -3,3 +3,17 @@ testq $1, %rdi
 jnz raisesig
 movq %rdi, %rax
 ret
+f2:
+testq $1, %rdi
+jnz raisesig
+leaq (%rdi, %rdi), %rdx
+sarq $1, %rdx
+leaq (, %rdx, 2), %rsi
+leaq (, %rdi, 2), %rcx
+movq %rdi, %rdx
+subq %rcx, %rdx
+sarq $1, %rdx
+imulq %rdx, %rsi
+movq %rdi, %rax
+imulq %rsi, %rax
+ret

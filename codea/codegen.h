@@ -27,6 +27,8 @@ void expect_list(struct tree *node);
 
 void raise_signal();
 
+void move_const(long int value, const char *dest);
+
 void tag(int type, const char *source, const char *dest);
 void untag(const char *source, const char *dest);
 

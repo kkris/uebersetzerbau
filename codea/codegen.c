@@ -86,7 +86,7 @@ static void move(const char *source, const char *dest)
     gen_code("movq %%%s, %%%s", source, dest);
 }
 
-static void move_const(long int value, const char *dest)
+void move_const(long int value, const char *dest)
 {
     gen_code("movq $%ld, %%%s", value, dest);
 }
@@ -541,13 +541,30 @@ void gen_islist(struct tree *node)
 
     const char *dest = node->reg;
 
-    move_const(0, temp_reg);
+    move_const(2, temp_reg);
     move(lhs->reg, dest);
     gen_code("andq $3, %%%s", dest);
     gen_code("cmpq $1, %%%s", dest);
     gen_code("lea 0(,1), %%%s", dest);
     gen_code("cmovz %%%s, %%%s", temp_reg, dest);
 }
+
+void gen_isfun(struct tree *node)
+{
+    debug("gen_islist");
+
+    struct tree *lhs = LEFT_CHILD(node);
+
+    const char *dest = node->reg;
+
+    move_const(2, temp_reg);
+    move(lhs->reg, dest);
+    gen_code("andq $3, %%%s", dest);
+    gen_code("cmpq $3, %%%s", dest);
+    gen_code("lea 0(,1), %%%s", dest);
+    gen_code("cmovz %%%s, %%%s", temp_reg, dest);
+}
+
 
 void gen_head(struct tree *node)
 {

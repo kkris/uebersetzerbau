@@ -13,7 +13,7 @@ register long *heapptr asm("%r15");
 void raisesig()
 {
     if(expect_sig == 0)
-        printf("FF Did not expect a signal at this point\n");
+        printf("\tFF Did not expect a signal at this point\n");
 
     sig_raised = 1;
 }
@@ -27,6 +27,13 @@ long int untag(long int value)
 {
     return value >> 1;
 }
+
+#define RET(EXPR) do {\
+    if(EXPR == 0) {\
+        printf("\tFF expr is false but should be true\n"); \
+        errors++;\
+    } \
+} while(0)
 
 #define CHECK(FUNC, INPUT, EXPECTED) do {\
     long int result = untag(FUNC(tag(INPUT))); \
@@ -66,9 +73,10 @@ long int untag(long int value)
     sig_raised = 0; \
 } while(0)
 
-
 int main(void) {
     heapptr = heap;
+
+    //printf("TESTCASE\n");
 
     #include "TESTCASE"
 

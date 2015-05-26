@@ -1,0 +1,10 @@
+extern long f1(long);
+extern long f2(long);
+
+CHECK(f2, 0, 0);
+CHECK(f2, 1, -4);
+CHECK(f2, 2, -32);
+CHECK(f2, 3, -108);
+CHECK(f2, -1, 4);
+CHECK(f2, -2, 32);
+

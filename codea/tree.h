@@ -34,6 +34,7 @@ enum {
     OP_ZERO,
     OP_ONE,
     OP_LIST,
+    OP_FUN,
     OP_UNKNOWN
 };
 
@@ -49,12 +50,14 @@ struct tree {
     int atomic;                 /* 1 if node is ident or constant term */
 
     struct burm_state *state; /* BURG state variable */
+
+    struct symbol *symbol; /* corresponding symbol if available */
 };
 
 
 struct tree *new_node(int op, struct tree *left, struct tree *right);
 struct tree *new_const_node(int op, struct tree *left, struct tree *right, long int value);
-struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name);
+struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name, struct symbol *symbol);
 
 void make_constant(struct tree *node, long int value);
 void make_equal_to(struct tree *dest, struct tree *source);

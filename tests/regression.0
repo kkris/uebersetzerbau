@@ -1,0 +1,5 @@
+f1 = fun x -> head x end;
+f2 = fun x -> tail x end;
+f3 = fun x -> islist x end;
+f4 = fun x -> isfun x end;
+

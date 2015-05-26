@@ -1,0 +1,32 @@
+f1:
+testq $1, %rdi
+jz raisesig
+testq $2, %rdi
+jnz raisesig
+subq $1, %rdi
+movq (%rdi), %rax
+ret
+f2:
+testq $1, %rdi
+jz raisesig
+testq $2, %rdi
+jnz raisesig
+subq $1, %rdi
+movq 8(%rdi), %rax
+ret
+f3:
+movq $2, %r11
+movq %rdi, %rax
+andq $3, %rax
+cmpq $1, %rax
+lea 0(,1), %rax
+cmovz %r11, %rax
+ret
+f4:
+movq $2, %r11
+movq %rdi, %rax
+andq $3, %rax
+cmpq $3, %rax
+lea 0(,1), %rax
+cmovz %r11, %rax
+ret

@@ -53,7 +53,7 @@ Program: /* empty */
        @{ @i @Program.defs@ = NULL; @}
        |
        IDENT '=' LambdaToplevel ';' Program
-       @{ @i @Program.0.defs@ = symbol_add(@Program.1.defs@, @IDENT.name@);
+       @{ @i @Program.0.defs@ = symbol_add(@Program.1.defs@, @IDENT.name@, SYMBOL_TYPE_FUN);
           @i @Program.1.symbols@ = @Program.0.symbols@;
           @i @LambdaToplevel.symbols@ = @Program.0.symbols@;
 
@@ -65,7 +65,7 @@ Program: /* empty */
 
 LambdaToplevel: FUN IDENT ARROW Expr END
       @{ 
-        @i @Expr.symbols@ = symbol_add(@LambdaToplevel.symbols@, @IDENT.name@);
+        @i @Expr.symbols@ = symbol_add(@LambdaToplevel.symbols@, @IDENT.name@, SYMBOL_TYPE_NONE);
         @i @LambdaToplevel.node@ = new_node(OP_RET, @Expr.node@, NULL);
 
         @regalloc @Expr.node@->reg = "rax";
@@ -76,7 +76,7 @@ LambdaToplevel: FUN IDENT ARROW Expr END
 
 Lambda: FUN IDENT ARROW Expr END
       @{
-        @i @Expr.symbols@ = symbol_add(@Lambda.symbols@, @IDENT.name@); 
+        @i @Expr.symbols@ = symbol_add(@Lambda.symbols@, @IDENT.name@, SYMBOL_TYPE_NONE); 
         @i @Lambda.node@ = @Expr.node@;
 
       @}
@@ -93,7 +93,7 @@ Expr: IF Expr THEN Expr ELSE Expr END
     @}
     | LET IDENT '=' Expr IN Expr END
     @{ 
-        @i @Expr.2.symbols@ = symbol_add(@Expr.0.symbols@, @IDENT.name@);
+        @i @Expr.2.symbols@ = symbol_add(@Expr.0.symbols@, @IDENT.name@, SYMBOL_TYPE_NONE);
 
         @i @Expr.0.node@ = NULL;
     @}
@@ -249,7 +249,7 @@ Term: '(' Expr ')'
     @}
     | IDENT         /* Variablenverwendung */
     @{ 
-        @i @Term.node@ = new_ident_node(OP_VAR, NULL, NULL, @IDENT.name@);
+        @i @Term.node@ = new_ident_node(OP_VAR, NULL, NULL, @IDENT.name@, symbol_find(@Term.symbols@, @IDENT.name@));
         @regalloc @Term.node@->reg = "rdi";
         @verify check_variable(@Term.symbols@, @IDENT.name@);
     @}

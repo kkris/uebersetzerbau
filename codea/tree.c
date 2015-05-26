@@ -16,6 +16,7 @@ struct tree *new_node(int op, struct tree *left, struct tree *right)
     t->value = 0;
     t->constant = 0;
     t->atomic = 0;
+    t->symbol = NULL;
 
     return t;
 }
@@ -29,12 +30,17 @@ struct tree *new_const_node(int op, struct tree *left, struct tree *right, long 
     return t;
 }
 
-struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name)
+struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name, struct symbol *symbol)
 {
     struct tree *t = new_node(op, left, right);
 
     t->name = strdup(name);
     t->atomic = 1;
+
+    if(symbol->type == SYMBOL_TYPE_FUN)
+        t->op = OP_FUN;
+
+    t->symbol = symbol;
 
     return t;
 }
@@ -61,6 +67,7 @@ void make_equal_to(struct tree *dest, struct tree *source)
     dest->value = source->value;
     dest->constant = source->constant;
     dest->atomic = source->atomic;
+    dest->symbol = source->symbol;
 
     LEFT_CHILD(dest) = LEFT_CHILD(source);
     RIGHT_CHILD(dest) = RIGHT_CHILD(source);
