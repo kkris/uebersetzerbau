@@ -170,6 +170,8 @@ u_list: OP_LIST(t_list, var)    # 0 # gen_list(bnode);
 if: OP_IF(var)                  # 0 # gen_if(bnode);
 if: OP_IF(t_expr)               # 0 # gen_if(bnode);
 if: OP_IF(u_expr)               # 0 # gen_if(bnode);
+if: OP_IF(u_list)               # 0 # gen_if(bnode);
+if: OP_IF(t_list)               # 0 # gen_if(bnode);
 
 ifthen: OP_IF_THEN(if, t_expr) # 0 # gen_ifthen(bnode);
 ifthen: OP_IF_THEN(if, const) # 0 # move_const(tag_const(RIGHT_CHILD(bnode)->value), bnode->reg); gen_ifthen(bnode);
