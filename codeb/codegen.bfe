@@ -8,7 +8,7 @@
 %}
 
 %start ret
-%term OP_VAR=1 OP_NUM=2 OP_ADD=3 OP_SUB=4 OP_MUL=5 OP_AND=6 OP_LT=7 OP_EQ=8 OP_NOT=9 OP_HEAD=10 OP_TAIL=11 OP_ISNUM=12 OP_ISLIST=13 OP_ISFUN=14 OP_RET=15 OP_ZERO=16 OP_ONE=17 OP_LIST=18 OP_FUN=19 OP_IF=20 OP_THEN_ELSE=21
+%term OP_VAR=1 OP_NUM=2 OP_ADD=3 OP_SUB=4 OP_MUL=5 OP_AND=6 OP_LT=7 OP_EQ=8 OP_NOT=9 OP_HEAD=10 OP_TAIL=11 OP_ISNUM=12 OP_ISLIST=13 OP_ISFUN=14 OP_RET=15 OP_ZERO=16 OP_ONE=17 OP_LIST=18 OP_FUN=19 OP_IF_THEN=20 OP_IF_THEN_ELSE=21
 %%
 
 ret: OP_RET(u_expr)             # 1 # ret(LEFT_CHILD(bnode), UNTAGGED, TYPE_REG);
@@ -167,27 +167,29 @@ u_list: OP_LIST(t_list, t_expr) # 0 # gen_list(bnode);
 u_list: OP_LIST(var, t_list)    # 0 # gen_list(bnode);
 u_list: OP_LIST(t_list, var)    # 0 # gen_list(bnode);
 
+ifthen: OP_IF_THEN(zero, t_expr) # 0 # gen_ifthen(bnode);
+thenelse: OP_IF_THEN_ELSE(ifthen, t_expr) # 0 # gen_ifthenelse(bnode);
 
-t_expr: OP_IF(zero, OP_THEN_ELSE(t_expr, t_expr)) # 0 # make_equal_to(bnode, RIGHT_CHILD(RIGHT_CHILD(bnode)));
-t_expr: OP_IF(zero, OP_THEN_ELSE(const, t_expr)) # 0 # make_equal_to(bnode, RIGHT_CHILD(RIGHT_CHILD(bnode)));
-const: OP_IF(zero, OP_THEN_ELSE(t_expr, const)) # 0 # make_equal_to(bnode, RIGHT_CHILD(RIGHT_CHILD(bnode)));
 
-t_expr: OP_IF(one, OP_THEN_ELSE(t_expr, t_expr)) # 0 # make_equal_to(bnode, RIGHT_CHILD(LEFT_CHILD(bnode)));
-const: OP_IF(one, OP_THEN_ELSE(const, t_expr)) # 0 # make_equal_to(bnode, RIGHT_CHILD(LEFT_CHILD(bnode)));
-t_expr: OP_IF(one, OP_THEN_ELSE(t_expr, const)) # 0 # make_equal_to(bnode, RIGHT_CHILD(LEFT_CHILD(bnode)));
+t_expr: OP_IF_THEN_ELSE(OP_IF_THEN(zero, t_expr), t_expr) # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+t_expr: OP_IF_THEN_ELSE(OP_IF_THEN(zero, const), t_expr) # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+const: OP_IF_THEN_ELSE(OP_IF_THEN(zero, t_expr), const) # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 
-t_expr: OP_IF(const, OP_THEN_ELSE(t_expr, t_expr)) # 1 # make_equal_to(bnode, RIGHT_CHILD(LEFT_CHILD(bnode)));
-const: OP_IF(const, OP_THEN_ELSE(const, t_expr)) # 1 # make_equal_to(bnode, RIGHT_CHILD(LEFT_CHILD(bnode)));
-t_expr: OP_IF(const, OP_THEN_ELSE(t_expr, const)) # 1 # make_equal_to(bnode, RIGHT_CHILD(LEFT_CHILD(bnode)));
+t_expr: OP_IF_THEN_ELSE(OP_IF_THEN(one, t_expr), t_expr) # 0 # make_equal_to(bnode, LEFT_CHILD(RIGHT_CHILD(bnode)));
+const: OP_IF_THEN_ELSE(OP_IF_THEN(one, const), t_expr) # 0 # make_equal_to(bnode, LEFT_CHILD(RIGHT_CHILD(bnode)));
+t_expr: OP_IF_THEN_ELSE(OP_IF_THEN(one, t_expr), const) # 0 # make_equal_to(bnode, LEFT_CHILD(RIGHT_CHILD(bnode)));
 
-t_expr: OP_IF(t_expr, OP_THEN_ELSE(t_expr, t_expr)) # 1 # gen_if(bnode);
-t_expr: OP_IF(t_expr, OP_THEN_ELSE(const, t_expr)) # 1 # gen_if(bnode);
-t_expr: OP_IF(t_expr, OP_THEN_ELSE(t_expr, const)) # 1 # gen_if(bnode);
+t_expr: OP_IF_THEN_ELSE(OP_IF_THEN(const, t_expr), t_expr) # 0 # make_equal_to(bnode, LEFT_CHILD(RIGHT_CHILD(bnode)));
+const: OP_IF_THEN_ELSE(OP_IF_THEN(const, const), t_expr) # 0 # make_equal_to(bnode, LEFT_CHILD(RIGHT_CHILD(bnode)));
+t_expr: OP_IF_THEN_ELSE(OP_IF_THEN(const, t_expr), const) # 0 # make_equal_to(bnode, LEFT_CHILD(RIGHT_CHILD(bnode)));
 
-t_expr: OP_IF(u_expr, OP_THEN_ELSE(t_expr, t_expr)) # 1 # gen_if(bnode);
-t_expr: OP_IF(u_expr, OP_THEN_ELSE(const, t_expr)) # 1 # gen_if(bnode);
-t_expr: OP_IF(u_expr, OP_THEN_ELSE(t_expr, const)) # 1 # gen_if(bnode);
+t_expr: OP_IF_THEN_ELSE(OP_IF_THEN(t_expr, t_expr), t_expr) # 1 # gen_if(bnode);
+t_expr: OP_IF_THEN_ELSE(OP_IF_THEN(t_expr, const), t_expr) # 1 # gen_if(bnode);
+t_expr: OP_IF_THEN_ELSE(OP_IF_THEN(t_expr, t_expr), const) # 1 # gen_if(bnode);
 
+t_expr: OP_IF_THEN_ELSE(OP_IF_THEN(u_expr, t_expr), t_expr) # 1 # gen_if(bnode);
+t_expr: OP_IF_THEN_ELSE(OP_IF_THEN(u_expr, const), t_expr) # 1 # gen_if(bnode);
+t_expr: OP_IF_THEN_ELSE(OP_IF_THEN(u_expr, t_expr), const) # 1 # gen_if(bnode);
 
 %%
 

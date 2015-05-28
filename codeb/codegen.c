@@ -31,7 +31,7 @@ static void maybe_force_tag_or_untag();
 
 static void debug(const char *msg, ...)
 {
-    return;
+    //return;
 
     va_list ap;
 
@@ -617,14 +617,30 @@ void gen_if(struct tree *node)
 {
     debug("gen_if");
 
-    struct tree *pred = LEFT_CHILD(node);
+    struct tree *ifthen = LEFT_CHILD(node);
 
-    struct tree *then = RIGHT_CHILD(LEFT_CHILD(node));
-    struct tree *otherwise = RIGHT_CHILD(RIGHT_CHILD(node));
+    struct tree *pred = LEFT_CHILD(ifthen);
+    struct tree *then = RIGHT_CHILD(ifthen);
+    struct tree *otherwise = RIGHT_CHILD(node);
 
     const char *dest = node->reg;
+
+    gen_code("cmpq $0, %%%s", pred->reg);
+    gen_code("")
+
 
 
     gen_code("if");
 
+}
+
+
+void gen_ifthen(struct tree *node)
+{
+    debug("gen_ifthen");
+}
+
+void gen_ifthenelse(struct tree *node)
+{
+    debug("gen_ifthenelse");
 }

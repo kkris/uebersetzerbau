@@ -47,8 +47,8 @@ struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const
 
 struct tree *new_if_node(struct tree *pred, struct tree *then, struct tree *otherwise)
 {
-    struct tree *thenelse = new_node(OP_THEN_ELSE, then, otherwise);
-    struct tree *t = new_node(OP_IF, pred, thenelse);
+    struct tree *ifthen = new_node(OP_IF_THEN, pred, then);
+    struct tree *t = new_node(OP_IF_THEN_ELSE, ifthen, otherwise);
 
     return t;
 }
