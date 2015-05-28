@@ -1,6 +1,7 @@
 #include "codegen.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
 #include <assert.h>
@@ -13,6 +14,8 @@ const char *temp_reg = "r11";
 // global variable which tracks the just tagged register
 char *just_tagged = NULL;
 char *just_untagged = NULL;
+
+int labelno = 0;
 
 static char *type_checked_vars[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
@@ -31,7 +34,7 @@ static void maybe_force_tag_or_untag();
 
 static void debug(const char *msg, ...)
 {
-    //return;
+    return;
 
     va_list ap;
 
@@ -76,6 +79,25 @@ static void gen_code(const char *code, ...)
 void gen_func(const char *name)
 {
     printf(".globl %s\n%s:\n", name, name);
+}
+
+void generate_unique_label()
+{
+    labelno = labelno + 2;
+}
+
+char *get_if_else_label()
+{
+    char *l = malloc(10 * sizeof(char));
+    sprintf(l, "label%d", labelno);
+    return l;
+}
+
+char *get_if_epilog_label()
+{
+    char *l = malloc(10 * sizeof(char));
+    sprintf(l, "label%d", labelno + 1);
+    return l;
 }
 
 static void move(const char *source, const char *dest)
@@ -221,7 +243,7 @@ void untag_list_inplace(const char *reg)
 }
 
 
-static long int tag_const(long int value)
+long int tag_const(long int value)
 {
     return value << 1;
 }
@@ -617,30 +639,26 @@ void gen_if(struct tree *node)
 {
     debug("gen_if");
 
-    struct tree *ifthen = LEFT_CHILD(node);
+    generate_unique_label();
 
-    struct tree *pred = LEFT_CHILD(ifthen);
-    struct tree *then = RIGHT_CHILD(ifthen);
-    struct tree *otherwise = RIGHT_CHILD(node);
-
-    const char *dest = node->reg;
+    struct tree *pred = LEFT_CHILD(node);
 
     gen_code("cmpq $0, %%%s", pred->reg);
-    gen_code("")
-
-
-
-    gen_code("if");
-
+    gen_code("jz %s", get_if_else_label());
 }
 
 
 void gen_ifthen(struct tree *node)
 {
     debug("gen_ifthen");
+
+    gen_code("jmp %s", get_if_epilog_label());
+    printf("%s:\n", get_if_else_label());
 }
 
 void gen_ifthenelse(struct tree *node)
 {
     debug("gen_ifthenelse");
+
+    printf("%s:\n", get_if_epilog_label());
 }

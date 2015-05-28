@@ -25,7 +25,7 @@
 
 @traversal @postorder verify
 @traversal @preorder regalloc
-@traversal @postorder codegen
+@traversal @preorder codegen
 
 @autoinh symbols
 @autosyn node
@@ -89,7 +89,8 @@ Expr: IF Expr THEN Expr ELSE Expr END
 
         @regalloc @Expr.2.node@->reg = @Expr.0.node@->reg;
         @regalloc @Expr.3.node@->reg = @Expr.0.node@->reg;
-        @regalloc @Expr.1.node@->reg = alloc_reg(@Expr.0.node@->reg, is_const_or_atomic(@Expr.0.node@));
+        @regalloc @Expr.1.node@->reg = alloc_reg(@Expr.0.node@->reg, @Expr.0.node@->constant);
+        @regalloc @Expr.0.node@->kids[0]->reg = @Expr.0.node@->reg;
     @}
     | Lambda
     @{
