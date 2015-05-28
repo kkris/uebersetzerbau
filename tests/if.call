@@ -57,7 +57,7 @@ RAISES(f4, 1);
 CHECK(f4, 0, 2);
 CHECK(f4, 1, 2);
 CHECK(f4, -1, 2);
-CHECK(f4, 5, 1);
+CHECK(f4, 5, 2);
 CHECK(f4, -5, 2);
 CHECK(f4, 10, 1);
 
