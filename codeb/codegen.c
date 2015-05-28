@@ -653,12 +653,12 @@ void gen_ifthen(struct tree *node)
     debug("gen_ifthen");
 
     gen_code("jmp %s", get_if_epilog_label());
-    printf("%s:\n", get_if_else_label());
+    printf("  %s:\n", get_if_else_label());
 }
 
 void gen_ifthenelse(struct tree *node)
 {
     debug("gen_ifthenelse");
 
-    printf("%s:\n", get_if_epilog_label());
+    printf("  %s:\n", get_if_epilog_label());
 }
