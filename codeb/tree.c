@@ -38,7 +38,7 @@ struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const
     t->name = strdup(name);
     t->atomic = 1;
 
-    if(symbol->type == SYMBOL_TYPE_FUN)
+    if(symbol != NULL && symbol->type == SYMBOL_TYPE_FUN)
         t->op = OP_FUN;
 
     t->symbol = symbol;
