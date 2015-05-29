@@ -126,6 +126,13 @@ void expect(const char *var_reg, int type)
         gen_code("jnz raisesig");
 
         type_checked_vars[i] = strdup(var_reg);
+    } else if(type == TYPE_LIST) {
+        gen_code("testq $1, %%%s", var_reg);
+        gen_code("jz raisesig");
+        gen_code("testq $2, %%%s", var_reg);
+        gen_code("jnz raisesig");
+
+        type_checked_vars[i] = strdup(var_reg);
     }
 }
 
@@ -141,10 +148,14 @@ void expect_list(struct tree *node)
 {
     debug("expect_list");
 
-    gen_code("testq $1, %%%s", node->reg);
-    gen_code("jz raisesig");
-    gen_code("testq $2, %%%s", node->reg);
-    gen_code("jnz raisesig");
+    if(node->op == OP_VAR) {
+        expect(node->reg, TYPE_LIST);
+    } else {
+        gen_code("testq $1, %%%s", node->reg);
+        gen_code("jz raisesig");
+        gen_code("testq $2, %%%s", node->reg);
+        gen_code("jnz raisesig");
+    }
 }
 
 void tag(int type, const char *source, const char *dest)
@@ -567,26 +578,38 @@ void gen_isfun(struct tree *node)
 }
 
 
-void gen_head(struct tree *node)
+void gen_head(struct tree *node, int tag_type)
 {
     debug("gen_head");
 
     struct tree *lhs = LEFT_CHILD(node);
-
     const char *dest = node->reg;
 
-    gen_code("movq (%%%s), %%%s", lhs->reg, dest);
+    if(tag_type == TAGGED) {
+        expect_list(lhs);
+        move(lhs->reg, dest);
+        untag_list_inplace(dest);
+        gen_code("movq (%%%s), %%%s", dest, dest);
+    } else {
+        gen_code("movq (%%%s), %%%s", lhs->reg, dest);
+    }
 }
 
-void gen_tail(struct tree *node)
+void gen_tail(struct tree *node, int tag_type)
 {
     debug("gen_tail");
 
     struct tree *lhs = LEFT_CHILD(node);
-
     const char *dest = node->reg;
 
-    gen_code("movq 8(%%%s), %%%s", lhs->reg, dest);
+    if(tag_type == TAGGED) {
+        expect_list(lhs);
+        move(lhs->reg, dest);
+        untag_list_inplace(dest);
+        gen_code("movq 8(%%%s), %%%s", dest, dest);
+    } else {
+        gen_code("movq 8(%%%s), %%%s", lhs->reg, dest);
+    }
 }
 
 void gen_list(struct tree *node)
@@ -621,6 +644,10 @@ void gen_if(struct tree *node)
     struct tree *pred = LEFT_CHILD(node);
     struct label_pair *labels = (struct label_pair*)node->data;
 
+    if(pred->constant) {
+        move_const(tag_const(pred->value), node->reg);
+    }
+
     gen_code("cmpq $0, %%%s", pred->reg);
     gen_code("jz .%s", labels->else_label);
 }
@@ -630,7 +657,13 @@ void gen_ifthen(struct tree *node)
 {
     debug("gen_ifthen");
 
+    struct tree *then = RIGHT_CHILD(node);
     struct label_pair *labels = (struct label_pair*)node->data;
+
+    if(then->constant) {
+        move_const(tag_const(then->value), node->reg);
+    }
+
 
     gen_code("jmp .%s", labels->epilog_label);
     printf(".%s:\n", labels->else_label);
@@ -640,7 +673,13 @@ void gen_ifthenelse(struct tree *node)
 {
     debug("gen_ifthenelse");
 
+    struct tree *elsenode = RIGHT_CHILD(node);
     struct label_pair *labels = (struct label_pair*)node->data;
+
+    if(elsenode->constant) {
+        move_const(tag_const(elsenode->value), node->reg);
+    }
+
 
     printf(".%s:\n", labels->epilog_label);
 }

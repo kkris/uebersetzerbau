@@ -21,3 +21,10 @@ f20 = fun x -> if 1 then x * 5 else 0-42 end end;
 f21 = fun x -> if 1 then 0-42 else x + 1 end end;
 f22 = fun x -> if 0 then x * 5 else 0-42 end end;
 f23 = fun x -> if 0 then 0-42 else x - 1 end end;
+f24 = fun x -> if x < 0 
+    then
+        (if x = (0-42) then (0-1337) else x + 1 end)
+    else
+        (if x = 13 then 1337 else x + 1 end)
+end end;
+f25 = fun l -> if (head l) < (tail l) then head l else tail l end end;

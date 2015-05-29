@@ -21,6 +21,7 @@ extern long f20(long);
 extern long f21(long);
 extern long f22(long);
 extern long f23(long);
+extern long f24(long);
 
 RAISES_NOT(f1, 1);
 RAISES_NOT(f1, 0);
@@ -217,4 +218,23 @@ CHECK(f23, 0, -1);
 CHECK(f23, 1, 0);
 CHECK(f23, 2, 1);
 CHECK(f23, 10, 9);
+
+RAISES(f24, 1);
+RAISES(f24, at);
+RAISES(f24, bt);
+RAISES(f24, 3);
+CHECK(f24, 0, 1);
+CHECK(f24, 1, 2);
+CHECK(f24, 2, 3);
+CHECK(f24, 13, 1337);
+CHECK(f24, -1, 0);
+CHECK(f24, -2, -1);
+CHECK(f24, -42, -1337);
+
+RAISES(f25, 0);
+RAISES_NOT(f25, at);
+RAISES(f25, 2);
+RAISES(f25, 3);
+CHECK_RAW(f25, at, 0);
+CHECK_RAW(f25, bt, 0);
 

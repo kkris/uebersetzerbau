@@ -20,7 +20,7 @@ ret: OP_RET(t_word)             # 0 # ret(LEFT_CHILD(bnode), TAGGED, TYPE_WORD);
 
 fun: OP_FUN                     # 0 #
 
-u_expr: const                   # 1 # 
+u_expr: const                   # 1 # bnode->constant = 1;
 u_expr: t_expr                  # 9 # expect_num(bnode); untag_num_inplace(bnode->reg);
 
 u_expr: OP_MUL(u_expr, u_expr)  # 1 # gen_mul(bnode);
@@ -35,7 +35,7 @@ u_expr: OP_MUL(one, u_expr)     # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 u_expr: OP_ISNUM(var)           # 0 # gen_isnum(bnode);
 u_expr: OP_ISNUM(t_word)        # 0 # gen_isnum(bnode);
 
-t_expr: const                   # 8 #
+t_expr: const                   # 8 # bnode->constant = 1;
 t_expr: var                     # 8 # expect_num(bnode);
 t_expr: u_expr                  # 9 # tag_num_inplace(bnode->reg);
 t_expr: t_word                  # 9 # expect_num(bnode);
@@ -78,9 +78,9 @@ var: OP_ADD(var, zero)          # 0 # expect_num(LEFT_CHILD(bnode)); make_equal_
 var: OP_ADD(zero, var)          # 0 # expect_num(RIGHT_CHILD(bnode)); make_equal_to(bnode, RIGHT_CHILD(bnode));
 var: OP_SUB(var, zero)          # 0 # expect_num(LEFT_CHILD(bnode)); make_equal_to(bnode, LEFT_CHILD(bnode));
 
-const: one                      # 0 #
-const: zero                     # 0 #
-const: OP_NUM                   # 0 #
+const: one                      # 0 # bnode->constant = 1;
+const: zero                     # 0 # bnode->constant = 1;
+const: OP_NUM                   # 0 # bnode->constant = 1;
 const: OP_ADD(const, const)     # 0 # make_constant(bnode, LEFT_CHILD(bnode)->value + RIGHT_CHILD(bnode)->value);
 const: OP_SUB(const, const)     # 0 # make_constant(bnode, LEFT_CHILD(bnode)->value - RIGHT_CHILD(bnode)->value);
 const: OP_MUL(const, const)     # 0 # make_constant(bnode, LEFT_CHILD(bnode)->value * RIGHT_CHILD(bnode)->value);
@@ -139,18 +139,18 @@ zero: OP_ISNUM(t_list)          # 0 # make_constant(bnode, 0);
 
 t_word: t_expr                  # 9 #
 t_word: t_list                  # 9 #
-t_word: const                   # 9 #
+t_word: const                   # 9 # bnode->constant = 1;
 t_word: var                     # 9 #
 
 
-t_word: OP_HEAD(var)            # 0 # expect_list(LEFT_CHILD(bnode)); untag_list_inplace(LEFT_CHILD(bnode)->reg); gen_head(bnode);
-t_word: OP_HEAD(u_list)         # 0 # gen_head(bnode);
-t_word: OP_HEAD(t_word)         # 0 # expect_list(LEFT_CHILD(bnode)); untag_list_inplace(LEFT_CHILD(bnode)->reg); gen_head(bnode);
+t_word: OP_HEAD(var)            # 0 # gen_head(bnode, TAGGED);
+t_word: OP_HEAD(u_list)         # 0 # gen_head(bnode, UNTAGGED);
+t_word: OP_HEAD(t_word)         # 0 # gen_head(bnode, TAGGED);
 t_word: OP_HEAD(t_expr)         # 0 # raise_signal();
 
-t_word: OP_TAIL(var)            # 0 # expect_list(LEFT_CHILD(bnode)); untag_list_inplace(LEFT_CHILD(bnode)->reg); gen_tail(bnode);
-t_word: OP_TAIL(u_list)         # 0 # gen_tail(bnode);
-t_word: OP_TAIL(t_word)         # 0 # expect_list(LEFT_CHILD(bnode)); untag_list_inplace(LEFT_CHILD(bnode)->reg); gen_tail(bnode);
+t_word: OP_TAIL(var)            # 0 # gen_tail(bnode, TAGGED);
+t_word: OP_TAIL(u_list)         # 0 # gen_tail(bnode, UNTAGGED);
+t_word: OP_TAIL(t_word)         # 0 # gen_tail(bnode, TAGGED);
 t_word: OP_TAIL(t_expr)         # 0 # raise_signal();
 
 
@@ -172,14 +172,11 @@ if: OP_IF(t_expr)               # 2 # gen_if(bnode);
 if: OP_IF(u_expr)               # 2 # gen_if(bnode);
 if: OP_IF(u_list)               # 2 # gen_if(bnode);
 if: OP_IF(t_list)               # 2 # gen_if(bnode);
+if: OP_IF(t_word)                # 1 # gen_if(bnode);
 
-if: OP_IF(const)                # 1 # move_const(tag_const(LEFT_CHILD(bnode)->value), bnode->reg); gen_if(bnode);
+ifthen: OP_IF_THEN(if, t_word) # 2 # gen_ifthen(bnode);
 
-ifthen: OP_IF_THEN(if, t_expr) # 2 # gen_ifthen(bnode);
-ifthen: OP_IF_THEN(if, const) # 2 # move_const(tag_const(RIGHT_CHILD(bnode)->value), bnode->reg); gen_ifthen(bnode);
-
-t_expr: OP_IF_THEN_ELSE(ifthen, t_expr) # 2 # gen_ifthenelse(bnode);
-t_expr: OP_IF_THEN_ELSE(ifthen, const) # 2 # move_const(tag_const(RIGHT_CHILD(bnode)->value), bnode->reg); gen_ifthenelse(bnode); 
+t_word: OP_IF_THEN_ELSE(ifthen, t_word) # 2 # gen_ifthenelse(bnode);
 
 
 %%

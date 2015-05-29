@@ -48,8 +48,8 @@ void gen_eq(struct tree *node);
 void gen_lt(struct tree *node);
 void gen_isnum(struct tree *node);
 void gen_islist(struct tree *node);
-void gen_head(struct tree *node);
-void gen_tail(struct tree *node);
+void gen_head(struct tree *node, int tag_type);
+void gen_tail(struct tree *node, int tag_type);
 void gen_list(struct tree *node);
 void gen_if(struct tree *node);
 
