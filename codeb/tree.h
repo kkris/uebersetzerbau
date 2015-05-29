@@ -55,13 +55,19 @@ struct tree {
     struct burm_state *state; /* BURG state variable */
 
     struct symbol *symbol; /* corresponding symbol if available */
+
+    void *data; /* node specific data */
 };
 
+struct label_pair {
+    char *else_label;
+    char *epilog_label;
+};
 
 struct tree *new_node(int op, struct tree *left, struct tree *right);
 struct tree *new_const_node(int op, struct tree *left, struct tree *right, long int value);
 struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const char *name, struct symbol *symbol);
-struct tree *new_if_node(struct tree *pred, struct tree *then, struct tree *otherwise);
+struct tree *new_if_node(struct tree *pred, struct tree *then, struct tree *otherwise, int labelno);
 
 void make_constant(struct tree *node, long int value);
 void make_equal_to(struct tree *dest, struct tree *source);

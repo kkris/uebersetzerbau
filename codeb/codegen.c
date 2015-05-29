@@ -15,8 +15,6 @@ const char *temp_reg = "r11";
 char *just_tagged = NULL;
 char *just_untagged = NULL;
 
-int labelno = 0;
-
 static char *type_checked_vars[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 static void reset_state()
@@ -79,25 +77,6 @@ static void gen_code(const char *code, ...)
 void gen_func(const char *name)
 {
     printf(".globl %s\n%s:\n", name, name);
-}
-
-void generate_unique_label()
-{
-    labelno = labelno + 2;
-}
-
-char *get_if_else_label()
-{
-    char *l = malloc(10 * sizeof(char));
-    sprintf(l, "label%d", labelno);
-    return l;
-}
-
-char *get_if_epilog_label()
-{
-    char *l = malloc(10 * sizeof(char));
-    sprintf(l, "label%d", labelno + 1);
-    return l;
 }
 
 static void move(const char *source, const char *dest)
@@ -639,12 +618,11 @@ void gen_if(struct tree *node)
 {
     debug("gen_if");
 
-    generate_unique_label();
-
     struct tree *pred = LEFT_CHILD(node);
+    struct label_pair *labels = (struct label_pair*)node->data;
 
     gen_code("cmpq $0, %%%s", pred->reg);
-    gen_code("jz %s", get_if_else_label());
+    gen_code("jz .%s", labels->else_label);
 }
 
 
@@ -652,13 +630,17 @@ void gen_ifthen(struct tree *node)
 {
     debug("gen_ifthen");
 
-    gen_code("jmp %s", get_if_epilog_label());
-    printf("  %s:\n", get_if_else_label());
+    struct label_pair *labels = (struct label_pair*)node->data;
+
+    gen_code("jmp .%s", labels->epilog_label);
+    printf(".%s:\n", labels->else_label);
 }
 
 void gen_ifthenelse(struct tree *node)
 {
     debug("gen_ifthenelse");
 
-    printf("  %s:\n", get_if_epilog_label());
+    struct label_pair *labels = (struct label_pair*)node->data;
+
+    printf(".%s:\n", labels->epilog_label);
 }

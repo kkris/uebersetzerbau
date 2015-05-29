@@ -11,6 +11,8 @@
 
     int errors = 0;
 
+    int labelno = 0;
+
     int yylex(void);
     void yyerror(char *);
 %}
@@ -85,7 +87,7 @@ Lambda: FUN IDENT ARROW Expr END
 
 Expr: IF Expr THEN Expr ELSE Expr END
     @{
-        @i @Expr.0.node@ = new_if_node(@Expr.1.node@, @Expr.2.node@, @Expr.3.node@);
+        @i @Expr.0.node@ = new_if_node(@Expr.1.node@, @Expr.2.node@, @Expr.3.node@, labelno++);
 
         @regalloc @Expr.2.node@->reg = @Expr.0.node@->reg;
         @regalloc @Expr.3.node@->reg = @Expr.0.node@->reg;

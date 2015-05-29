@@ -17,6 +17,7 @@ struct tree *new_node(int op, struct tree *left, struct tree *right)
     t->constant = 0;
     t->atomic = 0;
     t->symbol = NULL;
+    t->data = NULL;
 
     return t;
 }
@@ -45,11 +46,22 @@ struct tree *new_ident_node(int op, struct tree *left, struct tree *right, const
     return t;
 }
 
-struct tree *new_if_node(struct tree *pred, struct tree *then, struct tree *otherwise)
+struct tree *new_if_node(struct tree *pred, struct tree *then, struct tree *otherwise, int labelno)
 {
+    struct label_pair *labels = malloc(sizeof(struct label_pair));
+    labels->else_label = malloc(10 * sizeof(char*));
+    sprintf(labels->else_label, "else%d", labelno);
+
+    labels->epilog_label = malloc(10 * sizeof(char*));
+    sprintf(labels->epilog_label, "epilog%d", labelno);
+
     struct tree *ifnode = new_node(OP_IF, pred, NULL);
     struct tree *ifthen = new_node(OP_IF_THEN, ifnode, then);
     struct tree *t = new_node(OP_IF_THEN_ELSE, ifthen, otherwise);
+
+    ifnode->data = (void*)labels;
+    ifthen->data = (void*)labels;
+    t->data = (void*)labels;
 
     return t;
 }
@@ -77,6 +89,7 @@ void make_equal_to(struct tree *dest, struct tree *source)
     dest->constant = source->constant;
     dest->atomic = source->atomic;
     dest->symbol = source->symbol;
+    dest->data = source->data;
 
     LEFT_CHILD(dest) = LEFT_CHILD(source);
     RIGHT_CHILD(dest) = RIGHT_CHILD(source);
