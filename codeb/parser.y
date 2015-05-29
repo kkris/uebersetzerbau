@@ -91,6 +91,7 @@ Expr: IF Expr THEN Expr ELSE Expr END
         @regalloc @Expr.3.node@->reg = @Expr.0.node@->reg;
         @regalloc @Expr.1.node@->reg = alloc_reg(@Expr.0.node@->reg, @Expr.0.node@->constant);
         @regalloc @Expr.0.node@->kids[0]->reg = @Expr.0.node@->reg;
+        @regalloc @Expr.0.node@->kids[0]->kids[0]->reg = @Expr.1.node@->reg;
     @}
     | Lambda
     @{

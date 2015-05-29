@@ -167,17 +167,20 @@ u_list: OP_LIST(t_list, t_expr) # 0 # gen_list(bnode);
 u_list: OP_LIST(var, t_list)    # 0 # gen_list(bnode);
 u_list: OP_LIST(t_list, var)    # 0 # gen_list(bnode);
 
-if: OP_IF(var)                  # 0 # gen_if(bnode);
-if: OP_IF(t_expr)               # 0 # gen_if(bnode);
-if: OP_IF(u_expr)               # 0 # gen_if(bnode);
-if: OP_IF(u_list)               # 0 # gen_if(bnode);
-if: OP_IF(t_list)               # 0 # gen_if(bnode);
+if: OP_IF(var)                  # 2 # gen_if(bnode);
+if: OP_IF(t_expr)               # 2 # gen_if(bnode);
+if: OP_IF(u_expr)               # 2 # gen_if(bnode);
+if: OP_IF(u_list)               # 2 # gen_if(bnode);
+if: OP_IF(t_list)               # 2 # gen_if(bnode);
 
-ifthen: OP_IF_THEN(if, t_expr) # 0 # gen_ifthen(bnode);
-ifthen: OP_IF_THEN(if, const) # 0 # move_const(tag_const(RIGHT_CHILD(bnode)->value), bnode->reg); gen_ifthen(bnode);
+if: OP_IF(const)                # 1 # move_const(tag_const(LEFT_CHILD(bnode)->value), bnode->reg); gen_if(bnode);
 
-t_expr: OP_IF_THEN_ELSE(ifthen, t_expr) # 0 # gen_ifthenelse(bnode);
-t_expr: OP_IF_THEN_ELSE(ifthen, const) # 0 # move_const(tag_const(RIGHT_CHILD(bnode)->value), bnode->reg); gen_ifthenelse(bnode); 
+ifthen: OP_IF_THEN(if, t_expr) # 2 # gen_ifthen(bnode);
+ifthen: OP_IF_THEN(if, const) # 2 # move_const(tag_const(RIGHT_CHILD(bnode)->value), bnode->reg); gen_ifthen(bnode);
+
+t_expr: OP_IF_THEN_ELSE(ifthen, t_expr) # 2 # gen_ifthenelse(bnode);
+t_expr: OP_IF_THEN_ELSE(ifthen, const) # 2 # move_const(tag_const(RIGHT_CHILD(bnode)->value), bnode->reg); gen_ifthenelse(bnode); 
+
 
 %%
 

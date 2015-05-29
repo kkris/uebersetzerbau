@@ -55,7 +55,7 @@ long int untag(long int value)
     expect_sig = 1; \
     FUNC(INPUT); \
     if(sig_raised == 0) {\
-        printf("\tFF Expected signal in %s, but was not raised\n", #FUNC); \
+        printf("\tFF Expected signal in %s, but was not raised (input = %s)\n", #FUNC, #INPUT); \
         errors++;\
     }\
     expect_sig = 0; \
@@ -66,7 +66,7 @@ long int untag(long int value)
     expect_sig = 0; \
     FUNC(INPUT); \
     if(sig_raised == 1) {\
-        printf("\tFF Did not expect signal in %s, but was raised\n", #FUNC); \
+        printf("\tFF Did not expect signal in %s, but was raised (input = %s)\n", #FUNC, #INPUT); \
         errors++;\
     }\
     expect_sig = 0; \

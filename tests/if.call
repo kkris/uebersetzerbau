@@ -171,14 +171,15 @@ CHECK(f17, -3, -4);
 
 RAISES(f18, 1);
 CHECK(f18, 0, 0);
-CHECK(f18, 1, 2);
+CHECK(f18, 1, 1);
 CHECK(f18, 2, 4);
-CHECK(f18, -3, -12);
+CHECK(f18, -3, 9);
 
-RAISES(f19, 1);
-CHECK(f19, 0, 0);
-CHECK(f19, 1, 1);
-CHECK(f19, 2, 1);
+RAISES_NOT(f19, 1);
+CHECK(f19, 0, 1);
+CHECK(f19, 1, 0);
+CHECK(f19, 2, 0);
+CHECK(f19, 5, 1);
 CHECK(f19, 10, 0);
 
 RAISES(f20, 1);
