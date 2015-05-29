@@ -150,8 +150,8 @@ CHECK_RAW(f14, 4, 2);
 CHECK_RAW(f14, 5, 2);
 CHECK_RAW(f14, 7, 1);
 
-long a[] = {0, 1};
-long b[] = {1, 0};
+long a[] = {0, 2};
+long b[] = {-2, 0};
 
 long at = ((long)a)|1;
 long bt = ((long)b)|1;
@@ -236,5 +236,5 @@ RAISES_NOT(f25, at);
 RAISES(f25, 2);
 RAISES(f25, 3);
 CHECK_RAW(f25, at, 0);
-CHECK_RAW(f25, bt, 0);
+CHECK_RAW(f25, bt, -1);
 

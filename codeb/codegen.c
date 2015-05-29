@@ -110,7 +110,7 @@ void raise_signal()
     gen_code("jmp raisesig");
 }
 
-void expect(const char *var_reg, int type)
+int check_var(const char *var_reg)
 {
     debug("expect");
 
@@ -118,39 +118,29 @@ void expect(const char *var_reg, int type)
     for(i = 0; i < 10; i++) {
         if(type_checked_vars[i] == NULL) break;
         if(strcmp(var_reg, type_checked_vars[i]) == 0)
-            return;
+            return 0;
     }
 
-    if(type == TYPE_NUMBER) {
-        gen_code("testq $1, %%%s", var_reg);
-        gen_code("jnz raisesig");
+    type_checked_vars[i] = strdup(var_reg);
 
-        type_checked_vars[i] = strdup(var_reg);
-    } else if(type == TYPE_LIST) {
-        gen_code("testq $1, %%%s", var_reg);
-        gen_code("jz raisesig");
-        gen_code("testq $2, %%%s", var_reg);
-        gen_code("jnz raisesig");
-
-        type_checked_vars[i] = strdup(var_reg);
-    }
+    return 1;
 }
 
 void expect_num(struct tree *node)
 {
     debug("expect_num");
 
-    if(node->op == OP_VAR)
-        expect(node->reg, TYPE_NUMBER);
+    if(node->op != OP_VAR || check_var(node->reg)) {
+        gen_code("testq $1, %%%s", node->reg);
+        gen_code("jnz raisesig");
+    }
 }
 
 void expect_list(struct tree *node)
 {
     debug("expect_list");
 
-    if(node->op == OP_VAR) {
-        expect(node->reg, TYPE_LIST);
-    } else {
+    if(node->op != OP_VAR || check_var(node->reg)) {
         gen_code("testq $1, %%%s", node->reg);
         gen_code("jz raisesig");
         gen_code("testq $2, %%%s", node->reg);
