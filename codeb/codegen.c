@@ -730,7 +730,12 @@ void gen_call(struct tree *node)
     struct tree *param = RIGHT_CHILD(node);
 
     gen_code("push %%%s", "rdi");
-    move(param->reg, "rdi");
+
+    if(param->constant)
+        move_const(tag_const(param->value), "rdi");
+    else
+        move(param->reg, "rdi");
+
     gen_code("call %s", fun->symbol->name);
     move("rax", node->reg);
     gen_code("pop %%%s", "rdi");
