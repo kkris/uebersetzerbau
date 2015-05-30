@@ -1,0 +1,208 @@
+extern long f1(long);
+extern long f2(long);
+extern long f3(long);
+extern long f4(long);
+extern long f5(long);
+extern long f6(long);
+extern long f7(long);
+extern long f8(long);
+extern long f9(long);
+extern long f10(long);
+extern long f11(long);
+extern long f12(long);
+extern long f13(long);
+extern long f14(long);
+extern long f15(long);
+extern long f16(long);
+extern long f17(long);
+extern long f17(long);
+extern long f18(long);
+extern long f19(long);
+extern long f20(long);
+
+long a[] = {-6, 4}; // tagged -3, 2
+long b[] = {-1, 3}; // untagged
+
+long at = ((long)a)|1;
+long bt = ((long)b)|1;
+
+RAISES_NOT(f1, 1);
+RAISES_NOT(f1, 0);
+RAISES_NOT(f1, 2);
+RAISES_NOT(f1, 3);
+RAISES_NOT(f1, 4);
+RAISES_NOT(f1, 5);
+CHECK(f1, 0, 0);
+CHECK(f1, 1, 1);
+CHECK(f1, 42, 42);
+CHECK(f1, -42, -42);
+
+RAISES_NOT(f2, 1);
+RAISES_NOT(f2, 0);
+RAISES_NOT(f2, 2);
+RAISES_NOT(f2, 3);
+RAISES_NOT(f2, 4);
+RAISES_NOT(f2, 5);
+CHECK(f2, 0, 0);
+CHECK(f2, 1, 1);
+CHECK(f2, -1, -1);
+CHECK(f2, 5, 5);
+CHECK(f2, -5, -5);
+
+RAISES(f3, 1);
+CHECK(f3, 0, 1);
+CHECK(f3, 1, 3);
+CHECK(f3, -1, -1);
+CHECK(f3, 5, 11);
+CHECK(f3, -5, -9);
+CHECK(f3, 10, 21);
+
+RAISES(f4, 1);
+CHECK(f4, 0, 0);
+CHECK(f4, 1, 0);
+CHECK(f4, -1, 0);
+CHECK(f4, 5, 0);
+CHECK(f4, -5, 0);
+CHECK(f4, 10, 0);
+
+RAISES_NOT(f5, 1);
+CHECK(f5, -42, 10);
+CHECK(f5, 0, 10);
+CHECK(f5, 1, 10);
+
+RAISES(f6, 1);
+CHECK(f6, 0, 16);
+CHECK(f6, 1, 15);
+CHECK(f6, -1, 13);
+CHECK(f6, 5, 19);
+CHECK(f6, -2, 14);
+
+RAISES(f7, 0);
+RAISES(f7, 2);
+RAISES(f7, 3);
+RAISES(f7, (long)a);
+CHECK_RAW(f7, at, -3);
+
+RAISES(f8, 0);
+RAISES(f8, 2);
+RAISES(f8, 3);
+RAISES(f8, (long)a);
+CHECK_RAW(f8, at, 2);
+
+RAISES_NOT(f9, 1);
+RAISES_NOT(f9, 0);
+RAISES_NOT(f9, 2);
+RAISES_NOT(f9, 3);
+RAISES_NOT(f9, 4);
+RAISES_NOT(f9, 5);
+CHECK_RAW(f9, 0, 1);
+CHECK_RAW(f9, 1, 0);
+CHECK_RAW(f9, 2, 1);
+CHECK_RAW(f9, 3, 0);
+CHECK_RAW(f9, 4, 1);
+CHECK_RAW(f9, at, 0);
+CHECK_RAW(f9, bt, 0);
+
+RAISES_NOT(f10, 1);
+RAISES_NOT(f10, 0);
+RAISES_NOT(f10, 2);
+RAISES_NOT(f10, 3);
+RAISES_NOT(f10, 4);
+RAISES_NOT(f10, 5);
+CHECK_RAW(f10, 0, 0);
+CHECK_RAW(f10, 1, 1);
+CHECK_RAW(f10, 2, 0);
+CHECK_RAW(f10, 3, 0);
+CHECK_RAW(f10, 4, 0);
+CHECK_RAW(f10, 5, 1);
+CHECK_RAW(f10, at, 1);
+CHECK_RAW(f10, bt, 1);
+
+RAISES_NOT(f11, 1);
+RAISES_NOT(f11, 0);
+RAISES_NOT(f11, 2);
+RAISES_NOT(f11, 3);
+RAISES_NOT(f11, 4);
+RAISES_NOT(f11, 5);
+CHECK_RAW(f11, 0, 0);
+CHECK_RAW(f11, 1, 0);
+CHECK_RAW(f11, 2, 0);
+CHECK_RAW(f11, 3, 1);
+CHECK_RAW(f11, 4, 0);
+CHECK_RAW(f11, 5, 0);
+CHECK_RAW(f11, at, 0);
+CHECK_RAW(f11, bt, 0);
+
+RAISES(f12, 1);
+RAISES_NOT(f12, 8);
+
+RAISES_NOT(f13, 8);
+RAISES(f13, 1);
+CHECK(f13, 0, 1);
+CHECK(f13, 1, 2);
+CHECK(f13, 2, 3);
+CHECK(f13, -3, -2);
+CHECK(f13, 42, 43);
+CHECK(f13, -42, -41);
+
+RAISES_NOT(f14, 8);
+RAISES(f14, 1);
+CHECK(f14, 0, -1);
+CHECK(f14, 1, 0);
+CHECK(f14, 2, 1);
+CHECK(f14, -3, -4);
+CHECK(f14, 42, 41);
+CHECK(f14, -42, -43);
+
+RAISES_NOT(f15, 1);
+RAISES_NOT(f15, 0);
+RAISES_NOT(f15, 2);
+RAISES_NOT(f15, 3);
+RAISES_NOT(f15, 4);
+RAISES_NOT(f15, 5);
+CHECK(f15, 0, 2);
+CHECK(f15, 1, 2);
+CHECK(f15, 42, 1);
+CHECK(f15, -42, 2);
+CHECK(f15, -5, 2);
+
+RAISES(f16, 1);
+CHECK(f16, 0, 6);
+CHECK(f16, 1, 6);
+CHECK(f16, 2, 8);
+CHECK(f16, 3, 8);
+CHECK(f16, 4, 10);
+CHECK(f16, 5, 10);
+
+RAISES(f17, (long)a);
+RAISES(f17, (long)b);
+RAISES(f17, bt);
+CHECK_RAW(f17, at, -3);
+
+RAISES_NOT(f18, 1);
+RAISES_NOT(f18, 0);
+RAISES_NOT(f18, 2);
+RAISES_NOT(f18, 3);
+RAISES_NOT(f18, 4);
+RAISES_NOT(f18, 5);
+CHECK(f18, 0, 42);
+CHECK(f18, 1, 42);
+
+RAISES_NOT(f19, 1);
+RAISES_NOT(f19, 0);
+RAISES_NOT(f19, 2);
+RAISES_NOT(f19, 3);
+RAISES_NOT(f19, 4);
+RAISES_NOT(f19, 5);
+CHECK(f19, 0, 42);
+CHECK(f19, 1, 42);
+
+RAISES_NOT(f19, 1);
+RAISES_NOT(f19, 0);
+RAISES_NOT(f19, 2);
+RAISES_NOT(f19, 3);
+RAISES_NOT(f19, 4);
+RAISES_NOT(f19, 5);
+CHECK(f19, 0, 42);
+CHECK(f19, 1, 42);
+
