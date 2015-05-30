@@ -36,7 +36,7 @@ static void maybe_force_tag_or_untag();
 
 static void debug(const char *msg, ...)
 {
-    return;
+    //return;
 
     va_list ap;
 
@@ -68,7 +68,7 @@ char *alloc_var_reg(struct tree *parent, struct tree *expr)
 {
     if(expr->op == OP_VAR) {
         if(expr->symbol->reg == NULL) {
-            printf("null reg from sym");
+            printf("null reg from symXXXXXXXXXXXXXXXXX\n");
             return alloc_reg(parent->reg, 0);
         }
 
@@ -248,6 +248,8 @@ long int tag_const(long int value)
 
 void ret(struct tree *node, int tag_type, int type)
 {
+    debug("ret");
+
     if(tag_type == TAGGED) {
         move(node->reg, "rax");
     } else {
@@ -699,11 +701,10 @@ void gen_let(struct tree *node)
     struct tree *lhs = LEFT_CHILD(node);
     struct tree *rhs = RIGHT_CHILD(node);
 
-    if(lhs->op == OP_VAR && rhs->op == OP_VAR) {
-        if(strcmp(lhs->name, rhs->name) == 0) {
-            rhs->reg = lhs->reg;
-        }
+    if(lhs->constant) {
+        move_const(tag_const(lhs->value), lhs->reg);
     }
+
 
     //gen_code("letletlet");
 }

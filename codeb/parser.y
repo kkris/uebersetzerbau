@@ -105,16 +105,14 @@ Expr: IF Expr THEN Expr ELSE Expr END
     @}
     | LET IDENT '=' Expr IN Expr END
     @{ 
-        @i @Expr.2.symbols@ = symbol_add(@Expr.0.symbols@, @IDENT.name@, SYMBOL_TYPE_NONE, NULL);
+        @i @Expr.2.symbols@ = symbol_add(@Expr.0.symbols@, @IDENT.name@,
+        SYMBOL_TYPE_NONE, "rdi" /*XXX*/);
         @i @Expr.0.node@ = new_node(OP_LET, @Expr.1.node@, @Expr.2.node@);
 
-        @regalloc @Expr.1.node@->reg = alloc_reg(@Expr.0.node@->reg, 0);
+        @regalloc @Expr.1.node@->reg = alloc_var_reg(@Expr.0.node@, @Expr.1.node@);
         @regalloc @Expr.2.node@->reg = alloc_reg(@Expr.0.node@->reg, 0);
 
-        @regalloc @Expr.2.node@->reg = @Expr.0.node@->reg;
-        @regalloc @Expr.1.node@->reg = alloc_var_reg(@Expr.0.node@, @Expr.1.node@);
         @regalloc symbol_find(@Expr.2.symbols@, @IDENT.name@)->reg = @Expr.1.node@->reg;
-        @regalloc printf("reg: %s\n", @Expr.0.node@->reg);
     @}
     |
     Term

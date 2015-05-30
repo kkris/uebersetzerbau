@@ -100,8 +100,8 @@ one: OP_SUB(one, zero)          # 0 # make_constant(bnode, 1);
 
 one: OP_MUL(one, one)           # 0 # make_constant(bnode, 1);
 
-one: OP_ISNUM(t_expr)           # 0 # make_constant(bnode, 1);
-one: OP_ISNUM(u_expr)           # 0 # make_constant(bnode, 1);
+one: OP_ISNUM(t_expr)           # 3 # make_constant(bnode, 1);
+one: OP_ISNUM(u_expr)           # 3 # make_constant(bnode, 1);
 
 one: OP_ISLIST(u_list)          # 0 # make_constant(bnode, 1);
 
@@ -178,17 +178,21 @@ ifthen: OP_IF_THEN(if, t_word) # 2 # gen_ifthen(bnode);
 
 t_word: OP_IF_THEN_ELSE(ifthen, t_word) # 2 # gen_ifthenelse(bnode);
 
-zero: OP_LET(const, zero) # 0 # make_constant(bnode, 0);
-const: OP_LET(const, const) # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
-const: OP_LET(var, const) # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
-const: OP_LET(t_expr, const) # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
-const: OP_LET(t_word, const) # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 
 var: OP_LET(var, var)   # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+var: OP_LET(const, var) # 0 # gen_let(bnode); make_equal_to(bnode, RIGHT_CHILD(bnode));
+var: OP_LET(t_expr, var) # 0 # gen_let(bnode); make_equal_to(bnode, RIGHT_CHILD(bnode));
 
 t_expr: OP_LET(t_expr, t_expr) # 1 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 t_expr: OP_LET(var, t_expr) # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+t_expr: OP_LET(t_list, t_expr) # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 
+u_expr: OP_LET(t_expr, u_expr) # 1 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+u_expr: OP_LET(var, u_expr) # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+
+t_word: OP_LET(t_expr, t_word) # 1 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+t_word: OP_LET(var, t_word) # 1 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+t_word: OP_LET(t_list, t_word) # 1 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 
 %%
 
