@@ -1,0 +1,158 @@
+extern long g1(long);
+extern long g2(long);
+extern long g3(long);
+extern long g4(long);
+extern long g5(long);
+extern long g6(long);
+extern long g7(long);
+extern long g8(long);
+extern long g9(long);
+extern long g10(long);
+extern long g11(long);
+extern long g12(long);
+extern long g13(long);
+extern long g14(long);
+extern long g15(long);
+extern long g16(long);
+extern long g17(long);
+
+long a[] = {-6, 4}; // tagged -3, 2
+long b[] = {-1, 3}; // untagged
+
+long at = ((long)a)|1;
+long bt = ((long)b)|1;
+
+CHECK_RAW(g1, 0, 42);
+CHECK_RAW(g1, 1, 42);
+CHECK_RAW(g1, 2, 42);
+CHECK_RAW(g1, 3, 42);
+CHECK_RAW(g1, -1, 42);
+CHECK_RAW(g1, -2, 42);
+CHECK_RAW(g1, -42, 42);
+
+CHECK_RAW(g2, 0, 42);
+CHECK_RAW(g2, 1, 42);
+CHECK_RAW(g2, 2, 42);
+CHECK_RAW(g2, 3, 42);
+CHECK_RAW(g2, -1, 42);
+CHECK_RAW(g2, -2, 42);
+CHECK_RAW(g2, -42, 42);
+
+CHECK_RAW(g3, 0, 0);
+CHECK_RAW(g3, 1, 2);
+CHECK_RAW(g3, 2, 4);
+CHECK_RAW(g3, 3, 6);
+CHECK_RAW(g3, -1, -2);
+CHECK_RAW(g3, -2, -4);
+CHECK_RAW(g3, -42, -84);
+
+CHECK(g4, 0, 1337);
+CHECK(g4, 1, 1337);
+CHECK(g4, 2, 1337);
+CHECK(g4, 3, 1337);
+CHECK(g4, -1, 1337);
+CHECK(g4, -2, 1337);
+CHECK(g4, -42, 137);
+
+RAISES(g5, 1);
+CHECK(g5, 0, 0);
+CHECK(g5, 1, 1);
+CHECK(g5, 2, 2);
+CHECK(g5, 3, 3);
+CHECK(g5, -1, -1);
+CHECK(g5, -2, -2);
+CHECK(g5, -42, -42);
+
+RAISES(g6, 1);
+CHECK(g6, 0, 0);
+CHECK(g6, 1, 1);
+CHECK(g6, 2, 2);
+CHECK(g6, 3, 3);
+CHECK(g6, -1, -1);
+CHECK(g6, -2, -2);
+CHECK(g6, -42, -42);
+
+RAISES(g7, 1);
+CHECK(g7, 0, 0);
+CHECK(g7, 1, 6);
+CHECK(g7, 2, 12);
+CHECK(g7, 3, 18);
+CHECK(g7, -1, 6);
+CHECK(g7, -2, -12);
+CHECK(g7, -42, -252);
+
+RAISES(g8, 1);
+CHECK(g8, 0, 0);
+CHECK(g8, 1, 1);
+CHECK(g8, 2, 0);
+CHECK(g8, 3, 1);
+CHECK(g8, -1, 1);
+CHECK(g8, -2, 0);
+CHECK(g8, -42, 0);
+
+RAISES(g9, 1);
+CHECK(g9, 0, 0);
+CHECK(g9, 1, 1);
+CHECK(g9, 2, 2);
+CHECK(g9, 3, 3);
+CHECK(g9, -1, -1);
+CHECK(g9, -2, -2);
+CHECK(g9, -42, -42);
+
+RAISES(g10, (long)a);
+CHECK_RAW(g10, at, -3);
+
+RAISES(g11, (long)a);
+CHECK_RAW(g11, at, 2);
+
+RAISES(g12, 1);
+CHECK(g12, 0, 1);
+CHECK(g12, 1, 2);
+CHECK(g12, 2, 3);
+CHECK(g12, 3, 4);
+CHECK(g12, -1, 0);
+CHECK(g12, -2, -1);
+CHECK(g12, -42, -41);
+
+RAISES(g13, 1);
+CHECK(g13, 0, -1);
+CHECK(g13, 1, 0);
+CHECK(g13, 2, 1);
+CHECK(g13, 3, 2);
+CHECK(g13, -1, -2);
+CHECK(g13, -2, -3);
+CHECK(g13, -42, -43);
+
+CHECK(g14, 42, -1); /* ??? */
+
+CHECK(g15, 0, 0);
+CHECK(g15, 1, 1);
+CHECK(g15, 2, 2);
+CHECK(g15, 3, 3);
+CHECK(g15, -1, -1);
+CHECK(g15, -2, -2);
+CHECK(g15, -42, -42);
+
+CHECK(g16, 0, 0);
+CHECK(g16, 1, 1);
+CHECK(g16, 2, 2);
+CHECK(g16, 3, 3);
+CHECK(g16, -1, -1);
+CHECK(g16, -2, -2);
+CHECK(g16, -42, -42);
+
+CHECK(g17, 0, 0);
+CHECK(g17, 1, 1);
+CHECK(g17, 2, 2);
+CHECK(g17, 3, 3);
+CHECK(g17, -1, -1);
+CHECK(g17, -2, -2);
+CHECK(g17, -42, -42);
+
+
+
+
+
+
+
+

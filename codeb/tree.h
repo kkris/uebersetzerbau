@@ -39,6 +39,7 @@ enum {
     OP_IF_THEN,
     OP_IF_THEN_ELSE,
     OP_LET,
+    OP_CALL,
     OP_UNKNOWN
 };
 

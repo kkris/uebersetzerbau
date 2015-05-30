@@ -721,3 +721,17 @@ void gen_let(struct tree *node)
         move_const(tag_const(lhs->value), lhs->reg);
     }
 }
+
+void gen_call(struct tree *node)
+{
+    debug("gen_call");
+
+    struct tree *fun = LEFT_CHILD(node);
+    struct tree *param = RIGHT_CHILD(node);
+
+    gen_code("push %%%s", "rdi");
+    move(param->reg, "rdi");
+    gen_code("call %s", fun->symbol->name);
+    move("rax", node->reg);
+    gen_code("pop %%%s", "rdi");
+}

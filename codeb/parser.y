@@ -170,7 +170,10 @@ Expr: IF Expr THEN Expr ELSE Expr END
     @}
     | Expr Term    /* Funktionsaufruf */
     @{
-        @i @Expr.0.node@ = NULL;
+        @i @Expr.0.node@ = new_node(OP_CALL, @Expr.1.node@, @Term.node@);
+
+        @regalloc @Expr.1.node@->reg = @Expr.0.node@->reg;
+        @regalloc @Term.node@->reg = alloc_reg(@Expr.0.node@->reg, 0);
     @}
     ;
 

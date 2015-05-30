@@ -54,5 +54,6 @@ void gen_tail(struct tree *node, int tag_type);
 void gen_list(struct tree *node);
 void gen_if(struct tree *node);
 void gen_let(struct tree *node);
+void gen_call(struct tree *node);
 
 #endif // CODEGEN_H
