@@ -9,6 +9,7 @@ struct symbol *symbol_new()
 {
     struct symbol *sym = malloc(sizeof(struct symbol));
     sym->name = NULL;
+    sym->reg = NULL;
     sym->type = SYMBOL_TYPE_NONE;
     sym->next = NULL;
 
@@ -30,6 +31,8 @@ struct symbol *symbol_copy(struct symbol *sym)
 
         if(current->name != NULL)
             copy->name = strdup(current->name);
+        if(current->reg != NULL)
+            copy->reg = strdup(current->reg);
 
         copy->type = current->type;
         copy->next = prev;
@@ -55,7 +58,7 @@ struct symbol *symbol_find(struct symbol *sym, char *name)
     return NULL;
 }
 
-struct symbol *symbol_add(struct symbol *sym, char *name, int type)
+struct symbol *symbol_add(struct symbol *sym, char *name, int type, char *reg)
 {
     sym = symbol_copy(sym);
     struct symbol *result = symbol_find(sym, name);
@@ -67,6 +70,8 @@ struct symbol *symbol_add(struct symbol *sym, char *name, int type)
 
     struct symbol *element = symbol_new();
     element->name = strdup(name);
+    if(reg != NULL)
+        element->reg = strdup(reg);
     element->type = type;
     element->next = sym;
 
@@ -79,13 +84,13 @@ struct symbol *symbol_merge(struct symbol *s1, struct symbol *s2)
     struct symbol *result = symbol_new();
 
     while(current != NULL) {
-        result = symbol_add(result, current->name, current->type);
+        result = symbol_add(result, current->name, current->type, current->reg);
         current = current->next;
     }
 
     current = s2;
     while(current != NULL) {
-        result = symbol_add(result, current->name, current->type);
+        result = symbol_add(result, current->name, current->type, current->reg);
         current = current->next;
     }
 

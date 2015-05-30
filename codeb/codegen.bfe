@@ -8,7 +8,7 @@
 %}
 
 %start ret
-%term OP_VAR=1 OP_NUM=2 OP_ADD=3 OP_SUB=4 OP_MUL=5 OP_AND=6 OP_LT=7 OP_EQ=8 OP_NOT=9 OP_HEAD=10 OP_TAIL=11 OP_ISNUM=12 OP_ISLIST=13 OP_ISFUN=14 OP_RET=15 OP_ZERO=16 OP_ONE=17 OP_LIST=18 OP_FUN=19 OP_IF=20 OP_IF_THEN=21 OP_IF_THEN_ELSE=22
+%term OP_VAR=1 OP_NUM=2 OP_ADD=3 OP_SUB=4 OP_MUL=5 OP_AND=6 OP_LT=7 OP_EQ=8 OP_NOT=9 OP_HEAD=10 OP_TAIL=11 OP_ISNUM=12 OP_ISLIST=13 OP_ISFUN=14 OP_RET=15 OP_ZERO=16 OP_ONE=17 OP_LIST=18 OP_FUN=19 OP_IF=20 OP_IF_THEN=21 OP_IF_THEN_ELSE=22 OP_LET=23
 %%
 
 ret: OP_RET(u_expr)             # 1 # ret(LEFT_CHILD(bnode), UNTAGGED, TYPE_REG);
@@ -177,6 +177,17 @@ if: OP_IF(t_word)                # 1 # gen_if(bnode);
 ifthen: OP_IF_THEN(if, t_word) # 2 # gen_ifthen(bnode);
 
 t_word: OP_IF_THEN_ELSE(ifthen, t_word) # 2 # gen_ifthenelse(bnode);
+
+zero: OP_LET(const, zero) # 0 # make_constant(bnode, 0);
+const: OP_LET(const, const) # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+const: OP_LET(var, const) # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+const: OP_LET(t_expr, const) # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+const: OP_LET(t_word, const) # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+
+var: OP_LET(var, var)   # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+
+t_expr: OP_LET(t_expr, t_expr) # 1 # make_equal_to(bnode, RIGHT_CHILD(bnode));
+t_expr: OP_LET(var, t_expr) # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
 
 
 %%

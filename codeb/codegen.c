@@ -15,12 +15,16 @@ const char *temp_reg = "r11";
 char *just_tagged = NULL;
 char *just_untagged = NULL;
 
+char *prev_var_reg = NULL;
+
 static char *type_checked_vars[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 static void reset_state()
 {
     just_tagged = NULL;
     just_untagged = NULL;
+
+    prev_var_reg = NULL;
 
     int i;
     for(i = 0; i < 10; i++) {
@@ -58,6 +62,20 @@ char *alloc_reg(const char *prev, int reuse)
     }
 
     return NULL;
+}
+
+char *alloc_var_reg(struct tree *parent, struct tree *expr)
+{
+    if(expr->op == OP_VAR) {
+        if(expr->symbol->reg == NULL) {
+            printf("null reg from sym");
+            return alloc_reg(parent->reg, 0);
+        }
+
+        return strdup(expr->symbol->reg);
+    }
+
+    return alloc_reg(parent->reg, 0);
 }
 
 
@@ -672,4 +690,20 @@ void gen_ifthenelse(struct tree *node)
 
 
     printf(".%s:\n", labels->epilog_label);
+}
+
+void gen_let(struct tree *node)
+{
+    debug("gen_let");
+
+    struct tree *lhs = LEFT_CHILD(node);
+    struct tree *rhs = RIGHT_CHILD(node);
+
+    if(lhs->op == OP_VAR && rhs->op == OP_VAR) {
+        if(strcmp(lhs->name, rhs->name) == 0) {
+            rhs->reg = lhs->reg;
+        }
+    }
+
+    //gen_code("letletlet");
 }

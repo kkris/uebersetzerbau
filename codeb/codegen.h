@@ -18,6 +18,7 @@ enum {
 
 
 char *alloc_reg(const char *prev, int reuse);
+char *alloc_var_reg(struct tree *parent, struct tree *expr);
 
 void gen_func(const char *name);
 
@@ -52,5 +53,6 @@ void gen_head(struct tree *node, int tag_type);
 void gen_tail(struct tree *node, int tag_type);
 void gen_list(struct tree *node);
 void gen_if(struct tree *node);
+void gen_let(struct tree *node);
 
 #endif // CODEGEN_H
