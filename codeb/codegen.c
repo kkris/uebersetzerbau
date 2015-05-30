@@ -17,16 +17,12 @@ const char *temp_reg = "r11";
 char *just_tagged = NULL;
 char *just_untagged = NULL;
 
-char *prev_var_reg = NULL;
-
 static char *type_checked_vars[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
 static void reset_state()
 {
     just_tagged = NULL;
     just_untagged = NULL;
-
-    prev_var_reg = NULL;
 
     int i;
     for(i = 0; i < 10; i++) {
@@ -69,17 +65,13 @@ char *alloc_reg(const char *prev, int reuse)
 char *alloc_var_reg(struct tree *parent, struct tree *expr)
 {
     if(expr->op == OP_VAR) {
-        if(expr->symbol->reg == NULL) {
-            printf("null reg from symXXXXXXXXXXXXXXXXX\n");
-            return alloc_reg(parent->reg, 0);
-        }
-
-        return strdup(expr->symbol->reg);
+        return strdup(expr->symbol->reg); /* alias variables */
     }
 
     return alloc_reg(parent->reg, 0);
 }
 
+/* in each nodes symbol table set the register for a variable */
 void set_symbol_reg_children(struct tree *node, char *name, const char *reg)
 {
     if(node == NULL)
@@ -728,11 +720,4 @@ void gen_let(struct tree *node)
     if(lhs->constant) {
         move_const(tag_const(lhs->value), lhs->reg);
     }
-
-    if(rhs->op == OP_VAR) {
-        move(rhs->reg, node->reg);
-    }
-
-
-    //gen_code("letletlet");
 }
