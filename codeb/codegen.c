@@ -690,6 +690,10 @@ void gen_ifthen(struct tree *node)
         move_const(tag_const(then->value), node->reg);
     }
 
+    if(then->op == OP_VAR) {
+        move(then->reg, node->reg);
+    }
+
 
     gen_code("jmp .%s", labels->epilog_label);
     printf(".%s:\n", labels->else_label);
@@ -706,6 +710,10 @@ void gen_ifthenelse(struct tree *node)
         move_const(tag_const(elsenode->value), node->reg);
     }
 
+    if(elsenode->op == OP_VAR) {
+        move(elsenode->reg, node->reg);
+    }
+
 
     printf(".%s:\n", labels->epilog_label);
 }
@@ -719,6 +727,10 @@ void gen_let(struct tree *node)
 
     if(lhs->constant) {
         move_const(tag_const(lhs->value), lhs->reg);
+    }
+
+    if(rhs->op == OP_VAR) {
+        move(rhs->reg, node->reg);
     }
 
 

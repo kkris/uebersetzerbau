@@ -13,7 +13,7 @@ f12 = fun x -> let y = (x+1).(x-1) in y end end;
 f13 = fun x -> let y = (x+1).(x-1) in head y end end;
 f14 = fun x -> let y = (x+1).(x-1) in tail y end end;
 f15 = fun x -> let y = x = 42 in if y then 1 else 2 end end end;
-f16 = fun x -> let y = x and 2 in let z = x + 5 in y + z end end end;
+f16 = fun x -> let y = x and 1 in let z = x + 5 in y + z end end end;
 f17 = fun x -> let y = head x in let z = tail x in if y < z then y else z end end end end;
 f18 = fun x -> let y = x in 42 end end;
 f19 = fun x -> let y = x + 1 in 42 end end;
