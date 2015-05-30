@@ -22,29 +22,29 @@ long b[] = {-1, 3}; // untagged
 long at = ((long)a)|1;
 long bt = ((long)b)|1;
 
-CHECK_RAW(g1, 0, 42);
-CHECK_RAW(g1, 1, 42);
-CHECK_RAW(g1, 2, 42);
-CHECK_RAW(g1, 3, 42);
-CHECK_RAW(g1, -1, 42);
-CHECK_RAW(g1, -2, 42);
-CHECK_RAW(g1, -42, 42);
+CHECK(g1, 0, 42);
+CHECK(g1, 1, 42);
+CHECK(g1, 2, 42);
+CHECK(g1, 3, 42);
+CHECK(g1, -1, 42);
+CHECK(g1, -2, 42);
+CHECK(g1, -42, 42);
 
-CHECK_RAW(g2, 0, 42);
-CHECK_RAW(g2, 1, 42);
-CHECK_RAW(g2, 2, 42);
-CHECK_RAW(g2, 3, 42);
-CHECK_RAW(g2, -1, 42);
-CHECK_RAW(g2, -2, 42);
-CHECK_RAW(g2, -42, 42);
+CHECK(g2, 0, 42);
+CHECK(g2, 1, 42);
+CHECK(g2, 2, 42);
+CHECK(g2, 3, 42);
+CHECK(g2, -1, 42);
+CHECK(g2, -2, 42);
+CHECK(g2, -42, 42);
 
-CHECK_RAW(g3, 0, 0);
-CHECK_RAW(g3, 1, 2);
-CHECK_RAW(g3, 2, 4);
-CHECK_RAW(g3, 3, 6);
-CHECK_RAW(g3, -1, -2);
-CHECK_RAW(g3, -2, -4);
-CHECK_RAW(g3, -42, -84);
+CHECK(g3, 0, 0);
+CHECK(g3, 1, 1);
+CHECK(g3, 2, 2);
+CHECK(g3, 3, 3);
+CHECK(g3, -1, -1);
+CHECK(g3, -2, -2);
+CHECK(g3, -42, -42);
 
 CHECK(g4, 0, 1337);
 CHECK(g4, 1, 1337);
@@ -52,7 +52,7 @@ CHECK(g4, 2, 1337);
 CHECK(g4, 3, 1337);
 CHECK(g4, -1, 1337);
 CHECK(g4, -2, 1337);
-CHECK(g4, -42, 137);
+CHECK(g4, -42, 1337);
 
 RAISES(g5, 1);
 CHECK(g5, 0, 0);
@@ -77,7 +77,7 @@ CHECK(g7, 0, 0);
 CHECK(g7, 1, 6);
 CHECK(g7, 2, 12);
 CHECK(g7, 3, 18);
-CHECK(g7, -1, 6);
+CHECK(g7, -1, -6);
 CHECK(g7, -2, -12);
 CHECK(g7, -42, -252);
 
@@ -122,8 +122,6 @@ CHECK(g13, 3, 2);
 CHECK(g13, -1, -2);
 CHECK(g13, -2, -3);
 CHECK(g13, -42, -43);
-
-CHECK(g14, 42, -1); /* ??? */
 
 CHECK(g15, 0, 0);
 CHECK(g15, 1, 1);
