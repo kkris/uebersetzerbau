@@ -21,7 +21,7 @@ ret: OP_RET(t_word)             # 0 # ret(LEFT_CHILD(bnode), TAGGED, TYPE_WORD);
 fun: OP_FUN                     # 0 #
 
 u_expr: const                   # 1 # bnode->constant = 1;
-u_expr: t_expr                  # 9 # expect_num(bnode); untag_num_inplace(bnode->reg);
+u_expr: t_expr                  # 9 # untag_num_inplace(bnode->reg);
 
 u_expr: OP_MUL(u_expr, u_expr)  # 1 # gen_mul(bnode);
 
@@ -69,7 +69,7 @@ t_expr: OP_ISFUN(var)           # 0 # gen_isfun(bnode);
 t_expr: OP_ISFUN(t_word)        # 0 # gen_isfun(bnode);
 
 
-neg_t_expr: OP_NOT(t_expr)      # 0 # expect_num(LEFT_CHILD(bnode));
+neg_t_expr: OP_NOT(t_expr)      # 0 # 
 
 var: OP_VAR                     # 0 #
 var: OP_MUL(var, one)           # 0 # expect_num(LEFT_CHILD(bnode)); make_equal_to(bnode, LEFT_CHILD(bnode));
