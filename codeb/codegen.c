@@ -6,6 +6,8 @@
 #include <string.h>
 #include <assert.h>
 
+#include "symbol.h"
+
 char* registers[] = {"rdi", "rax", "rsi", "rdx", "rcx", "r8", "r9", "r10"};
 
 const char *heap_ptr = "r15";
@@ -36,7 +38,7 @@ static void maybe_force_tag_or_untag();
 
 static void debug(const char *msg, ...)
 {
-    //return;
+    return;
 
     va_list ap;
 
@@ -76,6 +78,20 @@ char *alloc_var_reg(struct tree *parent, struct tree *expr)
     }
 
     return alloc_reg(parent->reg, 0);
+}
+
+void set_symbol_reg_children(struct tree *node, char *name, const char *reg)
+{
+    if(node == NULL)
+        return;
+
+    struct symbol *sym = symbol_find(node->symbol, name);
+    if(sym != NULL) {
+        sym->reg = strdup(reg);
+    }
+
+    set_symbol_reg_children(LEFT_CHILD(node), name, reg);
+    set_symbol_reg_children(RIGHT_CHILD(node), name, reg);
 }
 
 

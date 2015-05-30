@@ -70,8 +70,7 @@ struct symbol *symbol_add(struct symbol *sym, char *name, int type, char *reg)
 
     struct symbol *element = symbol_new();
     element->name = strdup(name);
-    if(reg != NULL)
-        element->reg = strdup(reg);
+    element->reg = strdup(reg);
     element->type = type;
     element->next = sym;
 
