@@ -251,3 +251,20 @@ movq %r15, %rax
 addq $16, %r15
 movq (%rax), %rax
 ret
+f16:
+testq $1, %rdi
+jz raisesig
+testq $2, %rdi
+jnz raisesig
+movq %rdi, %rax
+subq $1, %rax
+movq (%rax), %rax
+testq $1, %rax
+jnz raisesig
+movq %rdi, %rsi
+subq $1, %rsi
+movq 8(%rsi), %rsi
+testq $1, %rsi
+jnz raisesig
+leaq (%rax, %rsi), %rax
+ret
