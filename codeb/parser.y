@@ -106,6 +106,7 @@ Expr: IF Expr THEN Expr ELSE Expr END
 
         @regalloc @Expr.1.node@->reg = alloc_var_reg(@Expr.0.node@, @Expr.1.node@);
         @regalloc @Expr.2.node@->reg = alloc_reg(@Expr.0.node@->reg, 0);
+        @regalloc @Expr.0.node@->kids[0]->reg = @Expr.1.node@->reg;
 
         @regalloc set_symbol_reg_children(@Expr.0.node@, @IDENT.name@, @Expr.1.node@->reg);
     @}

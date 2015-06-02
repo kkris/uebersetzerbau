@@ -68,11 +68,13 @@ struct tree *new_if_node(struct tree *pred, struct tree *then, struct tree *othe
 
 struct tree *new_let_node(struct tree *var, struct tree *expr, struct symbol *symbol)
 {
-    struct tree *t = new_node(OP_LET, var, expr);
+    struct tree *assign = new_node(OP_LET_ASSIGN, var, NULL);
+    struct tree *let = new_node(OP_LET_EVAL, assign, expr);
 
-    t-> symbol = symbol;
+    assign->symbol = symbol;
+    let->symbol = symbol;
 
-    return t;
+    return let;
 }
 void make_constant(struct tree *node, long int value)
 {
