@@ -1,0 +1,40 @@
+f1:
+movq $-2, %rsi
+testq $1, %rdi
+jnz raisesig
+movq $2, %r11
+cmp %rdi, %rsi
+leaq 0(, 1), %rdx
+cmovg %r11, %rdx
+cmpq $0, %rdx
+jz .else1
+movq $-2, %rsi
+jmp .epilog1
+.else1:
+movq $2, %r11
+cmp %rsi, %rdi
+leaq 0(, 1), %rsi
+cmovg %r11, %rsi
+.epilog1:
+movq %rsi, %rax
+ret
+f2:
+movq $256, %rsi
+testq $1, %rdi
+jnz raisesig
+movq $2, %r11
+cmp %rdi, %rsi
+leaq 0(, 1), %rdx
+cmovg %r11, %rdx
+cmpq $0, %rdx
+jz .else0
+movq $-2, %rsi
+jmp .epilog0
+.else0:
+movq $2, %r11
+cmp %rsi, %rdi
+leaq 0(, 1), %rsi
+cmovg %r11, %rsi
+.epilog0:
+movq %rsi, %rax
+ret
