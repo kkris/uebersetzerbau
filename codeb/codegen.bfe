@@ -178,7 +178,7 @@ ifthen: OP_IF_THEN(if, t_word) # 2 # gen_ifthen(bnode);
 
 t_word: OP_IF_THEN_ELSE(ifthen, t_word) # 2 # gen_ifthenelse(bnode);
 
-var: OP_LET_ASSIGN(const)       # 0 # move_const(tag_const(LEFT_CHILD(bnode)->value), bnode->reg);
+var: OP_LET_ASSIGN(const)       # 0 # assign_const(LEFT_CHILD(bnode)->value, bnode->reg);
 var: OP_LET_ASSIGN(var)         # 0 # 
 var: OP_LET_ASSIGN(t_expr)      # 0 # 
 var: OP_LET_ASSIGN(t_list)      # 0 # 

@@ -34,7 +34,7 @@ static void maybe_force_tag_or_untag();
 
 static void debug(const char *msg, ...)
 {
-    //return;
+    return;
 
     va_list ap;
 
@@ -60,6 +60,11 @@ char *alloc_reg(const char *prev, int reuse)
     }
 
     return NULL;
+}
+
+long int tag_const(long int value)
+{
+    return value << 1;
 }
 
 char *alloc_var_reg(struct tree *parent, struct tree *expr)
@@ -111,6 +116,20 @@ static void move(const char *source, const char *dest)
         return; // nop
 
     gen_code("movq %%%s, %%%s", source, dest);
+}
+
+void assign_const(long int value, const char *var_reg)
+{
+    move_const(tag_const(value), var_reg);
+
+    int i;
+    for(i = 0; i < 10; i++) {
+        if(type_checked_vars[i] == NULL) break;
+        if(strcmp(var_reg, type_checked_vars[i]) == 0)
+            return;
+    }
+
+    type_checked_vars[i] = strdup(var_reg);
 }
 
 void move_const(long int value, const char *dest)
@@ -246,12 +265,6 @@ void untag_list_inplace(const char *reg)
     debug("untag_list_inplace(%s)", reg);
 
     gen_code("subq $1, %%%s", reg);
-}
-
-
-long int tag_const(long int value)
-{
-    return value << 1;
 }
 
 void ret(struct tree *node, int tag_type, int type)
