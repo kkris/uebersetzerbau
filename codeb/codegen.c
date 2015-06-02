@@ -34,7 +34,7 @@ static void maybe_force_tag_or_untag();
 
 static void debug(const char *msg, ...)
 {
-    return;
+    //return;
 
     va_list ap;
 

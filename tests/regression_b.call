@@ -1,0 +1,18 @@
+extern long f1(long);
+extern long f2(long);
+
+long m1 = -1L;
+
+CHECK(f1, m1, 0);
+CHECK(f1, 0, 1);
+CHECK(f1, 1, 1);
+CHECK(f1, -2L, m1);
+CHECK(f1, -4115, m1);
+
+
+CHECK(f2, 128, 0);
+CHECK(f2, 256, 1);
+CHECK(f2, 567, 1);
+CHECK(f2, 127, m1);
+CHECK(f2, m1, m1);
+

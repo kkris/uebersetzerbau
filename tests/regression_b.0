@@ -1,0 +1,20 @@
+f1 = fun x ->
+    let y = 0 - 1 in
+        if x < y then
+            0 - 1
+        else
+            y < x
+        end
+    end
+end;
+
+f2 = fun x ->
+    let y = 128 in
+        if x < y then
+            0 - 1
+        else
+            y < x
+        end
+    end
+end;
+
