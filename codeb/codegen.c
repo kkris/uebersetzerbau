@@ -750,6 +750,7 @@ void gen_call(struct tree *node)
         move(param->reg, "rdi");
 
     gen_code("call %s", fun->symbol->name);
-    move("rax", node->reg);
     gen_code("pop %%%s", "rdi");
+
+    move("rax", node->reg);
 }
