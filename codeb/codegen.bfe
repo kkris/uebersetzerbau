@@ -166,6 +166,7 @@ u_list: OP_LIST(t_expr, t_list) # 0 # gen_list(bnode);
 u_list: OP_LIST(t_list, t_expr) # 0 # gen_list(bnode);
 u_list: OP_LIST(var, t_list)    # 0 # gen_list(bnode);
 u_list: OP_LIST(t_list, var)    # 0 # gen_list(bnode);
+u_list: OP_LIST(t_word, t_word) # 0 # gen_list(bnode);
 
 if: OP_IF(var)                  # 2 # gen_if(bnode);
 if: OP_IF(t_expr)               # 2 # gen_if(bnode);

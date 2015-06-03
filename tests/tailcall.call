@@ -2,6 +2,9 @@ extern long neg(long);
 extern long abs2(long);
 extern long countup(long);
 extern long countdown(long);
+extern long sumlist(long);
+extern long makelst(long);
+extern long range(long);
 
 RAISES(neg, 1);
 CHECK(neg, 0, 0);
@@ -32,4 +35,14 @@ CHECK(countdown, 0, 0);
 CHECK(countdown, 1, 0);
 CHECK(countdown, 24, 0);
 
+RAISES(sumlist2, 0);
+RAISES(sumlist2, 2);
+RAISES(sumlist2, 3);
+RAISES(sumlist2, 4);
+CHECK_RAW(sumlist, makelst(0), 21);
 
+CHECK_RAW(sumlist, range(10 << 1), 55);
+CHECK_RAW(sumlist, range(100 << 1), 5050);
+
+CHECK(test, 0, 1);
+CHECK(test2, 0, 3);

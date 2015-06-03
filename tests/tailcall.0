@@ -36,3 +36,53 @@ countdown = fun n ->
     end
 end;
 
+sumlist = fun list -> head (sumlist2 ((0).(list))) end;
+
+sumlist2 = fun struct ->
+    let
+        acc = head struct
+    in
+        let
+            list = tail struct
+        in
+            if islist list then
+                let
+                    value = head list
+                in
+                    sumlist2 ((acc + value).(tail list))
+                end
+            else
+                (acc + list).(0)
+            end
+        end
+    end
+end;
+
+makelst = fun x -> 1.2.3.4.5.6 end;
+
+range = fun n -> 
+    let
+        initial = n.(n-1)
+    in
+        head (range2 (initial.(n - 2)))
+    end
+end;
+
+range2 = fun struct ->
+    let
+        n = tail struct
+    in
+        let
+            list = head struct
+        in
+            if n = 0 then
+                (list).(0)
+            else
+                range2 ((n.list).(n - 1))
+            end
+        end
+    end
+end;
+
+test = fun x -> head (range 5) end;
+test2 = fun x -> head tail tail (range 5) end;
