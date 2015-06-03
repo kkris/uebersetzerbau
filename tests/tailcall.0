@@ -1,0 +1,38 @@
+id = fun x -> not not x end;
+
+neg = fun x -> 
+    let 
+        minusone = 0 - 1
+    in
+        let
+            negated = minusone * x
+        in
+            id (negated + 0)
+        end
+    end
+end;
+
+abs2 = fun x ->
+    if x < 0 then
+        neg x
+    else
+        x
+    end
+end;
+
+countup = fun n ->
+    if n = 25 then
+        n
+    else
+        countup (n + 1)
+    end
+end;
+
+countdown = fun n ->
+    if n then
+        countdown (n - 1)
+    else
+        n
+    end
+end;
+
