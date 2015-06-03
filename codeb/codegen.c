@@ -132,6 +132,18 @@ void assign_const(long int value, const char *var_reg)
     type_checked_vars[i] = strdup(var_reg);
 }
 
+void reg_is_number(const char *var_reg)
+{
+    int i;
+    for(i = 0; i < 10; i++) {
+        if(type_checked_vars[i] == NULL) break;
+        if(strcmp(var_reg, type_checked_vars[i]) == 0)
+            return;
+    }
+
+    type_checked_vars[i] = strdup(var_reg);
+}
+
 void move_const(long int value, const char *dest)
 {
     gen_code("movq $%ld, %%%s", value, dest);
