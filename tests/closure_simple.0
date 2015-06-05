@@ -1,9 +1,9 @@
 f1 = fun x -> fun y -> x + y end end;
-f2 = fun x -> fun y -> x - y end end;
-f3 = fun x -> fun y -> x * y end end;
-f4 = fun x -> fun y -> x and y end end;
+//f2 = fun x -> fun y -> x - y end end;
+//f3 = fun x -> fun y -> x * y end end;
+//f4 = fun x -> fun y -> x and y end end;
 
-g1 = fun x -> let partial = f1 x in partial x end end;
-g2 = fun x -> let partial = f2 x in partial x end end;
-g3 = fun x -> let partial = f3 x in partial x end end;
-g4 = fun x -> let partial = f4 x in partial x end end;
+g1 = fun x -> (f1 x) x end;//let partial = f1 x in partial x end end;
+g2 = fun x -> x end;//let partial = f2 x in partial x end end;
+g3 = fun x -> x end;//let partial = f3 x in partial x end end;
+g4 = fun x -> x end;//let partial = f4 x in partial x end end;

@@ -191,13 +191,15 @@ t_word: OP_LET_EVAL(var, t_word)    # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode
 
 
 t_word: OP_CALL(fun, t_word) # 0 # gen_call(bnode);
-t_word: OP_CALL(closure, t_word) # 0 # printf("call lambda\n");
 
 
 
 prolog: OP_LAMBDA_PROLOG # 0 # gen_lambda_prolog(bnode);
 
 closure: OP_LAMBDA(prolog, t_word) # 0 # gen_lambda_epilog(bnode);
+
+
+t_word: OP_CALL(t_word, t_word) # 0 # gen_call_closure(bnode);
 
 %%
 

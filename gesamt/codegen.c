@@ -786,9 +786,13 @@ void make_frame_from_const(long int value)
 
 void make_closure(const char *reg)
 {
-    gen_code("leaq 4(%%%s), (%%%s)", "rip", heap_ptr);
+    gen_code("call _next");
+    gen_code("_next:");
+    gen_code("pop %%%s", reg);
+    gen_code("movq %%%s, (%%%s)", reg, heap_ptr);
+    gen_code("addq $8, (%%%s)", heap_ptr);
     gen_code("movq %%%s, 8(%%%s)", frame_ptr, heap_ptr);
-    move(heap_ptr, reg);
+    gen_code("movq %%%s, %%%s", heap_ptr, reg);
     // TODO: tag closure
     gen_code("addq $16, %%%s", heap_ptr);
 }
@@ -803,5 +807,10 @@ void gen_lambda_prolog(struct tree *node)
 void gen_lambda_epilog(struct tree *node)
 {
     gen_code("ret");
-    printf(".retclosure\n");
+    printf(".retclosure:\n");
+}
+
+void gen_call_closure(struct tree *node)
+{
+    gen_code("call *(%%%s)", node->reg);
 }
