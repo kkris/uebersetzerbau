@@ -790,7 +790,7 @@ void make_closure(const char *reg)
     gen_code("_next:");
     gen_code("pop %%%s", reg);
     gen_code("movq %%%s, (%%%s)", reg, heap_ptr);
-    gen_code("addq $8, (%%%s)", heap_ptr);
+    gen_code("addq $21, (%%%s)", heap_ptr);
     gen_code("movq %%%s, 8(%%%s)", frame_ptr, heap_ptr);
     gen_code("movq %%%s, %%%s", heap_ptr, reg);
     // TODO: tag closure
