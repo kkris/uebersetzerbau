@@ -1,0 +1,37 @@
+extern long g1(long);
+extern long g2(long);
+extern long g3(long);
+extern long g4(long);
+
+RAISES(g1, 1);
+CHECK(g1, 0, 0);
+CHECK(g1, 1, 2);
+CHECK(g1, 2, 4);
+CHECK(g1, -1, -2);
+CHECK(g1, -42, -84);
+CHECK(g1, 1337, 2674);
+
+RAISES(g2, 1);
+CHECK(g2, 0, 0);
+CHECK(g2, 1, 0);
+CHECK(g2, 2, 0);
+CHECK(g2, -1, 0);
+CHECK(g2, -42, 0);
+CHECK(g2, 1337, 0);
+
+RAISES(g3, 1);
+CHECK(g3, 0, 0);
+CHECK(g3, 1, 2);
+CHECK(g3, 2, 4);
+CHECK(g3, -1, 1);
+CHECK(g3, -5, 25);
+CHECK(g3, 100, 10000);
+
+RAISES(g4, 1);
+CHECK(g4, 0, 0);
+CHECK(g4, 1, 1);
+CHECK(g4, 2, 2);
+CHECK(g4, -1, -1);
+CHECK(g4, -5, -5);
+CHECK(g4, 100, 100);
+
