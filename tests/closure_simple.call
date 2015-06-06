@@ -21,7 +21,7 @@ CHECK(g2, 1337, 0);
 
 RAISES(g3, 1);
 CHECK(g3, 0, 0);
-CHECK(g3, 1, 2);
+CHECK(g3, 1, 1);
 CHECK(g3, 2, 4);
 CHECK(g3, -1, 1);
 CHECK(g3, -5, 25);

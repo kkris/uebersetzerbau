@@ -77,10 +77,16 @@ struct tree *new_let_node(struct tree *var, struct tree *expr, struct symbol *sy
     return let;
 }
 
-struct tree *new_lambda_node(struct tree *body)
+struct tree *new_lambda_node(struct tree *body, int lambdano)
 {
+    struct closure_data *data = malloc(sizeof(struct closure_data));
+    data->num = lambdano;
+
     struct tree *prolog = new_node(OP_LAMBDA_PROLOG, NULL, NULL);
     struct tree *t = new_node(OP_LAMBDA, prolog, body);
+
+    prolog->data = (void*)data;
+    t->data = (void*)data;
 
     return t;
 }

@@ -770,6 +770,8 @@ void gen_call(struct tree *node)
 
 void make_frame_from_reg(const char *reg)
 {
+    debug("make_frame_from_reg");
+
     gen_code("movq %%%s, (%%%s)", frame_ptr, heap_ptr);
     gen_code("movq %%%s, 8(%%%s)", reg, heap_ptr);
     move(heap_ptr, frame_ptr);
@@ -778,39 +780,64 @@ void make_frame_from_reg(const char *reg)
 
 void make_frame_from_const(long int value)
 {
+    debug("make_frame_from_const");
+
     gen_code("movq %%%s, (%%%s)", frame_ptr, heap_ptr);
     gen_code("movq $%ld, 8(%%%s)", value, heap_ptr);
     move(heap_ptr, frame_ptr);
     gen_code("addq $16, %%%s", heap_ptr);
 }
 
-void make_closure(const char *reg)
+void make_closure(struct tree *node)
 {
-    gen_code("call _next");
-    gen_code("_next:");
-    gen_code("pop %%%s", reg);
-    gen_code("movq %%%s, (%%%s)", reg, heap_ptr);
-    gen_code("addq $21, (%%%s)", heap_ptr);
+    debug("make_closure");
+
+    int instruction_offset = 21; // TODO
+    struct closure_data *data = (struct closure_data*)node->data;
+
+    // get the instruction pointer
+    gen_code("call _get_ip_%d", data->num);
+    printf("_get_ip_%d:\n", data->num);
+    gen_code("pop %%%s", node->reg);
+    gen_code("movq %%%s, (%%%s)", node->reg, heap_ptr);
+    gen_code("addq $%d, (%%%s)", instruction_offset, heap_ptr);
     gen_code("movq %%%s, 8(%%%s)", frame_ptr, heap_ptr);
-    gen_code("movq %%%s, %%%s", heap_ptr, reg);
+    gen_code("movq %%%s, %%%s", heap_ptr, node->reg);
     // TODO: tag closure
     gen_code("addq $16, %%%s", heap_ptr);
 }
 
 void gen_lambda_prolog(struct tree *node)
 {
+    debug("gen_lambda_prolog");
+
+    struct closure_data *data = (struct closure_data*)node->data;
+
     make_frame_from_reg("rdi");
-    make_closure(node->reg);
-    gen_code("jmp .retclosure");
+    make_closure(node);
+    gen_code("jmp .return_closure_%d", data->num);
 }
 
 void gen_lambda_epilog(struct tree *node)
 {
+    debug("gen_lambda_epilog");
+
+    struct closure_data *data = (struct closure_data*)node->data;
+
     gen_code("ret");
-    printf(".retclosure:\n");
+    printf(".return_closure_%d:\n", data->num);
 }
 
 void gen_call_closure(struct tree *node)
 {
-    gen_code("call *(%%%s)", node->reg);
+    debug("gen_call_closure");
+
+    gen_code("#make frame with value");
+
+    struct tree *fun = LEFT_CHILD(node);
+    struct tree *param = RIGHT_CHILD(node);
+
+    gen_code("call *(%%%s)", fun->reg);
+
+    move("rax", node->reg);
 }

@@ -12,6 +12,7 @@
     int errors = 0;
 
     int labelno = 0;
+    int lambdano = 0;
 
     int yylex(void);
     void yyerror(char *);
@@ -79,7 +80,7 @@ LambdaToplevel: FUN IDENT ARROW Expr END
 Lambda: FUN IDENT ARROW Expr END
       @{
         @i @Expr.symbols@ = symbol_add(@Lambda.symbols@, @IDENT.name@, SYMBOL_TYPE_NONE, "rdi"); 
-        @i @Lambda.node@ = new_lambda_node(@Expr.node@);
+        @i @Lambda.node@ = new_lambda_node(@Expr.node@, labelno++);
 
         @regalloc @Expr.node@->reg = @Lambda.node@->reg;
         @regalloc @Lambda.node@->kids[0]->reg = @Expr.node@->reg;
