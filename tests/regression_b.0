@@ -18,3 +18,51 @@ f2 = fun x ->
     end
 end;
 
+
+f3 = fun x -> 
+    let 
+        h = head x 
+    in 
+        let 
+            t = tail x 
+        in 
+            h*t 
+        end 
+    end 
+end;
+
+f4 = fun x -> 
+    let 
+        h = head x 
+    in 
+        let 
+            t = tail x 
+        in 
+            h+t
+        end 
+    end 
+end;
+
+f5 = fun x -> 
+    let 
+        h = head x 
+    in 
+        let 
+            t = tail x 
+        in 
+            h-t 
+        end 
+    end 
+end;
+
+f6 = fun x -> 
+    let 
+        h = head x 
+    in 
+        let 
+            t = tail x 
+        in 
+            h and t 
+        end 
+    end 
+end;
