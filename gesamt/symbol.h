@@ -11,6 +11,8 @@ struct symbol {
     char *reg;
     int type;
     struct symbol *next;
+
+    int captured; /* indicate that symbol is captured by closure */
 };
 
 struct symbol *symbol_new();

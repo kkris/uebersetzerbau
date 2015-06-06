@@ -79,11 +79,15 @@ LambdaToplevel: FUN IDENT ARROW Expr END
 
 Lambda: FUN IDENT ARROW Expr END
       @{
-        @i @Expr.symbols@ = symbol_add(@Lambda.symbols@, @IDENT.name@, SYMBOL_TYPE_NONE, "rdi"); 
+        @i @Expr.symbols@ = symbol_add(@Lambda.symbols@, @IDENT.name@,
+        SYMBOL_TYPE_NONE, "later"); 
         @i @Lambda.node@ = new_lambda_node(@Expr.node@, labelno++);
 
         @regalloc @Expr.node@->reg = @Lambda.node@->reg;
         @regalloc @Lambda.node@->kids[0]->reg = @Expr.node@->reg;
+
+        @regalloc set_symbol_reg_children(@Lambda.node@, @IDENT.name@, @Expr.node@->reg);
+        @regalloc mark_other_symbols_as_captured(@Lambda.node@, @IDENT.name@);
 
       @}
       ;
@@ -272,6 +276,9 @@ Term: '(' Expr ')'
         @i @Term.node@ = new_ident_node(OP_VAR, NULL, NULL, @IDENT.name@, symbol_find(@Term.symbols@, @IDENT.name@));
         @regalloc @Term.node@->reg = symbol_find(@Term.symbols@, @IDENT.name@)->reg;
         @verify check_variable(@Term.symbols@, @IDENT.name@);
+
+        @regalloc fprintf(stderr, "Accessing %s, closure: %d\n", @IDENT.name@,
+        symbol_find(@Term.symbols@, @IDENT.name@)->captured);
     @}
     ;
 

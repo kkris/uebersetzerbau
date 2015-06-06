@@ -92,6 +92,24 @@ void set_symbol_reg_children(struct tree *node, char *name, const char *reg)
     set_symbol_reg_children(RIGHT_CHILD(node), name, reg);
 }
 
+/* in each nodes symbol table set all variables except this one as captured */
+void mark_other_symbols_as_captured(struct tree *node, char *except)
+{
+    if(node == NULL)
+        return;
+
+    struct symbol *current = node->symbol;
+    while(current != NULL) {
+        if(strcmp(current->name, except) != 0) {
+            current->captured = 1;
+        }
+
+        current = current->next;
+    }
+
+    mark_other_symbols_as_captured(LEFT_CHILD(node), except);
+    mark_other_symbols_as_captured(RIGHT_CHILD(node), except);
+}
 
 static void gen_code(const char *code, ...)
 {

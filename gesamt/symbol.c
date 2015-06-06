@@ -12,7 +12,7 @@ struct symbol *symbol_new()
     sym->reg = NULL;
     sym->type = SYMBOL_TYPE_NONE;
     sym->next = NULL;
-
+    sym->captured = 0;
 
     return sym;
 }
@@ -35,6 +35,7 @@ struct symbol *symbol_copy(struct symbol *sym)
             copy->reg = strdup(current->reg);
 
         copy->type = current->type;
+        copy->captured = current->captured;
         copy->next = prev;
         prev = copy;
 
