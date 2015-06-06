@@ -1,0 +1,12 @@
+gt = fun x ->
+    let
+        y = (x + x) - x // x
+    in
+        fun z ->
+            y < z
+        end
+    end
+end;
+
+g1 = fun x -> (gt 0) x end;
+g2 = fun x -> (gt 100) x end;
