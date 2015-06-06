@@ -74,7 +74,7 @@ char *alloc_var_reg(struct tree *parent, struct tree *expr)
         return strdup(expr->symbol->reg); /* alias variables */
     }
 
-    return alloc_reg(parent->reg, 0);
+    return alloc_reg(parent->reg, 1);
 }
 
 /* in each nodes symbol table set the register for a variable */
