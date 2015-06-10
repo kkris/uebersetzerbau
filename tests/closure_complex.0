@@ -8,5 +8,40 @@ gt = fun x ->
     end
 end;
 
+times2 = fun x -> x * 2 end;
+
+map = fun func -> fun list ->
+    let h = head list in
+        let t = tail list in
+            if islist t then
+                (func h) . ((map func) t)
+            else
+                func h
+            end
+        end
+    end
+end end;
+
+sum = fun list -> (sumrec 0) list end;
+
+sumrec = fun acc -> fun list ->
+    if islist list then
+        (sumrec (acc + (head list))) (tail list)
+    else
+        acc + list
+    end
+end end;
+
+range = fun n -> (rangerec (n - 1)) n end;
+
+rangerec = fun n -> fun list ->
+    if n = 0 then
+        0.list
+    else
+        (rangerec (n - 1)) (n.list)
+    end
+end end;
+
+
 g1 = fun x -> (gt 0) x end;
 g2 = fun x -> (gt 100) x end;

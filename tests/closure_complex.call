@@ -10,3 +10,6 @@ CHECK(g2, 100, 0);
 CHECK(g2, 101, 1);
 CHECK(g2, 1337, 1);
 
+
+CHECK_RAW(sum, range(10 << 1), 55);
+CHECK_RAW(sum, range(100 << 1), 5050);
