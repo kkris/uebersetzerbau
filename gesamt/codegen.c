@@ -914,17 +914,22 @@ static void load_captured_onto_stack(struct tree *node)
             fprintf(stderr, "load %s from frame\n", sym->name);
 
             gen_code("push 8(%%%s)", frame_ptr);
-
-            /* if(!first) { */
-            /*     make_frame(); */
-            /* } */
-
-            /* gen_code("movq %%%s, 8(%%%s)", sym->reg, frame_ptr); */
-
-            /* if(first) { */
-            /*     first = 0; */
-            /* } */
         }
+        sym = sym->next;
+    }
+}
+
+static void unload_captured_from_stack(struct tree *node)
+{
+    struct closure_data *data = (struct closure_data*)node->data;
+
+    int first = 1;
+    struct symbol *sym = node->symbol;
+    while(sym != NULL) {
+        if(sym->captured) {
+            gen_code("pop %%%s", temp_reg);
+
+            }
         sym = sym->next;
     }
 }
@@ -944,10 +949,12 @@ void gen_lambda_prolog(struct tree *node)
     gen_code("# make closure");
     make_closure(node);
     gen_code("jmp .return_closure_%d", data->num);
-
+    gen_code("_d%d:", data->num);
     gen_code("# load captured variables onto stack");
 
     load_captured_onto_stack(node);
+
+
 
     /* make_frame_from_reg("rdi"); */
     /* make_closure(node); */
@@ -975,8 +982,12 @@ void gen_lambda_epilog(struct tree *node)
 
     struct closure_data *data = (struct closure_data*)node->data;
 
+
+    unload_captured_from_stack(node);
+
     gen_code("ret");
     printf(".return_closure_%d:\n", data->num);
+    move(LEFT_CHILD(node)->reg, node->reg);
 }
 
 void gen_call_closure(struct tree *node)
@@ -995,6 +1006,8 @@ void gen_call_closure(struct tree *node)
     move(param->reg, "rdi");
     gen_code("# call closure");
     gen_code("call *(%%%s)", fun->reg);
+
+    gen_code("pop %%%s", frame_ptr);
 
     move("rax", node->reg);
 }

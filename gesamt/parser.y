@@ -86,7 +86,7 @@ Lambda: FUN IDENT ARROW Expr END
         @regalloc @Expr.node@->reg = "rax"; /*@Lambda.node@->reg;*/ /* TODO: ??? */
         @regalloc @Lambda.node@->kids[0]->reg = @Expr.node@->reg;
 
-        @regalloc set_symbol_reg_children(@Lambda.node@, @IDENT.name@, @Expr.node@->reg);
+//        @regalloc set_symbol_reg_children(@Lambda.node@, @IDENT.name@, @Expr.node@->reg);
         @regalloc mark_other_symbols_as_captured(@Lambda.node@, @IDENT.name@);
 
       @}
