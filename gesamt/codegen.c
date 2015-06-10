@@ -133,7 +133,6 @@ void mark_other_symbols_as_captured(struct tree *node, char *except)
         if(strcmp(current->name, except) == 0) {
 
         } else if(current->type != SYMBOL_TYPE_FUN) {
-            fprintf(stderr, "marking %s as captured\n", current->name);
             current->captured = 1;
             current->offset = offset;
 
@@ -261,6 +260,15 @@ void expect_list(struct tree *node)
     }
 }
 
+void expect_closure(struct tree *node)
+{
+    debug("expect_closure");
+    gen_code("testq $1, %%%s", node->reg);
+    gen_code("jz raisesig");
+    gen_code("testq $2, %%%s", node->reg);
+    gen_code("jz raisesig");
+}
+
 void tag(int type, const char *source, const char *dest)
 {
     debug("tag(%s, %s)", source, dest);
@@ -335,6 +343,13 @@ void untag_list_inplace(const char *reg)
     gen_code("subq $1, %%%s", reg);
 }
 
+void untag_closure_inplace(const char *reg)
+{
+    debug("untag_closure_inplace");
+
+    gen_code("subq $3, %%%s", reg);
+}
+
 void ret(struct tree *node, int tag_type, int type)
 {
     debug("ret");
@@ -361,9 +376,6 @@ void ret(struct tree *node, int tag_type, int type)
 
 void load_var(struct tree *node)
 {
-    fprintf(stderr, "Load %s. Closure: %d, Offset: %d\n",
-            node->symbol->name, node->symbol->captured, node->symbol->offset);
-
     if(node->symbol->captured) {
         int stack_offset = node->symbol->offset * 8;
 
@@ -877,7 +889,7 @@ void make_closure(struct tree *node)
     gen_code("movq %%%s, (%%%s)", node->reg, heap_ptr);
     gen_code("movq %%%s, 8(%%%s)", frame_ptr, heap_ptr);
     gen_code("movq %%%s, %%%s", heap_ptr, node->reg);
-    // TODO: tag closure
+    gen_code("addq $3, %%%s", node->reg); // tag as closure
     gen_code("addq $16, %%%s", heap_ptr);
 }
 
@@ -894,8 +906,6 @@ static void save_captured_vars_in_frames(struct tree *node)
     struct symbol *sym = node->symbol;
     while(sym != NULL) {
         if(sym->captured) {
-            fprintf(stderr, "offset: %d, reg: %s, outer: %d\n", sym->offset, sym->reg, sym->outer);
-
             make_frame();
             if(sym->outer) {
                 gen_code("movq %d(%%%s), %%%s", sym->offset, "rsp", var_reg0);
