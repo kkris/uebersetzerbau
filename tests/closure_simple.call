@@ -35,3 +35,11 @@ CHECK(g4, -1, 0);
 CHECK(g4, -5, -8);
 CHECK(g4, 100, 100);
 
+RAISES(g5, 1);
+CHECK(g5, 0, 0);
+CHECK(g5, 1, 1);
+CHECK(g5, 2, 2);
+CHECK(g5, -1, -1);
+CHECK(g5, -5, -5);
+CHECK(g5, 100, 100);
+

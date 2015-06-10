@@ -14,7 +14,8 @@ struct symbol *symbol_new()
     sym->type = SYMBOL_TYPE_NONE;
     sym->next = NULL;
     sym->captured = 0;
-    sym->offset = 0;
+    sym->offset = -1;
+    sym->outer = 0;
 
     return sym;
 }
@@ -41,6 +42,7 @@ struct symbol *symbol_copy(struct symbol *sym)
         copy->type = current->type;
         copy->captured = current->captured;
         copy->offset = current->offset;
+        copy->outer = current->outer;
         copy->next = prev;
         prev = copy;
 

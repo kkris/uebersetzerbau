@@ -1,0 +1,28 @@
+extern long no(long);
+
+CHECK(no, 0, 42);
+
+CHECK(add42, 0, 42);
+CHECK(add42, -42, 0);
+CHECK(add42, 100, 142);
+
+CHECK(c1, 0, 297);
+CHECK(c1, 3, 300);
+CHECK(c1, -5, 292);
+CHECK(c1, 10, 307);
+CHECK(c1, -101, 196);
+
+CHECK(adddist, 0, 1193322);
+
+CHECK(median1, 0, 0);
+CHECK(median1, 3, 3);
+CHECK(median1, -5, -5);
+CHECK(median1, 10, 10);
+CHECK(median1, -101, -101);
+
+CHECK(median3, 0, 0);
+CHECK(median3, 3, -3);
+CHECK(median3, -5, 5);
+CHECK(median3, 10, -10);
+CHECK(median3, -101, 101);
+

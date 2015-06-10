@@ -15,6 +15,7 @@ struct symbol {
 
     int captured; /* indicate that symbol is captured by closure */
     int offset;
+    int outer;
 };
 
 struct symbol *symbol_new();

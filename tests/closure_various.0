@@ -1,0 +1,21 @@
+no = fun x -> x + 42 end;
+
+add = fun x -> fun y -> x + y end end;
+
+add42 = fun x -> (add 42) x end;
+
+complex = fun x -> let y = 42 in
+    fun z -> x + y + z end end end;
+
+c1 = fun x -> (complex x) $ff end;
+
+
+threeadd = fun x -> fun y -> fun z -> x + y + z end end end;
+
+adddist = fun x -> ((threeadd $ff) 21) $123456 end;
+
+linear = fun c -> fun d -> fun x -> (c * x) + d end end end;
+
+
+median1 = fun x -> ((linear 1) 0) x end;
+median3 = fun x -> ((linear (0-1)) 0) x end;

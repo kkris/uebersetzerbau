@@ -106,6 +106,9 @@ void set_captured(struct tree *node, const char *name, int offset)
     struct symbol *current = node->symbol;
     while(current != NULL) {
         if(strcmp(current->name, name) == 0) {
+            if(current->captured != 1) {
+                current->outer = 1;
+            }
             current->captured = 1;
             current->offset = offset;
             current->reg = strdup(var_reg0);
@@ -865,18 +868,18 @@ void make_closure(struct tree *node)
 {
     debug("make_closure");
 
-    int instruction_offset = 20; // TODO
+    int instruction_offset = 19; // TODO
     struct closure_data *data = (struct closure_data*)node->data;
 
     // get the instruction pointer
     /* gen_code("call _get_ip_%d", data->num); */
     /* printf("_get_ip_%d:\n", data->num); */
     /* gen_code("pop %%%s", node->reg); */
-    gen_code("lea (%%%s), %%%s", "rip", node->reg);
+    /* gen_code("lea %d(%%%s), %%%s", instruction_offset, "rip", node->reg); */
+    gen_code("lea (_closure%d), %%%s", data->num, node->reg);
 
     // make closure cell
     gen_code("movq %%%s, (%%%s)", node->reg, heap_ptr);
-    gen_code("addq $%d, (%%%s)", instruction_offset, heap_ptr);
     gen_code("movq %%%s, 8(%%%s)", frame_ptr, heap_ptr);
     gen_code("movq %%%s, %%%s", heap_ptr, node->reg);
     // TODO: tag closure
@@ -886,7 +889,6 @@ void make_closure(struct tree *node)
 static void make_frame()
 {
     gen_code("movq %%%s, (%%%s)", frame_ptr, heap_ptr);
-    gen_code("movq $0, 8(%%%s)", heap_ptr);
     move(heap_ptr, frame_ptr);
     gen_code("addq $16, %%%s", heap_ptr);
 
@@ -894,20 +896,17 @@ static void make_frame()
 
 static void save_captured_vars_in_frames(struct tree *node)
 {
-    struct closure_data *data = (struct closure_data*)node->data;
-
-    int first = 1;
     struct symbol *sym = node->symbol;
     while(sym != NULL) {
         if(sym->captured) {
-            if(!first) {
-                make_frame();
-            }
+            fprintf(stderr, "offset: %d, reg: %s, outer: %d\n", sym->offset, sym->reg, sym->outer);
 
-            gen_code("movq %%%s, 8(%%%s)\t\t# save %s in frame", sym->orig_reg, frame_ptr, sym->name);
-
-            if(first) {
-                first = 0;
+            make_frame();
+            if(sym->outer) {
+                gen_code("movq %d(%%%s), %%%s", sym->offset, "rsp", var_reg0);
+                gen_code("movq %%%s, 8(%%%s)\t\t# save %s in frame", var_reg0, frame_ptr, sym->name);
+            } else {
+                gen_code("movq %%%s, 8(%%%s)\t\t# save %s in frame", sym->orig_reg, frame_ptr, sym->name);
             }
         }
         sym = sym->next;
@@ -916,8 +915,6 @@ static void save_captured_vars_in_frames(struct tree *node)
 
 static void load_captured_onto_stack(struct tree *node)
 {
-    struct closure_data *data = (struct closure_data*)node->data;
-
     int first = 1;
     struct symbol *sym = node->symbol;
     while(sym != NULL) {
@@ -956,7 +953,6 @@ void gen_lambda_prolog(struct tree *node)
 
     gen_code("# save captured variables in frame");
     gen_code("movq $0, %%%s", frame_ptr);
-    make_frame();
 
     save_captured_vars_in_frames(node);
 
@@ -965,30 +961,9 @@ void gen_lambda_prolog(struct tree *node)
     gen_code("# make closure");
     make_closure(node);
     gen_code("jmp .return_closure_%d", data->num);
-    gen_code("_d%d:", data->num);
+    gen_code("_closure%d:", data->num);
 
     load_captured_onto_stack(node);
-
-
-
-    /* make_frame_from_reg("rdi"); */
-    /* make_closure(node); */
-    /* gen_code("jmp .return_closure_%d", data->num); */
-
-    /* fprintf(stderr, "Variables in closure:\n"); */
-    /* struct symbol *sym = node->symbol; */
-    /* while(sym != NULL) { */
-    /*     if(sym->captured) */
-    /*         fprintf(stderr, "%s\n", sym->name); */
-    /*     sym = sym->next; */
-    /* } */
-
-    // get frame
-    /* gen_code("movq 8(%%%s), %%%s", "rsp", frame_ptr); */
-    /* gen_code("movq 8(%%%s), %%%s", frame_ptr, "rdi"); */
-    /* gen_code("movq (%%%s), %%%s", frame_ptr, frame_ptr); */
-    /* gen_code("movq 8(%%%s), %%%s", frame_ptr, "rsi"); */
-
 }
 
 void gen_lambda_epilog(struct tree *node)
