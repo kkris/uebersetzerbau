@@ -1,0 +1,12 @@
+CHECK(g1, 0, 0);
+CHECK(g1, 1, 1);
+CHECK(g1, 2, 1);
+CHECK(g1, -1, 0);
+CHECK(g1, -42, 0);
+
+CHECK(g2, 0, 0);
+CHECK(g2, -1, 0);
+CHECK(g2, 100, 0);
+CHECK(g2, 101, 1);
+CHECK(g2, 1337, 1);
+
