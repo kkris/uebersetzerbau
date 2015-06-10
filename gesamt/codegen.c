@@ -985,7 +985,7 @@ void gen_call_closure(struct tree *node)
     gen_code("movq 8(%%%s), %%%s\t# get environment", fun->reg, frame_ptr);
 
     gen_code("push %%%s\t\t# push environment", frame_ptr);
-
+    gen_code("push %%%s", "rdi");
     if(param->constant)
         move_const(tag_const(param->value), "rdi");
     else
@@ -993,6 +993,7 @@ void gen_call_closure(struct tree *node)
 
     gen_code("call *(%%%s)\t\t# call closure", fun->reg);
 
+    gen_code("pop %%%s", "rdi");
     gen_code("pop %%%s", frame_ptr);
 
     move("rax", node->reg);
