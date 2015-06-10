@@ -201,5 +201,7 @@ t_word: OP_LAMBDA(prolog, t_word) # 0 # gen_lambda_epilog(bnode);
 
 t_word: OP_CALL(t_word, t_word) # 0 # gen_call_closure(bnode);
 
+
+
 %%
 

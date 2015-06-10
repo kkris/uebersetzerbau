@@ -81,7 +81,7 @@ Lambda: FUN IDENT ARROW Expr END
       @{
         @i @Expr.symbols@ = symbol_add(@Lambda.symbols@, @IDENT.name@,
         SYMBOL_TYPE_NONE, "later"); 
-        @i @Lambda.node@ = new_lambda_node(@Expr.node@, labelno++);
+        @i @Lambda.node@ = new_lambda_node(@Expr.node@, labelno++, @Expr.symbols@);
 
         @regalloc @Expr.node@->reg = @Lambda.node@->reg;
         @regalloc @Lambda.node@->kids[0]->reg = @Expr.node@->reg;
