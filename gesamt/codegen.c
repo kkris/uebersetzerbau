@@ -13,11 +13,15 @@ char* registers[] = {"rdi", "rax", "rsi", "rdx", "rcx", "r8", "r9", "r10"};
 const char *heap_ptr = "r15";
 const char *temp_reg = "r11";
 const char *frame_ptr = "r11";
-const char *var_reg = "r12";
 
 // global variable which tracks the just tagged register
 char *just_tagged = NULL;
 char *just_untagged = NULL;
+
+int cur_var_reg = 0;
+const char *var_reg0 = "r12";
+const char *var_reg1 = "r13";
+
 
 static char *type_checked_vars[10] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 
@@ -87,6 +91,7 @@ void set_symbol_reg_children(struct tree *node, char *name, const char *reg)
     struct symbol *sym = symbol_find(node->symbol, name);
     if(sym != NULL) {
         sym->reg = strdup(reg);
+        sym->orig_reg = strdup(reg);
     }
 
     set_symbol_reg_children(LEFT_CHILD(node), name, reg);
@@ -103,7 +108,7 @@ void set_captured(struct tree *node, const char *name, int offset)
         if(strcmp(current->name, name) == 0) {
             current->captured = 1;
             current->offset = offset;
-            current->reg = strdup(var_reg);
+            current->reg = strdup(var_reg0);
         }
         current = current->next;
     }
@@ -358,10 +363,18 @@ void load_var(struct tree *node)
 
     if(node->symbol->captured) {
         int stack_offset = node->symbol->offset * 8;
-        gen_code("movq %d(%%%s), %%%s", stack_offset, "rsp", var_reg);
+
+        const char *reg;
+        if(cur_var_reg == 0)
+            reg = var_reg0;
+        else
+            reg = var_reg1;
+
+        gen_code("movq %d(%%%s), %%%s", stack_offset, "rsp", reg);
+        cur_var_reg = (cur_var_reg + 1) % 2;
+        
+        node->reg = strdup(reg);
     }
-
-
 }
 
 void gen_not(struct tree *node)
@@ -887,13 +900,11 @@ static void save_captured_vars_in_frames(struct tree *node)
     struct symbol *sym = node->symbol;
     while(sym != NULL) {
         if(sym->captured) {
-            fprintf(stderr, "saving %s in frame\n", sym->name);
-
             if(!first) {
                 make_frame();
             }
 
-            gen_code("movq %%%s, 8(%%%s)", sym->orig_reg, frame_ptr);
+            gen_code("movq %%%s, 8(%%%s)\t\t# save %s in frame", sym->orig_reg, frame_ptr, sym->name);
 
             if(first) {
                 first = 0;
@@ -911,9 +922,15 @@ static void load_captured_onto_stack(struct tree *node)
     struct symbol *sym = node->symbol;
     while(sym != NULL) {
         if(sym->captured) {
-            fprintf(stderr, "load %s from frame\n", sym->name);
+            if(!first) {
+                gen_code("movq (%%%s), %%%s", frame_ptr, frame_ptr);
+            }
 
-            gen_code("push 8(%%%s)", frame_ptr);
+            gen_code("push 8(%%%s)\t\t# load %s from frame", frame_ptr, sym->name);
+
+            if(first) {
+                first = 0;
+            }
         }
         sym = sym->next;
     }
@@ -928,8 +945,7 @@ static void unload_captured_from_stack(struct tree *node)
     while(sym != NULL) {
         if(sym->captured) {
             gen_code("pop %%%s", temp_reg);
-
-            }
+        }
         sym = sym->next;
     }
 }
@@ -950,7 +966,6 @@ void gen_lambda_prolog(struct tree *node)
     make_closure(node);
     gen_code("jmp .return_closure_%d", data->num);
     gen_code("_d%d:", data->num);
-    gen_code("# load captured variables onto stack");
 
     load_captured_onto_stack(node);
 
@@ -997,15 +1012,16 @@ void gen_call_closure(struct tree *node)
     struct tree *fun = LEFT_CHILD(node);
     struct tree *param = RIGHT_CHILD(node);
 
-    gen_code("# get environment");
-    gen_code("movq 8(%%%s), %%%s", fun->reg, frame_ptr);
+    gen_code("movq 8(%%%s), %%%s\t# get environment", fun->reg, frame_ptr);
 
-    gen_code("# push environment");
-    gen_code("push %%%s", frame_ptr);
-    gen_code("# pass first parameter");
-    move(param->reg, "rdi");
-    gen_code("# call closure");
-    gen_code("call *(%%%s)", fun->reg);
+    gen_code("push %%%s\t\t# push environment", frame_ptr);
+
+    if(param->constant)
+        move_const(tag_const(param->value), "rdi");
+    else
+        move(param->reg, "rdi");
+
+    gen_code("call *(%%%s)\t\t# call closure", fun->reg);
 
     gen_code("pop %%%s", frame_ptr);
 
