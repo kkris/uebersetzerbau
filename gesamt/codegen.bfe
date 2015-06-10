@@ -72,7 +72,7 @@ t_expr: OP_ISFUN(t_word)        # 0 # gen_isfun(bnode);
 
 neg_t_expr: OP_NOT(t_expr)      # 0 # 
 
-var: OP_VAR                     # 0 # fprintf(stderr, "Accessing %s, is closure: %d\n", bnode->symbol->name, bnode->symbol->captured);
+var: OP_VAR                     # 0 # load_var(bnode);
 var: OP_MUL(var, one)           # 0 # expect_num(LEFT_CHILD(bnode)); make_equal_to(bnode, LEFT_CHILD(bnode));
 var: OP_MUL(one, var)           # 0 # expect_num(RIGHT_CHILD(bnode)); make_equal_to(bnode, RIGHT_CHILD(bnode));
 var: OP_ADD(var, zero)          # 0 # expect_num(LEFT_CHILD(bnode)); make_equal_to(bnode, LEFT_CHILD(bnode));

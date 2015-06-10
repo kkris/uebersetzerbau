@@ -13,6 +13,7 @@ char* registers[] = {"rdi", "rax", "rsi", "rdx", "rcx", "r8", "r9", "r10"};
 const char *heap_ptr = "r15";
 const char *temp_reg = "r11";
 const char *frame_ptr = "r11";
+const char *var_reg = "r12";
 
 // global variable which tracks the just tagged register
 char *just_tagged = NULL;
@@ -92,20 +93,23 @@ void set_symbol_reg_children(struct tree *node, char *name, const char *reg)
     set_symbol_reg_children(RIGHT_CHILD(node), name, reg);
 }
 
-void set_captured(struct tree *node, const char *name)
+void set_captured(struct tree *node, const char *name, int offset)
 {
     if(node == NULL)
         return;
 
     struct symbol *current = node->symbol;
     while(current != NULL) {
-        if(strcmp(current->name, name) == 0)
+        if(strcmp(current->name, name) == 0) {
             current->captured = 1;
+            current->offset = offset;
+            current->reg = strdup(var_reg);
+        }
         current = current->next;
     }
 
-    set_captured(LEFT_CHILD(node), name);
-    set_captured(RIGHT_CHILD(node), name);
+    set_captured(LEFT_CHILD(node), name, offset);
+    set_captured(RIGHT_CHILD(node), name, offset);
 }
 
 /* in each nodes symbol table set all variables -except this one- as captured */
@@ -114,6 +118,8 @@ void mark_other_symbols_as_captured(struct tree *node, char *except)
     if(node == NULL)
         return;
 
+    int offset = 0;
+
     struct symbol *current = node->symbol;
     while(current != NULL) {
         if(strcmp(current->name, except) == 0) {
@@ -121,9 +127,12 @@ void mark_other_symbols_as_captured(struct tree *node, char *except)
         } else if(current->type != SYMBOL_TYPE_FUN) {
             fprintf(stderr, "marking %s as captured\n", current->name);
             current->captured = 1;
+            current->offset = offset;
 
-            set_captured(LEFT_CHILD(node), current->name);
-            set_captured(RIGHT_CHILD(node), current->name);
+            set_captured(LEFT_CHILD(node), current->name, offset);
+            set_captured(RIGHT_CHILD(node), current->name, offset);
+
+            offset = offset + 1;
         }
 
         current = current->next;
@@ -340,6 +349,19 @@ void ret(struct tree *node, int tag_type, int type)
     gen_code("ret");
 
     reset_state();
+}
+
+void load_var(struct tree *node)
+{
+    fprintf(stderr, "Load %s. Closure: %d, Offset: %d\n",
+            node->symbol->name, node->symbol->captured, node->symbol->offset);
+
+    if(node->symbol->captured) {
+        int stack_offset = node->symbol->offset * 8;
+        gen_code("movq %d(%%%s), %%%s", stack_offset, "rsp", var_reg);
+    }
+
+
 }
 
 void gen_not(struct tree *node)
@@ -834,9 +856,10 @@ void make_closure(struct tree *node)
     struct closure_data *data = (struct closure_data*)node->data;
 
     // get the instruction pointer
-    gen_code("call _get_ip_%d", data->num);
-    printf("_get_ip_%d:\n", data->num);
-    gen_code("pop %%%s", node->reg);
+    /* gen_code("call _get_ip_%d", data->num); */
+    /* printf("_get_ip_%d:\n", data->num); */
+    /* gen_code("pop %%%s", node->reg); */
+    gen_code("lea (%%%s), %%%s", "rip", node->reg);
 
     // make closure cell
     gen_code("movq %%%s, (%%%s)", node->reg, heap_ptr);
@@ -847,30 +870,102 @@ void make_closure(struct tree *node)
     gen_code("addq $16, %%%s", heap_ptr);
 }
 
+static void make_frame()
+{
+    gen_code("movq %%%s, (%%%s)", frame_ptr, heap_ptr);
+    gen_code("movq $0, 8(%%%s)", heap_ptr);
+    move(heap_ptr, frame_ptr);
+    gen_code("addq $16, %%%s", heap_ptr);
+
+}
+
+static void save_captured_vars_in_frames(struct tree *node)
+{
+    struct closure_data *data = (struct closure_data*)node->data;
+
+    int first = 1;
+    struct symbol *sym = node->symbol;
+    while(sym != NULL) {
+        if(sym->captured) {
+            fprintf(stderr, "saving %s in frame\n", sym->name);
+
+            if(!first) {
+                make_frame();
+            }
+
+            gen_code("movq %%%s, 8(%%%s)", sym->orig_reg, frame_ptr);
+
+            if(first) {
+                first = 0;
+            }
+        }
+        sym = sym->next;
+    }
+}
+
+static void load_captured_onto_stack(struct tree *node)
+{
+    struct closure_data *data = (struct closure_data*)node->data;
+
+    int first = 1;
+    struct symbol *sym = node->symbol;
+    while(sym != NULL) {
+        if(sym->captured) {
+            fprintf(stderr, "load %s from frame\n", sym->name);
+
+            gen_code("push 8(%%%s)", frame_ptr);
+
+            /* if(!first) { */
+            /*     make_frame(); */
+            /* } */
+
+            /* gen_code("movq %%%s, 8(%%%s)", sym->reg, frame_ptr); */
+
+            /* if(first) { */
+            /*     first = 0; */
+            /* } */
+        }
+        sym = sym->next;
+    }
+}
+
 void gen_lambda_prolog(struct tree *node)
 {
     debug("gen_lambda_prolog");
 
+    gen_code("# save captured variables in frame");
+    gen_code("movq $0, %%%s", frame_ptr);
+    make_frame();
+
+    save_captured_vars_in_frames(node);
+
     struct closure_data *data = (struct closure_data*)node->data;
 
-    make_frame_from_reg("rdi");
+    gen_code("# make closure");
     make_closure(node);
     gen_code("jmp .return_closure_%d", data->num);
 
-    fprintf(stderr, "Variables in closure:\n");
-    struct symbol *sym = node->symbol;
-    while(sym != NULL) {
-        if(sym->captured)
-            fprintf(stderr, "%s\n", sym->name);
-        sym = sym->next;
-    }
+    gen_code("# load captured variables onto stack");
+
+    load_captured_onto_stack(node);
+
+    /* make_frame_from_reg("rdi"); */
+    /* make_closure(node); */
+    /* gen_code("jmp .return_closure_%d", data->num); */
+
+    /* fprintf(stderr, "Variables in closure:\n"); */
+    /* struct symbol *sym = node->symbol; */
+    /* while(sym != NULL) { */
+    /*     if(sym->captured) */
+    /*         fprintf(stderr, "%s\n", sym->name); */
+    /*     sym = sym->next; */
+    /* } */
 
     // get frame
-    printf("_d%d:\n", data->num);
-    gen_code("movq 8(%%%s), %%%s", "rsp", frame_ptr);
-    gen_code("movq 8(%%%s), %%%s", frame_ptr, "rdi");
-    gen_code("movq (%%%s), %%%s", frame_ptr, frame_ptr);
-    gen_code("movq 8(%%%s), %%%s", frame_ptr, "rsi");
+    /* gen_code("movq 8(%%%s), %%%s", "rsp", frame_ptr); */
+    /* gen_code("movq 8(%%%s), %%%s", frame_ptr, "rdi"); */
+    /* gen_code("movq (%%%s), %%%s", frame_ptr, frame_ptr); */
+    /* gen_code("movq 8(%%%s), %%%s", frame_ptr, "rsi"); */
 
 }
 
@@ -888,22 +983,17 @@ void gen_call_closure(struct tree *node)
 {
     debug("gen_call_closure");
 
-    gen_code("#make frame with value");
-
     struct tree *fun = LEFT_CHILD(node);
     struct tree *param = RIGHT_CHILD(node);
 
-    // get env
-    //gen_code("movq 8(%%%s), %%%s", fun-);
-    gen_code("movq 8(%%%s), %%%s", fun->reg, frame_ptr); // set predecessor frame
+    gen_code("# get environment");
+    gen_code("movq 8(%%%s), %%%s", fun->reg, frame_ptr);
 
-    // make frame with param
-    if(param->constant)
-        make_frame_from_const(param->value);
-    else
-        make_frame_from_reg(param->reg);
-
+    gen_code("# push environment");
     gen_code("push %%%s", frame_ptr);
+    gen_code("# pass first parameter");
+    move(param->reg, "rdi");
+    gen_code("# call closure");
     gen_code("call *(%%%s)", fun->reg);
 
     move("rax", node->reg);

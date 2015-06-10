@@ -10,9 +10,11 @@ struct symbol *symbol_new()
     struct symbol *sym = malloc(sizeof(struct symbol));
     sym->name = NULL;
     sym->reg = NULL;
+    sym->orig_reg = NULL;
     sym->type = SYMBOL_TYPE_NONE;
     sym->next = NULL;
     sym->captured = 0;
+    sym->offset = 0;
 
     return sym;
 }
@@ -33,9 +35,12 @@ struct symbol *symbol_copy(struct symbol *sym)
             copy->name = strdup(current->name);
         if(current->reg != NULL)
             copy->reg = strdup(current->reg);
+        if(current->orig_reg != NULL)
+            copy->orig_reg = strdup(current->orig_reg);
 
         copy->type = current->type;
         copy->captured = current->captured;
+        copy->offset = current->offset;
         copy->next = prev;
         prev = copy;
 
@@ -72,6 +77,7 @@ struct symbol *symbol_add(struct symbol *sym, char *name, int type, char *reg)
     struct symbol *element = symbol_new();
     element->name = strdup(name);
     element->reg = strdup(reg);
+    element->orig_reg = strdup(reg);
     element->type = type;
     element->next = sym;
 

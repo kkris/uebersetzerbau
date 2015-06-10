@@ -9,10 +9,12 @@ enum {
 struct symbol {
     char *name;
     char *reg;
+    char *orig_reg;
     int type;
     struct symbol *next;
 
     int captured; /* indicate that symbol is captured by closure */
+    int offset;
 };
 
 struct symbol *symbol_new();
