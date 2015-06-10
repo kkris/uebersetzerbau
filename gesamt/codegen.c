@@ -871,11 +871,6 @@ void make_closure(struct tree *node)
     int instruction_offset = 19; // TODO
     struct closure_data *data = (struct closure_data*)node->data;
 
-    // get the instruction pointer
-    /* gen_code("call _get_ip_%d", data->num); */
-    /* printf("_get_ip_%d:\n", data->num); */
-    /* gen_code("pop %%%s", node->reg); */
-    /* gen_code("lea %d(%%%s), %%%s", instruction_offset, "rip", node->reg); */
     gen_code("lea (_closure%d), %%%s", data->num, node->reg);
 
     // make closure cell
