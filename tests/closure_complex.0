@@ -18,7 +18,24 @@ map = fun func -> fun list ->
     end
 end end;
 
-sum = fun list -> (sumrec 0) list end;
+reduce = fun func -> fun acc -> fun list ->
+    if islist list then
+        let newacc = func acc (head list) in
+            reduce func newacc (tail list)
+        end
+    else
+        func acc list
+    end
+end end end;
+
+sum = fun list -> let add = fun x -> fun y -> x + y end end in
+    reduce add 0 list
+end end;
+
+prod = fun list -> let mul = fun x -> fun y -> x * y end end in
+    reduce mul 1 list
+end end;
+
 
 sumrec = fun acc -> fun list ->
     if islist list then
@@ -31,8 +48,8 @@ end end;
 range = fun n -> (rangerec (n - 1)) n end;
 
 rangerec = fun n -> fun list ->
-    if n = 0 then
-        0.list
+    if n = 1 then
+        1.list
     else
         (rangerec (n - 1)) (n.list)
     end
@@ -40,14 +57,15 @@ end end;
 
 g1 = fun x -> (gt 0) x end;
 g2 = fun x -> (gt 100) x end;
-//mapid = fun x -> 
-  //  let id = fun arg -> 0 end in //arg end in
-    //    id 1//(map id 1)
-//    end
-//end;
 
 mapid = fun x -> 
     let id = fun arg -> arg end in
        sum (map id x)
+    end
+end;
+
+mapdouble = fun x -> 
+    let double = fun arg -> 2 * arg end in
+        sum (map double x)
     end
 end;

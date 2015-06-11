@@ -14,4 +14,11 @@ CHECK(g2, 1337, 1);
 CHECK_RAW(sum, range(10 << 1), 55);
 CHECK_RAW(sum, range(100 << 1), 5050);
 
+CHECK_RAW(prod, range(4 << 1), 24);
+CHECK_RAW(prod, range(10 << 1), 3628800);
+
 CHECK_RAW(mapid, range(10 << 1), 55);
+CHECK_RAW(mapid, range(100 << 1), 5050);
+
+CHECK_RAW(mapdouble, range(10 << 1), 110);
+CHECK_RAW(mapdouble, range(100 << 1), 10100);
