@@ -976,7 +976,10 @@ void gen_lambda_epilog(struct tree *node)
     debug("gen_lambda_epilog");
 
     struct closure_data *data = (struct closure_data*)node->data;
+    struct tree *body = RIGHT_CHILD(node);
 
+    if(body->op == OP_VAR)
+        move(body->reg, node->reg);
 
     unload_captured_from_stack(node);
 

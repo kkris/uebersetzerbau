@@ -11,14 +11,10 @@ end;
 times2 = fun x -> x * 2 end;
 
 map = fun func -> fun list ->
-    let h = head list in
-        let t = tail list in
-            if islist t then
-                (func h) . ((map func) t)
-            else
-                func h
-            end
-        end
+    if islist list then
+        (func (head list)) . ((map func) (tail list))
+    else
+        func list
     end
 end end;
 
@@ -45,3 +41,14 @@ end end;
 
 g1 = fun x -> (gt 0) x end;
 g2 = fun x -> (gt 100) x end;
+//mapid = fun x -> 
+  //  let id = fun arg -> 0 end in //arg end in
+    //    id 1//(map id 1)
+//    end
+//end;
+
+mapid = fun x -> 
+    let id = fun arg -> arg end in
+        id 1
+    end
+end;

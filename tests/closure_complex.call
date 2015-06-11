@@ -13,3 +13,5 @@ CHECK(g2, 1337, 1);
 
 CHECK_RAW(sum, range(10 << 1), 55);
 CHECK_RAW(sum, range(100 << 1), 5050);
+
+CHECK_RAW(mapid, range(10 << 1), 55);

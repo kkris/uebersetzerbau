@@ -38,3 +38,30 @@ CHECK(g5, -1, -1);
 CHECK(g5, -5, -5);
 CHECK(g5, 100, 100);
 
+CHECK(g6, 0, 5);
+CHECK(g6, 1, 7);
+CHECK(g6, 2, 9);
+CHECK(g6, -1, 3);
+CHECK(g6, -5, -5);
+CHECK(g6, 100, 205);
+
+CHECK(g7, 0, 0);
+CHECK(g7, 1, 1);
+CHECK(g7, 2, 4);
+CHECK(g7, -1, 1);
+CHECK(g7, -5, 25);
+CHECK(g7, 100, 10000);
+CHECK(g7, 9, 81);
+CHECK(g7, -25, 625);
+
+CHECK(g8, 0, 0);
+CHECK(g8, 1, 1);
+CHECK(g8, 2, 8);
+CHECK(g8, -1, -1);
+CHECK(g8, -5, -125);
+
+CHECK(fib, 0, 0);
+CHECK(fib, 1, 1);
+CHECK(fib, 2, 1);
+CHECK(fib, 3, 2);
+CHECK(fib, 4, 3);

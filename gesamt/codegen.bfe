@@ -196,6 +196,7 @@ t_word: OP_CALL(fun, t_word) # 0 # gen_call(bnode);
 
 prolog: OP_LAMBDA_PROLOG # 0 # gen_lambda_prolog(bnode);
 
+t_word: OP_LAMBDA(prolog, var)    # 0 # gen_lambda_epilog(bnode);
 t_word: OP_LAMBDA(prolog, t_word) # 0 # gen_lambda_epilog(bnode);
 
 
