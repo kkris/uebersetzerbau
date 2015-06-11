@@ -12,7 +12,7 @@ times2 = fun x -> x * 2 end;
 
 map = fun func -> fun list ->
     if islist list then
-        (func (head list)) . ((map func) (tail list))
+        (func (head list)) . (map func (tail list))
     else
         func list
     end
@@ -38,7 +38,6 @@ rangerec = fun n -> fun list ->
     end
 end end;
 
-
 g1 = fun x -> (gt 0) x end;
 g2 = fun x -> (gt 100) x end;
 //mapid = fun x -> 
@@ -49,6 +48,6 @@ g2 = fun x -> (gt 100) x end;
 
 mapid = fun x -> 
     let id = fun arg -> arg end in
-        id 1
+       sum (map id x)
     end
 end;

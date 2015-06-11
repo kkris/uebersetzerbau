@@ -26,3 +26,5 @@ g14 = fun x -> f10 x end;
 g15 = fun x -> f8 (f10 x) end;
 g16 = fun x -> f9 (f9 (f10 x)) end;
 g17 = fun x -> f4 (f3 x) end;
+g18 = fun x -> f5 (f3 (f2 x)) end;
+g19 = fun x -> (f5 x) + (f5 x) end;

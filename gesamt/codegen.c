@@ -12,7 +12,7 @@ char* registers[] = {"rdi", "rax", "rsi", "rdx", "rcx", "r8", "r9", "r10"};
 
 const char *heap_ptr = "r15";
 const char *temp_reg = "r11";
-const char *frame_ptr = "r11";
+const char *frame_ptr = "r14";
 
 // global variable which tracks the just tagged register
 char *just_tagged = NULL;
@@ -794,9 +794,7 @@ void gen_ifthen(struct tree *node)
         move_const(tag_const(then->value), node->reg);
     }
 
-    if(then->op == OP_VAR) {
-        move(then->reg, node->reg);
-    }
+    move(then->reg, node->reg);
 
 
     gen_code("jmp .%s", labels->epilog_label);
@@ -814,9 +812,7 @@ void gen_ifthenelse(struct tree *node)
         move_const(tag_const(elsenode->value), node->reg);
     }
 
-    if(elsenode->op == OP_VAR) {
-        move(elsenode->reg, node->reg);
-    }
+    move(elsenode->reg, node->reg);
 
 
     printf(".%s:\n", labels->epilog_label);
@@ -841,6 +837,13 @@ void gen_call(struct tree *node)
     struct tree *fun = LEFT_CHILD(node);
     struct tree *param = RIGHT_CHILD(node);
 
+    char* registers[] = {"rdi", "rax", "rsi", "rdx", "rcx", "r8", "r9", "r10"};
+
+    int i;
+    for(i = 2; i < sizeof(registers) / sizeof(registers[0]); i++) {
+        gen_code("push %%%s", registers[i]);
+    }
+
     gen_code("push %%%s", "rdi");
 
     if(param->constant)
@@ -850,6 +853,10 @@ void gen_call(struct tree *node)
 
     gen_code("call %s", fun->symbol->name);
     gen_code("pop %%%s", "rdi");
+
+    for(i = sizeof(registers) / sizeof(registers[0]) - 1; i > 1; i--) {
+        gen_code("pop %%%s", registers[i]);
+    }
 
     move("rax", node->reg);
 }
@@ -977,12 +984,13 @@ void gen_lambda_epilog(struct tree *node)
     struct tree *body = RIGHT_CHILD(node);
 
     if(body->op == OP_VAR)
-        move(body->reg, node->reg);
+        move(body->reg, LEFT_CHILD(node)->reg);
     else if(body->constant)
-        move_const(tag_const(body->value), node->reg);
+        move_const(tag_const(body->value), LEFT_CHILD(node)->reg);
 
     unload_captured_from_stack(node);
 
+    move(LEFT_CHILD(node)->reg, "rax");
     gen_code("ret");
     printf(".return_closure_%d:\n", data->num);
     move(LEFT_CHILD(node)->reg, node->reg);
@@ -995,10 +1003,19 @@ void gen_call_closure(struct tree *node)
     struct tree *fun = LEFT_CHILD(node);
     struct tree *param = RIGHT_CHILD(node);
 
+    char* registers[] = {"rdi", "rax", "rsi", "rdx", "rcx", "r8", "r9", "r10"};
+
     gen_code("movq 8(%%%s), %%%s\t# get environment", fun->reg, frame_ptr);
+
+
+    int i;
+    for(i = 2; i < sizeof(registers) / sizeof(registers[0]); i++) {
+        gen_code("push %%%s", registers[i]);
+    }
 
     gen_code("push %%%s\t\t# push environment", frame_ptr);
     gen_code("push %%%s", "rdi");
+
     if(param->constant)
         move_const(tag_const(param->value), "rdi");
     else
@@ -1008,6 +1025,10 @@ void gen_call_closure(struct tree *node)
 
     gen_code("pop %%%s", "rdi");
     gen_code("pop %%%s", frame_ptr);
+
+    for(i = sizeof(registers) / sizeof(registers[0]) - 1; i > 1; i--) {
+        gen_code("pop %%%s", registers[i]);
+    }
 
     move("rax", node->reg);
 }

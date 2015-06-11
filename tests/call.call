@@ -147,10 +147,18 @@ CHECK(g17, -1, -1);
 CHECK(g17, -2, -2);
 CHECK(g17, -42, -42);
 
+CHECK(g18, 0, 2);
+CHECK(g18, 1, 4);
+CHECK(g18, 2, 6);
+CHECK(g18, 3, 8);
+CHECK(g18, -1, 0);
+CHECK(g18, -2, -2);
+CHECK(g18, -42, -82);
 
-
-
-
-
-
+CHECK(g19, 0, 0);
+CHECK(g19, 1, 4);
+CHECK(g19, 2, 8);
+CHECK(g19, 3, 12);
+CHECK(g19, -1, -4);
+CHECK(g19, -2, -8);
 
