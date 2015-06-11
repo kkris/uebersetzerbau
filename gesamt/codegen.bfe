@@ -145,12 +145,12 @@ t_word: var                     # 9 #
 
 
 t_word: OP_HEAD(var)            # 0 # gen_head(bnode, TAGGED);
-t_word: OP_HEAD(u_list)         # 0 # gen_head(bnode, UNTAGGED);
+t_word: OP_HEAD(u_list)         # 1 # gen_head(bnode, UNTAGGED);
 t_word: OP_HEAD(t_word)         # 0 # gen_head(bnode, TAGGED);
 t_word: OP_HEAD(t_expr)         # 0 # raise_signal();
 
 t_word: OP_TAIL(var)            # 0 # gen_tail(bnode, TAGGED);
-t_word: OP_TAIL(u_list)         # 0 # gen_tail(bnode, UNTAGGED);
+t_word: OP_TAIL(u_list)         # 1 # gen_tail(bnode, UNTAGGED);
 t_word: OP_TAIL(t_word)         # 0 # gen_tail(bnode, TAGGED);
 t_word: OP_TAIL(t_expr)         # 0 # raise_signal();
 

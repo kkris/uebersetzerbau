@@ -720,8 +720,7 @@ void gen_head(struct tree *node, int tag_type)
     if(tag_type == TAGGED) {
         expect_list(lhs);
         move(lhs->reg, dest);
-        untag_list_inplace(dest);
-        gen_code("movq (%%%s), %%%s", dest, dest);
+        gen_code("movq -1(%%%s), %%%s", dest, dest);
     } else {
         gen_code("movq (%%%s), %%%s", lhs->reg, dest);
     }
@@ -737,8 +736,7 @@ void gen_tail(struct tree *node, int tag_type)
     if(tag_type == TAGGED) {
         expect_list(lhs);
         move(lhs->reg, dest);
-        untag_list_inplace(dest);
-        gen_code("movq 8(%%%s), %%%s", dest, dest);
+        gen_code("movq 7(%%%s), %%%s", dest, dest);
     } else {
         gen_code("movq 8(%%%s), %%%s", lhs->reg, dest);
     }
