@@ -978,6 +978,8 @@ void gen_lambda_epilog(struct tree *node)
 
     if(body->op == OP_VAR)
         move(body->reg, node->reg);
+    else if(body->constant)
+        move_const(tag_const(body->value), node->reg);
 
     unload_captured_from_stack(node);
 
