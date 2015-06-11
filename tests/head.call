@@ -21,9 +21,7 @@ long at = ((long)a)|1;
 long b[] = {1, 3}; // not tagged numbers
 long bt = ((long)b)|1;
 
-RAISES(f1, 1);
 
-RAISES(f2, 1);
 
 RAISES_NOT(f3, 1);
 CHECK(f3, 0, 1);
@@ -65,8 +63,6 @@ CHECK(f10, -1, 1);
 CHECK(f10, 5, 1);
 CHECK(f10, -5, 1);
 
-RAISES(f11, 1);
-
 RAISES_NOT(f12, 1);
 CHECK(f12, 0, 1);
 CHECK(f12, 1, 1);
@@ -81,14 +77,12 @@ CHECK(f13, -1, -1);
 CHECK(f13, 5, 5);
 CHECK(f13, -5, -5);
 
-RAISES(f14, 1);
 CHECK(f14, 0, 0);
 CHECK(f14, 1, 2);
 CHECK(f14, -1, -2);
 CHECK(f14, 5, 10);
 CHECK(f14, -5, -10);
 
-RAISES(f15, 1);
 CHECK(f15, 0, 1);
 CHECK(f15, 1, 2);
 CHECK(f15, -1, 0);
@@ -96,4 +90,3 @@ CHECK(f15, 5, 6);
 CHECK(f15, -5, -4);
 
 CHECK_RAW(f16, at, 29);
-RAISES(f16, bt);

@@ -6,7 +6,6 @@ extern long sumlist(long);
 extern long makelst(long);
 extern long range(long);
 
-RAISES(neg, 1);
 CHECK(neg, 0, 0);
 CHECK(neg, 1, -1);
 CHECK(neg, 2, -2);
@@ -15,7 +14,6 @@ CHECK(neg, -2, 2);
 CHECK(neg, 42, -42);
 CHECK(neg, -1337, 1337);
 
-RAISES(abs2, 1);
 CHECK(abs2, 0, 0);
 CHECK(abs2, 1, 1);
 CHECK(abs2, 2, 2);
@@ -24,21 +22,15 @@ CHECK(abs2, -2, 2);
 CHECK(abs2, 42, 42);
 CHECK(abs2, -1337, 1337);
 
-RAISES(countup, 1);
 CHECK(countup, 0, 25);
 CHECK(countup, 1, 25);
 CHECK(countup, -42, 25);
 CHECK(countup, 24, 25);
 
-RAISES(countdown, 1);
 CHECK(countdown, 0, 0);
 CHECK(countdown, 1, 0);
 CHECK(countdown, 24, 0);
 
-RAISES(sumlist2, 0);
-RAISES(sumlist2, 2);
-RAISES(sumlist2, 3);
-RAISES(sumlist2, 4);
 CHECK_RAW(sumlist, makelst(0), 21);
 
 CHECK_RAW(sumlist, range(10 << 1), 55);

@@ -6,11 +6,9 @@ extern long f4(long);
 long a[] = {4, 6};
 long b[] = {0, 0};
 
-RAISES(f1, (long)a);
 RAISES_NOT(f1, ((long)a)|1);
 RET(f1(((long)a)|1) == 4);
 
-RAISES(f2, (long)a);
 RAISES_NOT(f2, ((long)a)|1);
 RET(f2(((long)a)|1) == 6);
 

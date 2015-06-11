@@ -12,7 +12,7 @@ char* registers[] = {"rdi", "rax", "rsi", "rdx", "rcx", "r8", "r9", "r10"};
 
 const char *heap_ptr = "r15";
 const char *temp_reg = "r11";
-const char *frame_ptr = "r14";
+const char *frame_ptr = "r11";
 
 // global variable which tracks the just tagged register
 char *just_tagged = NULL;
@@ -163,6 +163,8 @@ static void gen_code(const char *code, ...)
 void gen_func(const char *name)
 {
     printf(".globl %s\n%s:\n", name, name);
+    gen_code("push %%%s", var_reg0);
+    gen_code("push %%%s", var_reg1);
 }
 
 static void move(const char *source, const char *dest)
@@ -368,6 +370,9 @@ void ret(struct tree *node, int tag_type, int type)
             tag(TYPE_LIST, "rax", "rax");
         }
     }
+
+    gen_code("pop %%%s", var_reg1);
+    gen_code("pop %%%s", var_reg0);
 
     gen_code("ret");
 

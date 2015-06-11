@@ -54,7 +54,6 @@ CHECK(g4, -1, 1337);
 CHECK(g4, -2, 1337);
 CHECK(g4, -42, 1337);
 
-RAISES(g5, 1);
 CHECK(g5, 0, 0);
 CHECK(g5, 1, 1);
 CHECK(g5, 2, 2);
@@ -63,7 +62,6 @@ CHECK(g5, -1, -1);
 CHECK(g5, -2, -2);
 CHECK(g5, -42, -42);
 
-RAISES(g6, 1);
 CHECK(g6, 0, 0);
 CHECK(g6, 1, 1);
 CHECK(g6, 2, 2);
@@ -72,7 +70,6 @@ CHECK(g6, -1, -1);
 CHECK(g6, -2, -2);
 CHECK(g6, -42, -42);
 
-RAISES(g7, 1);
 CHECK(g7, 0, 0);
 CHECK(g7, 1, 6);
 CHECK(g7, 2, 12);
@@ -81,7 +78,6 @@ CHECK(g7, -1, -6);
 CHECK(g7, -2, -12);
 CHECK(g7, -42, -252);
 
-RAISES(g8, 1);
 CHECK(g8, 0, 0);
 CHECK(g8, 1, 1);
 CHECK(g8, 2, 0);
@@ -90,7 +86,6 @@ CHECK(g8, -1, 1);
 CHECK(g8, -2, 0);
 CHECK(g8, -42, 0);
 
-RAISES(g9, 1);
 CHECK(g9, 0, 0);
 CHECK(g9, 1, 1);
 CHECK(g9, 2, 2);
@@ -99,13 +94,10 @@ CHECK(g9, -1, -1);
 CHECK(g9, -2, -2);
 CHECK(g9, -42, -42);
 
-RAISES(g10, (long)a);
 CHECK_RAW(g10, at, -3);
 
-RAISES(g11, (long)a);
 CHECK_RAW(g11, at, 2);
 
-RAISES(g12, 1);
 CHECK(g12, 0, 1);
 CHECK(g12, 1, 2);
 CHECK(g12, 2, 3);
@@ -114,7 +106,6 @@ CHECK(g12, -1, 0);
 CHECK(g12, -2, -1);
 CHECK(g12, -42, -41);
 
-RAISES(g13, 1);
 CHECK(g13, 0, -1);
 CHECK(g13, 1, 0);
 CHECK(g13, 2, 1);

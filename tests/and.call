@@ -12,7 +12,6 @@ extern long f11(long int);
 extern long f12(long int);
 extern long f13(long int);
 
-RAISES(f1, 1);
 CHECK(f1, 0, 0);
 CHECK(f1, 1, 1);
 CHECK(f1, -1,  -1);
@@ -20,7 +19,6 @@ CHECK(f1, -2, -2);
 CHECK(f1, 5, 5);
 CHECK(f1, 1000, 1000);
 
-RAISES(f2, 1);
 CHECK(f2, 0, 0);
 CHECK(f2, 1, 1);
 CHECK(f2, -1,  -1);
@@ -28,7 +26,6 @@ CHECK(f2, -2, -2);
 CHECK(f2, 5, 5);
 CHECK(f2, 1000, 1000);
 
-RAISES(f3, 1);
 CHECK(f3, 0, 0);
 CHECK(f3, 1, 0);
 CHECK(f3, -1,  0);
@@ -43,7 +40,6 @@ CHECK(f4, -2, 0);
 CHECK(f4, 5, 0);
 CHECK(f4, 1000, 0);
 
-RAISES(f5, 1);
 CHECK(f5, 0, 0);
 CHECK(f5, 1, 0);
 CHECK(f5, -1, 0);
@@ -51,7 +47,6 @@ CHECK(f5, -2, -2);
 CHECK(f5, 5, 4);
 CHECK(f5, 1000, 1000);
 
-RAISES(f6, 1);
 CHECK(f6, 0, 0);
 CHECK(f6, 1, 0);
 CHECK(f6, -1,  8);
@@ -62,7 +57,6 @@ CHECK(f6, 8, 8);
 CHECK(f6, 24, 8);
 CHECK(f6, 16, 0);
 
-RAISES(f7, 1);
 CHECK(f7, 0, 0);
 CHECK(f7, 1, 0);
 CHECK(f7, -1,  8);
@@ -73,7 +67,6 @@ CHECK(f7, 8, 8);
 CHECK(f7, 24, 8);
 CHECK(f7, 16, 0);
 
-RAISES(f8, 1);
 CHECK(f8, 0, 0);
 CHECK(f8, 1, 0);
 CHECK(f8, -1,  -2);
@@ -85,7 +78,6 @@ CHECK(f8, 24, 16);
 CHECK(f8, 6, 4);
 CHECK(f8, 16, 0);
 
-RAISES(f9, 1);
 CHECK(f9, 0, 0);
 CHECK(f9, 1, 0);
 CHECK(f9, -1,  0);
@@ -96,7 +88,6 @@ CHECK(f9, 8, 0);
 CHECK(f9, 24, 0);
 CHECK(f9, 16, 0);
 
-RAISES(f10, 1);
 CHECK(f10, 0, 0);
 CHECK(f10, 1, 0);
 CHECK(f10, -1,  -2);
@@ -107,7 +98,6 @@ CHECK(f10, 8, 8);
 CHECK(f10, 24, 24);
 CHECK(f10, 16, 16);
 
-RAISES(f11, 1);
 CHECK(f11, 0, 0);
 CHECK(f11, 1, 0);
 CHECK(f11, -1, 0);
@@ -118,7 +108,6 @@ CHECK(f11, 8, 0);
 CHECK(f11, 24, 0);
 CHECK(f11, 16, 0);
 
-RAISES(f12, 1);
 CHECK(f12, 0, 0);
 CHECK(f12, 1, 0);
 CHECK(f12, -1, 0);
@@ -129,7 +118,6 @@ CHECK(f12, 8, 0);
 CHECK(f12, 24, 0);
 CHECK(f12, 16, 0);
 
-RAISES(f13, 1);
 CHECK(f13, 0, 1);
 CHECK(f13, 1, 2);
 CHECK(f13, -1, 0);

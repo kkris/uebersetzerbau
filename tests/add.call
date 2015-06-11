@@ -15,7 +15,6 @@ extern long f14(long int);
 extern long f15(long int);
 extern long f16(long int);
 
-RAISES(f1, 1);
 CHECK(f1, 0, 1);
 CHECK(f1, 1, 2);
 CHECK(f1, -1,  0);
@@ -23,7 +22,6 @@ CHECK(f1, -2, -1);
 CHECK(f1, 5, 6);
 CHECK(f1, 1000, 1001);
 
-RAISES(f2, 1);
 CHECK(f2, 0, 1);
 CHECK(f2, 1, 2);
 CHECK(f2, -1,  0);
@@ -31,105 +29,84 @@ CHECK(f2, -2, -1);
 CHECK(f2, 5, 6);
 CHECK(f2, 1000, 1001);
 
-RAISES(f3, 1);
 CHECK(f3, 0, 0);
 CHECK(f3, -1,  -2);
 CHECK(f3, -2, -4);
 CHECK(f3, 5, 10);
 CHECK(f3, 1000, 2000);
 
-RAISES(f4, 1);
 CHECK(f4, 0, 2);
 CHECK(f4, -1,  1);
 CHECK(f4, -2, 0);
 CHECK(f4, 5, 7);
 CHECK(f4, 1000, 1002);
 
-RAISES(f5, 1);
 CHECK(f5, 0, 1);
 CHECK(f5, -1,  -1);
 CHECK(f5, -2, -3);
 CHECK(f5, 5, 11);
 CHECK(f5, 1000, 2001);
 
-RAISES(f6, 1);
-CHECK(f6, 0, 1);
-CHECK(f6, -1,  -1);
-CHECK(f6, -2, -3);
-CHECK(f6, 5, 11);
-CHECK(f6, 1000, 2001);
-
-RAISES(f7, 1);
 CHECK(f7, 0, 1);
 CHECK(f7, -1,  -1);
 CHECK(f7, -2, -3);
 CHECK(f7, 5, 11);
 CHECK(f7, 1000, 2001);
 
-RAISES(f8, 1);
 CHECK(f8, 0, 1);
 CHECK(f8, -1,  -1);
 CHECK(f8, -2, -3);
 CHECK(f8, 5, 11);
 CHECK(f8, 1000, 2001);
 
-RAISES(f9, 1);
 CHECK(f9, 0, 2);
 CHECK(f9, -1,  0);
 CHECK(f9, -2, -2);
 CHECK(f9, 5, 12);
 CHECK(f9, 1000, 2002);
 
-RAISES(f10, 1);
 CHECK(f10, 0, 0);
 CHECK(f10, -1,  -1);
 CHECK(f10, -2, -2);
 CHECK(f10, 5, 5);
 CHECK(f10, 1000, 1000);
 
-RAISES(f11, 1);
 CHECK(f11, 0, 0);
 CHECK(f11, -1,  -1);
 CHECK(f11, -2, -2);
 CHECK(f11, 5, 5);
 CHECK(f11, 1000, 1000);
 
-RAISES(f12, 1);
 CHECK(f12, 0, 0);
 CHECK(f12, -1,  -1);
 CHECK(f12, -2, -2);
 CHECK(f12, 5, 5);
 CHECK(f12, 1000, 1000);
 
-RAISES(f13, 1);
 CHECK(f13, 0, 0);
 CHECK(f13, -1,  -1);
 CHECK(f13, -2, -2);
 CHECK(f13, 5, 5);
 CHECK(f13, 1000, 1000);
 
-RAISES(f14, 1);
 CHECK(f14, 0, 0);
 CHECK(f14, -1,  -1);
 CHECK(f14, -2, -2);
 CHECK(f14, 5, 5);
 CHECK(f14, 1000, 1000);
 
-RAISES(f15, 1);
 CHECK(f15, 0, 10);
 CHECK(f15, -1,  6);
 CHECK(f15, -2, 2);
 CHECK(f15, 5, 30);
 CHECK(f15, 1000, 4010);
 
-RAISES(f16, 1);
 CHECK(f16, 0, 28);
 CHECK(f16, -1,  21);
 CHECK(f16, -2, 14);
 CHECK(f16, 5, 63);
 CHECK(f16, 1000, 7028);
 
-RAISES(f17, 1);
 CHECK(f17, 0, 15);
 CHECK(f17, -1,  10);
 CHECK(f17, -2, 5);

@@ -35,21 +35,18 @@ CHECK(f4, -5, 1);
 RAISES_NOT(f5, 1);
 CHECK(f5, -42, 1);
 
-RAISES(f6, 1);
 CHECK(f6, 0, 1);
 CHECK(f6, 1, 1);
 CHECK(f6, -1, 1);
 CHECK(f6, 5, 1);
 CHECK(f6, -5, 1);
 
-RAISES(f7, 1);
 CHECK(f7, 0, 0);
 CHECK(f7, 1, 0);
 CHECK(f7, -1, 0);
 CHECK(f7, 5, 0);
 CHECK(f7, -5, 0);
 
-RAISES(f8, 1);
 CHECK(f8, 0, 0);
 CHECK(f8, 1, 0);
 CHECK(f8, -1, 0);
@@ -57,7 +54,6 @@ CHECK(f8, 5, 0);
 CHECK(f8, -5, 0);
 CHECK(f8, 4, 1);
 
-RAISES(f9, 1);
 CHECK(f9, 0, 0);
 CHECK(f9, 1, 0);
 CHECK(f9, -1, 0);

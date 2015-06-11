@@ -46,7 +46,6 @@ CHECK(f2, -1, 2);
 CHECK(f2, 5, 1);
 CHECK(f2, -5, 2);
 
-RAISES(f3, 1);
 CHECK(f3, 0, 1);
 CHECK(f3, 1, 1);
 CHECK(f3, -1, 1);
@@ -54,7 +53,6 @@ CHECK(f3, 5, 2);
 CHECK(f3, -5, 1);
 CHECK(f3, 10, 2);
 
-RAISES(f4, 1);
 CHECK(f4, 0, 2);
 CHECK(f4, 1, 2);
 CHECK(f4, -1, 2);
@@ -62,26 +60,22 @@ CHECK(f4, 5, 2);
 CHECK(f4, -5, 2);
 CHECK(f4, 10, 1);
 
-RAISES(f5, 1);
 CHECK(f5, -42, 1);
 CHECK(f5, 0, 2);
 CHECK(f5, 1, 1);
 
-RAISES(f6, 1);
 CHECK(f6, 0, 1);
 CHECK(f6, 1, 1);
 CHECK(f6, -1, 1);
 CHECK(f6, 5, 1);
 CHECK(f6, -2, 2);
 
-RAISES(f7, 1);
 CHECK(f7, 0, 1);
 CHECK(f7, 1, 2);
 CHECK(f7, -1, 1);
 CHECK(f7, 5, 1);
 CHECK(f7, -5, 1);
 
-RAISES(f8, 1);
 CHECK(f8, 0, 2);
 CHECK(f8, 1, 1);
 CHECK(f8, -1, 1);
@@ -103,7 +97,6 @@ CHECK(f10, -1, 1);
 CHECK(f10, 5, 1);
 CHECK(f10, -5, 1);
 
-RAISES(f11, 1);
 CHECK(f11, 0, 1);
 CHECK(f11, 1, 2);
 CHECK(f11, -1, 1);
@@ -156,21 +149,17 @@ long b[] = {-2, 0};
 long at = ((long)a)|1;
 long bt = ((long)b)|1;
 
-RAISES(f15, (long)a);
 CHECK_RAW(f15, at, 2);
 CHECK_RAW(f15, bt, 1);
 
-RAISES(f16, (long)a);
 CHECK_RAW(f16, at, 1);
 CHECK_RAW(f16, bt, 2);
 
-RAISES(f17, 1);
 CHECK(f17, 0, 1);
 CHECK(f17, 1, 0);
 CHECK(f17, 2, 1);
 CHECK(f17, -3, -4);
 
-RAISES(f18, 1);
 CHECK(f18, 0, 0);
 CHECK(f18, 1, 1);
 CHECK(f18, 2, 4);
@@ -183,10 +172,6 @@ CHECK(f19, 2, 0);
 CHECK(f19, 5, 1);
 CHECK(f19, 10, 0);
 
-RAISES(f20, 1);
-RAISES(f20, at);
-RAISES(f20, bt);
-RAISES(f20, 3);
 CHECK(f20, 0, 0);
 CHECK(f20, 1, 5);
 CHECK(f20, 2, 10);
@@ -210,19 +195,11 @@ CHECK(f22, 1, -42);
 CHECK(f22, 2, -42);
 CHECK(f22, 10, -42);
 
-RAISES(f23, 1);
-RAISES(f23, at);
-RAISES(f23, bt);
-RAISES(f23, 3);
 CHECK(f23, 0, -1);
 CHECK(f23, 1, 0);
 CHECK(f23, 2, 1);
 CHECK(f23, 10, 9);
 
-RAISES(f24, 1);
-RAISES(f24, at);
-RAISES(f24, bt);
-RAISES(f24, 3);
 CHECK(f24, 0, 1);
 CHECK(f24, 1, 2);
 CHECK(f24, 2, 3);
@@ -231,10 +208,7 @@ CHECK(f24, -1, 0);
 CHECK(f24, -2, -1);
 CHECK(f24, -42, -1337);
 
-RAISES(f25, 0);
 RAISES_NOT(f25, at);
-RAISES(f25, 2);
-RAISES(f25, 3);
 CHECK_RAW(f25, at, 0);
 CHECK_RAW(f25, bt, -1);
 
