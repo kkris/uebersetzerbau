@@ -1,0 +1,125 @@
+id = fun x -> x end;
+add = fun x -> fun y -> x + y end end;
+mul = fun x -> fun y -> x * y end end;
+sub = fun x -> fun y -> x - y end end;
+neg = fun x -> not x end;
+even = fun x -> not (x and 1) end;
+odd = fun x -> x and 1 end;
+inc = fun x -> x + 1 end;
+dec = fun x -> x - 1 end;
+nonnull = fun x -> x end;
+
+// make unary function binary which applies the function to its first argument
+unaryToBinary = fun func ->
+    fun x -> fun y ->
+        func x
+    end end
+end;
+
+flip = fun func ->
+    fun x -> fun y ->
+        func y x
+    end end
+end;
+
+gcd = fun a -> fun b ->
+    if a = b then
+        a
+    else
+        if b < a then
+            gcd (a - b) b
+        else
+            gcd a (b - a)
+        end
+    end
+end end;
+
+isPrime = fun n -> 
+    if n = 1 then
+        0
+    else
+        isPrimeRec n 2
+end end;
+
+isPrimeRec = fun n -> fun a ->
+    if a = n then
+        1
+    else if (gcd n a) = 1 then
+        isPrimeRec n (a + 1)
+    else
+        0
+    end end
+end end;
+
+
+map = fun func -> fun list ->
+    if islist list then
+        (func (head list)) . (map func (tail list))
+    else
+        func list
+    end
+end end;
+
+reduce = fun func -> fun acc -> fun list ->
+    if islist list then
+        let newacc = func acc (head list) in
+            reduce func newacc (tail list)
+        end
+    else
+        func acc list
+    end
+end end end;
+
+filter = fun pred -> fun list -> fun alt ->
+    if islist list then
+        let h = head list in
+            if pred h then
+                h . (filter pred (tail list) alt)
+            else
+                alt . (filter pred (tail list) alt)
+            end
+        end
+    else
+        if pred list then
+            list
+        else
+            alt
+        end
+    end
+end end end;
+
+length = fun list ->
+    reduce (unaryToBinary inc) 0 list
+end;
+
+count = fun pred -> fun list ->
+    let p = fun acc -> fun x ->
+        1//if pred x then acc + 1 else acc end
+    end end in
+        reduce p 0 list
+    end
+end end;
+
+sum = fun list -> reduce add 0 list end;
+prod = fun list -> reduce mul 1 list end;
+
+range = fun n -> (rangerec (n - 1)) n end;
+
+rangerec = fun n -> fun list ->
+    if n = 1 then
+        1.list
+    else
+        (rangerec (n - 1)) (n.list)
+    end
+end end;
+
+filtereven = fun list -> filter even list 0 end;
+filterodd = fun list -> filter odd list 0 end;
+
+gcd21 = fun x -> gcd 21 x end;
+gcd100 = fun x -> gcd 100 x end;
+gcd31 = fun x -> gcd 31 x end;
+
+countFirstNPrimes = fun n ->
+    (count isPrime (range n))
+end;

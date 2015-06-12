@@ -1,0 +1,56 @@
+CHECK_RAW(sum, range(10 << 1), 55);
+CHECK_RAW(sum, range(100 << 1), 5050);
+
+CHECK_RAW(length, range(10 << 1), 10);
+CHECK_RAW(length, range(100 << 1), 100);
+
+CHECK_RAW(sum, filtereven(range(10 << 1)), 30);
+CHECK_RAW(sum, filterodd(range(10 << 1)), 25);
+
+CHECK(gcd21, 7, 7);
+CHECK(gcd21, 21, 21);
+CHECK(gcd21, 3, 3);
+CHECK(gcd21, 14, 7);
+CHECK(gcd21, 1, 1);
+
+CHECK(gcd100, 7, 1);
+CHECK(gcd100, 5, 5);
+CHECK(gcd100, 50, 50);
+CHECK(gcd100, 20, 20);
+CHECK(gcd100, 100, 100);
+CHECK(gcd100, 1, 1);
+
+CHECK(gcd31, 7, 1);
+CHECK(gcd31, 5, 1);
+CHECK(gcd31, 50, 1);
+CHECK(gcd31, 20, 1);
+CHECK(gcd31, 1, 1);
+CHECK(gcd31, 31, 31);
+
+CHECK(isPrime, 1, 0);
+CHECK(isPrime, 2, 1);
+CHECK(isPrime, 3, 1);
+CHECK(isPrime, 4, 0);
+CHECK(isPrime, 5, 1);
+CHECK(isPrime, 6, 0);
+CHECK(isPrime, 7, 1);
+CHECK(isPrime, 8, 0);
+CHECK(isPrime, 9, 0);
+CHECK(isPrime, 10, 0);
+CHECK(isPrime, 11, 1);
+CHECK(isPrime, 12, 0);
+
+/* CHECK(countFirstNPrimes, 2, 1); */
+/* CHECK(countFirstNPrimes, 3, 2); */
+/* CHECK(countFirstNPrimes, 4, 2); */
+/* CHECK(countFirstNPrimes, 5, 3); */
+/* CHECK(countFirstNPrimes, 6, 3); */
+/* CHECK(countFirstNPrimes, 7, 4); */
+/* CHECK(countFirstNPrimes, 8, 4); */
+/* CHECK(countFirstNPrimes, 9, 4); */
+/* CHECK(countFirstNPrimes, 10, 4); */
+/* CHECK(countFirstNPrimes, 11, 5); */
+/* CHECK(countFirstNPrimes, 12, 5); */
+/* CHECK(countFirstNPrimes, 13, 6); */
+/* CHECK(countFirstNPrimes, 14, 6); */
+/* CHECK(countFirstNPrimes, 15, 6); */

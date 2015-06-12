@@ -1,0 +1,3 @@
+plusn = fun x -> fun y -> x + y end end;
+f1 = fun x -> plusn end;
+f2 = fun x -> isfun plusn end;
