@@ -1037,3 +1037,14 @@ void gen_call_closure(struct tree *node)
 
     move("rax", node->reg);
 }
+
+void func_to_word(struct tree *node)
+{
+    gen_code("lea (%s), %%%s", node->symbol->name, node->reg);
+    gen_code("movq %%%s, (%%%s)", node->reg, heap_ptr);
+    gen_code("movq %%%s, 8(%%%s)", frame_ptr, heap_ptr);
+    gen_code("movq %%%s, %%%s", heap_ptr, node->reg);
+    gen_code("addq $3, %%%s", node->reg); // tag as closure
+    gen_code("addq $16, %%%s", heap_ptr);
+
+}

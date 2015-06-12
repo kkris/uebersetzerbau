@@ -142,6 +142,7 @@ t_word: t_expr                  # 9 #
 t_word: t_list                  # 9 #
 t_word: const                   # 9 # bnode->constant = 1;
 t_word: var                     # 9 #
+t_word: fun                     # 9 # func_to_word(bnode);
 
 
 t_word: OP_HEAD(var)            # 0 # gen_head(bnode, TAGGED);

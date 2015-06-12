@@ -56,7 +56,8 @@ Program: /* empty */
        @{ @i @Program.defs@ = NULL; @}
        |
        IDENT '=' LambdaToplevel ';' Program
-       @{ @i @Program.0.defs@ = symbol_add(@Program.1.defs@, @IDENT.name@, SYMBOL_TYPE_FUN, "func");
+       @{ @i @Program.0.defs@ = symbol_add(@Program.1.defs@, @IDENT.name@,
+       SYMBOL_TYPE_FUN, "rax");
           @i @Program.1.symbols@ = @Program.0.symbols@;
           @i @LambdaToplevel.symbols@ = @Program.0.symbols@;
 
