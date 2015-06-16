@@ -1,0 +1,67 @@
+f = fun x -> 1 end;
+g = fun x -> x 0 end; 
+h = fun x -> g f end;
+
+
+fibListTest = fun x ->
+  if x = 0 then
+    (tail (tail (tail (tail (fibList 5)))))
+  else
+    if x = 1 then 
+      (tail (tail (tail (tail (tail (fibList 6))))))
+    else
+      (head (tail (tail (tail (tail (tail (fibList 7)))))))
+    end
+  end
+end;
+
+fibList = fun n ->
+  reverseList (fibListRev n)
+end;
+
+fibListRev = fun n ->
+  if n = 1 then
+    fibN 1
+  else
+    (fibN n).(fibListRev (n-1))
+  end
+end;
+
+fibN = fun n -> 
+  let fib1 = 1 in
+    if 2 < n then
+      (fibN (n-1)) + (fibN (n-2)) + 0
+    else
+      if n = 2 then
+        1 - 0
+      else
+        fib1
+      end
+    end
+  end
+end;
+
+reverseList = fun l ->
+  if (islist l) then
+    (last l).(reverseList (withoutlast l))
+  else
+    l
+  end
+end;
+
+last = fun l ->
+  if (islist l) then
+    last (tail l)
+  else
+    l
+  end
+end;
+
+withoutlast = fun l ->
+  if (islist (tail l)) then
+    (head l).(withoutlast (tail l))
+  else
+    head l
+  end
+end;
+

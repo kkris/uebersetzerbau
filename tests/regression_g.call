@@ -1,0 +1,10 @@
+CHECK(f, 1, 1);
+CHECK(h, 1, 1);
+CHECK(f, 4, 1);
+CHECK(h, 4, 1);
+CHECK(h, -2, 1);
+
+CHECK(fibListTest, 0, 10);
+CHECK(fibListTest, 1, 8);
+CHECK(fibListTest, 2, 8);
+

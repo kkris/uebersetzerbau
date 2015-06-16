@@ -1,0 +1,15 @@
+f = fun x -> 
+    let y = 2 * x in
+        fun z -> let a = z + y in
+            fun b -> let c = b - a in
+                c + z + y + x
+            end end
+        end end
+    end
+end;
+
+g = fun x -> fun y -> fun z -> x + y end end end;
+
+
+//f1 = fun x -> f x  (10 * x) (100 * x) end;
+g1 = fun x -> g 42 255 1 end;
