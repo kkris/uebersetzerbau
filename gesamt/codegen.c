@@ -1021,12 +1021,14 @@ void gen_call_closure(struct tree *node)
     gen_code("push %%%s\t\t# push environment", frame_ptr);
     gen_code("push %%%s", "rdi");
 
+    move(fun->reg, node->reg);
+
     if(param->constant)
         move_const(tag_const(param->value), "rdi");
     else
         move(param->reg, "rdi");
 
-    gen_code("call *(%%%s)\t\t# call closure", fun->reg);
+    gen_code("call *(%%%s)\t\t# call closure", node->reg);
 
     gen_code("pop %%%s", "rdi");
     gen_code("pop %%%s", frame_ptr);
