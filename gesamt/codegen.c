@@ -390,9 +390,9 @@ void load_var(struct tree *node)
         else
             reg = var_reg1;
 
-        gen_code("movq %d(%%%s), %%%s", stack_offset, "rsp", reg);
+        gen_code("movq %d(%%%s), %%%s\t# load %s", stack_offset, "rsp", reg, node->symbol->name);
         cur_var_reg = (cur_var_reg + 1) % 2;
-        
+
         node->reg = strdup(reg);
     }
 }
@@ -932,13 +932,14 @@ static void load_captured_onto_stack(struct tree *node)
 {
     int first = 1;
     struct symbol *sym = node->symbol;
+
     while(sym != NULL) {
         if(sym->captured) {
             if(!first) {
                 gen_code("movq (%%%s), %%%s", frame_ptr, frame_ptr);
             }
 
-            gen_code("push 8(%%%s)\t\t# load %s from frame", frame_ptr, sym->name);
+            gen_code("push 8(%%%s)\t\t# load %s into local scope", frame_ptr, sym->name);
 
             if(first) {
                 first = 0;
@@ -956,7 +957,7 @@ static void unload_captured_from_stack(struct tree *node)
     struct symbol *sym = node->symbol;
     while(sym != NULL) {
         if(sym->captured) {
-            gen_code("pop %%%s", temp_reg);
+            gen_code("pop %%%s\t# remove %s from stack", temp_reg, sym->name);
         }
         sym = sym->next;
     }
@@ -1008,17 +1009,17 @@ void gen_call_closure(struct tree *node)
     struct tree *fun = LEFT_CHILD(node);
     struct tree *param = RIGHT_CHILD(node);
 
-    char* registers[] = {"rdi", "rax", "rsi", "rdx", "rcx", "r8", "r9", "r10"};
-
     gen_code("movq 8(%%%s), %%%s\t# get environment", fun->reg, frame_ptr);
-
 
     int i;
     for(i = 2; i < sizeof(registers) / sizeof(registers[0]); i++) {
-        gen_code("push %%%s", registers[i]);
+        if(i == 2) {
+            gen_code("push %%%s\t# save ctx", registers[i]);
+        } else {
+            gen_code("push %%%s", registers[i]);
+        }
     }
 
-    gen_code("push %%%s\t\t# push environment", frame_ptr);
     gen_code("push %%%s", "rdi");
 
     move(fun->reg, node->reg);
@@ -1031,10 +1032,13 @@ void gen_call_closure(struct tree *node)
     gen_code("call *(%%%s)\t\t# call closure", node->reg);
 
     gen_code("pop %%%s", "rdi");
-    gen_code("pop %%%s", frame_ptr);
 
     for(i = sizeof(registers) / sizeof(registers[0]) - 1; i > 1; i--) {
-        gen_code("pop %%%s", registers[i]);
+        if (i == (sizeof(registers) / sizeof(registers[0]) - 1)) {
+            gen_code("pop %%%s\t# restore ctx", registers[i]);
+        } else {
+            gen_code("pop %%%s", registers[i]);
+        }
     }
 
     move("rax", node->reg);
