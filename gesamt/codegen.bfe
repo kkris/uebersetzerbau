@@ -188,8 +188,7 @@ var: OP_LET_ASSIGN(t_list)      # 0 #
 var: OP_LET_ASSIGN(t_word)      # 0 # 
 
 const: OP_LET_EVAL(var, const)      # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
-t_word: OP_LET_EVAL(var, t_word)    # 0 # make_equal_to(bnode, RIGHT_CHILD(bnode));
-
+t_word: OP_LET_EVAL(var, t_word)    # 0 # gen_let(bnode);
 
 t_word: OP_CALL(fun, t_word) # 0 # gen_call(bnode);
 

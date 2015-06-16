@@ -510,9 +510,6 @@ static void gen_mul_const_reg(long int value, const char *source, const char *de
     debug("gen_mul_reg_const");
 
     switch(value) {
-    case 0:
-    case 1:
-        gen_code("mul with 0, 1 should be handled else where"); break;
     case 2:
         gen_code("leaq (, %%%s, 2), %%%s", source, dest); break;
     case 3:
@@ -832,6 +829,8 @@ void gen_let(struct tree *node)
 
     if(lhs->constant) {
         move_const(tag_const(lhs->value), lhs->reg);
+    } else {
+        move(rhs->reg, node->reg);
     }
 }
 
@@ -841,8 +840,6 @@ void gen_call(struct tree *node)
 
     struct tree *fun = LEFT_CHILD(node);
     struct tree *param = RIGHT_CHILD(node);
-
-    char* registers[] = {"rdi", "rax", "rsi", "rdx", "rcx", "r8", "r9", "r10"};
 
     int i;
     for(i = 2; i < sizeof(registers) / sizeof(registers[0]); i++) {
@@ -866,31 +863,10 @@ void gen_call(struct tree *node)
     move("rax", node->reg);
 }
 
-void make_frame_from_reg(const char *reg)
-{
-    debug("make_frame_from_reg");
-
-    gen_code("movq %%%s, (%%%s)", frame_ptr, heap_ptr);
-    gen_code("movq %%%s, 8(%%%s)", reg, heap_ptr);
-    move(heap_ptr, frame_ptr);
-    gen_code("addq $16, %%%s", heap_ptr);
-}
-
-void make_frame_from_const(long int value)
-{
-    debug("make_frame_from_const");
-
-    gen_code("movq %%%s, (%%%s)", frame_ptr, heap_ptr);
-    gen_code("movq $%ld, 8(%%%s)", value, heap_ptr);
-    move(heap_ptr, frame_ptr);
-    gen_code("addq $16, %%%s", heap_ptr);
-}
-
 void make_closure(struct tree *node)
 {
     debug("make_closure");
 
-    int instruction_offset = 19; // TODO
     struct closure_data *data = (struct closure_data*)node->data;
 
     gen_code("lea (_closure%d), %%%s", data->num, node->reg);
@@ -913,15 +889,16 @@ static void make_frame()
 
 static void save_captured_vars_in_frames(struct tree *node)
 {
+    gen_code("# save captured variables in frame");
     struct symbol *sym = node->symbol;
     while(sym != NULL) {
         if(sym->captured) {
             make_frame();
             if(sym->outer) {
-                gen_code("movq %d(%%%s), %%%s", sym->offset, "rsp", var_reg0);
-                gen_code("movq %%%s, 8(%%%s)\t\t# save %s in frame", var_reg0, frame_ptr, sym->name);
+                gen_code("movq %d(%%%s), %%%s", (sym->offset) * 8, "rsp", var_reg0);
+                gen_code("movq %%%s, 8(%%%s)", var_reg0, frame_ptr);
             } else {
-                gen_code("movq %%%s, 8(%%%s)\t\t# save %s in frame", sym->orig_reg, frame_ptr, sym->name);
+                gen_code("movq %%%s, 8(%%%s)", sym->orig_reg, frame_ptr);
             }
         }
         sym = sym->next;
@@ -937,9 +914,11 @@ static void load_captured_onto_stack(struct tree *node)
         if(sym->captured) {
             if(!first) {
                 gen_code("movq (%%%s), %%%s", frame_ptr, frame_ptr);
+            } else {
+                gen_code("# load captured variables into scope");
             }
 
-            gen_code("push 8(%%%s)\t\t# load %s into local scope", frame_ptr, sym->name);
+            gen_code("push 8(%%%s)", frame_ptr);
 
             if(first) {
                 first = 0;
@@ -957,7 +936,7 @@ static void unload_captured_from_stack(struct tree *node)
     struct symbol *sym = node->symbol;
     while(sym != NULL) {
         if(sym->captured) {
-            gen_code("pop %%%s\t# remove %s from stack", temp_reg, sym->name);
+            gen_code("pop %%%s", temp_reg);
         }
         sym = sym->next;
     }
@@ -1009,7 +988,7 @@ void gen_call_closure(struct tree *node)
     struct tree *fun = LEFT_CHILD(node);
     struct tree *param = RIGHT_CHILD(node);
 
-    gen_code("movq 8(%%%s), %%%s\t# get environment", fun->reg, frame_ptr);
+    gen_code("movq 8(%%%s), %%%s\t# pass environment", fun->reg, frame_ptr);
 
     int i;
     for(i = 2; i < sizeof(registers) / sizeof(registers[0]); i++) {

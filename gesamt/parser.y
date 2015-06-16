@@ -84,10 +84,9 @@ Lambda: FUN IDENT ARROW Expr END
         SYMBOL_TYPE_NONE, "rdi"); 
         @i @Lambda.node@ = new_lambda_node(@Expr.node@, labelno++, @Expr.symbols@);
 
-        @regalloc @Expr.node@->reg = "rsi"; /*@Lambda.node@->reg;*/ /* TODO: ??? */
+        @regalloc @Expr.node@->reg = "rsi";
         @regalloc @Lambda.node@->kids[0]->reg = @Expr.node@->reg;
 
-//        @regalloc set_symbol_reg_children(@Lambda.node@, @IDENT.name@, @Expr.node@->reg);
         @regalloc mark_other_symbols_as_captured(@Lambda.node@, @IDENT.name@);
 
       @}
