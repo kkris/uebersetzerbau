@@ -175,7 +175,7 @@ if: OP_IF(t_expr)               # 2 # gen_if(bnode);
 if: OP_IF(u_expr)               # 2 # gen_if(bnode);
 if: OP_IF(u_list)               # 2 # gen_if(bnode);
 if: OP_IF(t_list)               # 2 # gen_if(bnode);
-if: OP_IF(t_word)                # 1 # gen_if(bnode);
+if: OP_IF(t_word)               # 1 # gen_if(bnode);
 
 ifthen: OP_IF_THEN(if, t_word) # 2 # gen_ifthen(bnode);
 
