@@ -31,7 +31,6 @@
 @traversal @preorder codegen
 
 @autoinh symbols
-@autosyn node
 
 @attributes { char *name; } IDENT
 @attributes { long int value; } NUM
@@ -56,8 +55,7 @@ Program: /* empty */
        @{ @i @Program.defs@ = NULL; @}
        |
        IDENT '=' LambdaToplevel ';' Program
-       @{ @i @Program.0.defs@ = symbol_add(@Program.1.defs@, @IDENT.name@,
-       SYMBOL_TYPE_FUN, "rax");
+       @{ @i @Program.0.defs@ = symbol_add(@Program.1.defs@, @IDENT.name@, SYMBOL_TYPE_FUN, "rax");
           @i @Program.1.symbols@ = @Program.0.symbols@;
           @i @LambdaToplevel.symbols@ = @Program.0.symbols@;
 
@@ -80,8 +78,7 @@ LambdaToplevel: FUN IDENT ARROW Expr END
 
 Lambda: FUN IDENT ARROW Expr END
       @{
-        @i @Expr.symbols@ = symbol_add(@Lambda.symbols@, @IDENT.name@,
-        SYMBOL_TYPE_NONE, "rdi"); 
+        @i @Expr.symbols@ = symbol_add(@Lambda.symbols@, @IDENT.name@, SYMBOL_TYPE_NONE, "rdi"); 
         @i @Lambda.node@ = new_lambda_node(@Expr.node@, labelno++, @Expr.symbols@);
 
         @regalloc @Expr.node@->reg = "rsi";
